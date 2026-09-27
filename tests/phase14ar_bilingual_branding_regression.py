@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+from pathlib import Path
+import json
+
+ROOT = Path(__file__).resolve().parents[1]
+
+def require(condition, message):
+    if not condition:
+        raise AssertionError(message)
+
+def main():
+    worker = (ROOT / "worker/src/phase14ar-bilingual-branding.js").read_text(encoding="utf-8")
+    lifecycle_worker = (ROOT / "worker/src/phase14at-booking-lifecycle.js").read_text(encoding="utf-8")
+    dashboard_worker = (ROOT / "worker/src/phase14au-dashboard-screen2.js").read_text(encoding="utf-8")
+    customers_worker = (ROOT / "worker/src/phase14av-customers-screen3.js").read_text(encoding="utf-8")
+    screen4_worker = (ROOT / "worker/src/phase14aw-screen4-bookings.js").read_text(encoding="utf-8")
+    admin_entry = (ROOT / "apps/admin-web/src/phase14h.js").read_text(encoding="utf-8")
+    admin = (ROOT / "apps/admin-web/src/phase14ar-i18n-branding.js").read_text(encoding="utf-8")
+    admin_auth = (ROOT / "apps/admin-web/src/phase14ar-auth-i18n.js").read_text(encoding="utf-8")
+    admin_bootstrap = (ROOT / "apps/admin-web/src/phase14ar-auth-bootstrap-guard.js").read_text(encoding="utf-8")
+    admin_css = (ROOT / "apps/admin-web/src/phase14ar-i18n-branding.css").read_text(encoding="utf-8")
+    public_entry = (ROOT / "apps/public-web/src/phase14c.js").read_text(encoding="utf-8")
+    public = (ROOT / "apps/public-web/src/phase14ar-public-i18n.js").read_text(encoding="utf-8")
+    public_css = (ROOT / "apps/public-web/src/phase14ar-public-i18n.css").read_text(encoding="utf-8")
+    smoke = (ROOT / "scripts/smoke-staging.mjs").read_text(encoding="utf-8")
+    package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
+    local = (ROOT / "worker/wrangler.toml").read_text(encoding="utf-8")
+    staging = (ROOT / "worker/wrangler.staging.toml.template").read_text(encoding="utf-8")
+    production = (ROOT / "worker/wrangler.production.toml.template").read_text(encoding="utf-8")
+
+    require('import core from "./phase14al-sequential-weekday.js";' in worker, "Phase14AR Worker must preserve Phase14AL chain")
+    require('import core from "./phase14ar-bilingual-branding.js";' in lifecycle_worker, "Phase14AT lifecycle wrapper must preserve the Phase14AR chain")
+    require('import core from "./phase14at-booking-lifecycle.js";' in dashboard_worker, "Phase14AU must preserve Phase14AT and the Phase14AR chain")
+    require('import core from "./phase14au-dashboard-screen2.js";' in customers_worker, "Phase14AV must preserve Phase14AU and the Phase14AR chain")
+    require('import core from "./phase14av-customers-screen3.js";' in screen4_worker, "Phase14AW must preserve Phase14AV and the Phase14AR chain")
+    require("SETTINGS_SELECT" in worker and "SETTINGS_WRITE" in worker, "Worker must reuse/capture existing settings DB operations")
+    require("shopNameGu" in worker and "shopNameEn" in worker and "websiteTitleGu" in worker and "websiteTitleEn" in worker, "Worker must expose four bilingual branding fields")
+    require("proxyDb" in worker and "captureResult" in worker, "Branding must piggyback existing settings reads instead of polling")
+    require("CACHE_TTL_MS = 6 * 60 * 60 * 1000" in worker, "Unauthenticated branding fallback must use bounded cache")
+    require("setInterval" not in worker, "Worker bilingual layer must not poll")
+    require("defaultLanguae" not in worker, "Worker must not misspell defaultLanguage")
+    require("defaultLanguage: displayPreferences.defaultLanguage" in worker, "Public catalog branding must expose defaultLanguage")
+    require("data.defaultLanguage = displayPreferences.defaultLanguage" in worker, "Public bootstrap must expose defaultLanguage")
+    require('const ADMIN_SHELL_MARKER = "worker-ar-admin-r1";' in worker, "Admin shell must have a stable freshness marker")
+    require("serveAdminShell" in worker and 'new URL("/admin/index.html", sourceUrl.origin)' in worker, "Worker must serve the current Admin shell directly")
+    require('headers.set("cache-control", "no-store, no-cache, must-revalidate, max-age=0")' in worker, "Admin shell must disable browser/CDN caching")
+    require('headers.set("x-zhagmag-admin-shell", ADMIN_SHELL_MARKER)' in worker, "Admin shell freshness marker must be emitted")
+    require('url.pathname === "/admin"' in worker and 'url.pathname === "/admin/"' in worker and 'url.pathname === "/admin/index.html"' in worker, "All Admin shell entry paths must use no-store handling")
+    require('url.pathname.startsWith("/api/auth/") && !response.ok' in worker, "Failed auth/bootstrap responses must not trigger an extra settings D1 read")
+
+    expected_staging = 'main = "src/phase14aw-screen4-bookings.js"'
+    expected_production = 'main = "src/phase14at-booking-lifecycle.js"'
+    require(expected_staging in local and expected_staging in staging, "Local/staging configs must use the cumulative Screen 4 wrapper")
+    require(expected_production in production, "Production config must remain pinned to the Phase14AT lifecycle wrapper")
+
+    # Language DOM runtimes must not participate in the splash/auth bootstrap path.
+    require('import "./phase14ar-i18n-branding.js";' not in admin_entry, "Full Admin translator must not static-load before React startup")
+    require('import "./phase14ar-auth-i18n.js";' not in admin_entry, "Auth translator must not static-load before React startup")
+    require('import "./phase14ar-i18n-branding.css";' in admin_entry, "Language control CSS may load eagerly without starting runtime observers")
+    require('import("./phase14ar-i18n-branding.js")' in admin_entry, "Full Admin translator must dynamic-load after shell readiness")
+    require('import("./phase14ar-auth-i18n.js")' in admin_entry, "Auth translator must dynamic-load after Login readiness")
+    require('document.querySelector(".shell")' in admin_entry and 'document.querySelector(".auth-page")' in admin_entry, "Deferred language loader must gate on rendered React views")
+    require('phase14arMode' in admin_entry and 'phase14arMode="admin"' in admin_entry and 'phase14arMode="auth"' in admin_entry, "Deferred language loader must track auth/admin lifecycle")
+    require('data-phase14ar-auth-owned="1"' in admin_entry, "Auth-owned language button must be replaced before full Admin translator takes ownership")
+    require('const phase14arRoot=document.getElementById("root")' in admin_entry, "Deferred loader must scope lifecycle detection to the React root")
+    require('observe(phase14arRoot,{childList:true})' in admin_entry, "Deferred loader may observe only top-level root child replacement")
+    require('observe(document.documentElement,{childList:true,subtree:true})' not in admin_entry, "Deferred loader must not watch signed-in navigation subtree mutations")
+    require('import "./phase14ar-auth-bootstrap-guard.js";' in admin_entry, "Auth bootstrap fail-open guard must still load before the app chain")
+    require(admin_entry.index('phase14ar-auth-bootstrap-guard.js') < admin_entry.index('phase14g.js'), "Auth bootstrap guard must install before main.tsx can start")
+    require('target.closest(".auth-page")' in admin_entry and 'form.closest(".auth-page")' in admin_entry, "Global click/submit guards must not intercept React-owned auth forms")
+
+    for marker in ["zhagmag:ui-language:v1","phase14ar-language-button","shopNameGu","websiteTitleEn","document.documentElement","localStorage"]:
+        require(marker in admin, f"Missing Admin bilingual marker: {marker}")
+    require("phase14ar-branding-grid" in admin and "Bilingual Branding" in admin, "Admin Settings must expose bilingual branding editor")
+    require('method==="PUT"' in admin and 'path==="/api/admin/settings"' in admin, "Admin must intercept the existing Settings PUT request")
+    require("const response=await priorFetch(input,init);" in admin, "Admin branding must reuse the existing Settings request")
+    require("response.clone().json().then(data=>{mergeBranding(data);if(adminApi)scheduleAfterReact()})" in admin, "Admin response observation must be non-blocking and schedule one post-React refresh")
+    require("fetch(\"" not in admin and "fetch('" not in admin, "Admin bilingual runtime must not issue standalone API calls")
+    require("phase14ar-language-button" in admin_css, "Admin language control styling is required")
+    require("phase14arSource" in admin and "phase14arRendered" in admin and "setDirectText" in admin, "Admin language switch must use tracked real text nodes")
+    require("queueMicrotask(scan)" in admin and "requestAnimationFrame(scan)" not in admin, "Admin language switch must update without animation-frame loops")
+    require("MutationObserver" not in admin, "Signed-in Admin translator must never continuously observe React DOM mutations")
+    require("setInterval" not in admin, "Signed-in Admin translator must never poll")
+    require("scheduleAfterReact" in admin and 'document.addEventListener("click"' in admin and 'document.addEventListener("change"' in admin, "Signed-in translation must refresh only from bounded lifecycle events")
+    require('target.closest(".shell")' in admin, "Interaction-triggered translation must stay scoped to signed-in Admin shell")
+    require('window.setTimeout(schedule,150)' in admin, "Deferred translator must have one bounded Dashboard-ready follow-up without polling")
+    require("setTextIfChanged" in admin and "setAttrIfChanged" in admin and "setDocumentTitleIfChanged" in admin, "Admin DOM writes must be idempotent")
+    require('button.textContent=currentLanguage()' not in admin, "Admin language button must not rewrite identical text on every scan")
+    require("isAuthReactOwned" in admin and 'node?.closest?.(".auth-page")' in admin, "Main Admin translator must leave auth subtree to auth-safe layer")
+    require("document.body.append(button)" in admin and 'button.dataset.phase14arExternal="1"' in admin, "Admin language control must stay outside React-owned app tree")
+
+    for marker in ["AUTH_COPY","phase14arAuthSource","phase14arAuthRendered","phase14arAuthReady","zhagmag:ui-language:v1","zhagmag:branding:v1"]:
+        require(marker in admin_auth, f"Missing auth-safe bilingual marker: {marker}")
+    require("queueMicrotask(scan)" in admin_auth and "MutationObserver" in admin_auth, "Auth-safe language updates must be event-driven")
+    require("setInterval" not in admin_auth and "fetch(" not in admin_auth, "Auth-safe language layer must not poll or call APIs")
+    require("ensureLanguageButton" in admin_auth and 'button.dataset.phase14arAuthOwned="1"' in admin_auth, "Auth language control must be created only after Login exists")
+    require('document.querySelector(".auth-page")' in admin_auth, "Auth language runtime must remain scoped to the rendered auth view")
+    require('button.addEventListener("click",()=>queueMicrotask(schedule))' in admin_auth, "Auth copy must refresh immediately after language switch")
+    require('document.querySelector(".auth-brand strong")' in admin_auth, "Auth brand must follow selected bilingual shop name")
+    require("Invalid email/mobile or password." in admin_auth and "ઈમેઇલ/મોબાઇલ અથવા પાસવર્ડ ખોટો છે." in admin_auth, "Common login errors must remain bilingual")
+
+    require("AUTH_BOOTSTRAP_TIMEOUT_MS=8000" in admin_bootstrap, "Initial Admin session check must have an 8-second fail-open bound")
+    require('pathname==="/api/auth/me"' in admin_bootstrap, "Bootstrap timeout must apply only to /api/auth/me")
+    require("new AbortController()" in admin_bootstrap and "controller.abort()" in admin_bootstrap, "Hung auth bootstrap fetch must be aborted")
+    require("Promise.race([network,timeout])" in admin_bootstrap, "Auth bootstrap must have an end-to-end fail-open race independent of fetch settlement")
+    require("AUTH_BOOTSTRAP_TIMEOUT" in admin_bootstrap and '"x-zhagmag-auth-bootstrap":"timeout"' in admin_bootstrap, "Timeout fallback must return a detectable synthetic 401 response")
+    require("setInterval" not in admin_bootstrap, "Auth bootstrap guard must not poll")
+    require(admin_bootstrap.count("priorFetch(input") == 2, "Auth bootstrap guard must do at most one underlying fetch per request path")
+
+    require("color:transparent" not in admin_css and "content:attr(data-phase14ar-copy)" not in admin_css, "Admin must not use overlay translation text")
+    require(".topbar{flex-wrap:wrap}" in admin_css, "Admin header must wrap safely for long language labels")
+    require("position:fixed!important" in admin_css, "Login language control must stay outside React auth tree")
+    require("body:has(.shell) .phase14ar-language-button{position:absolute!important" in admin_css, "Signed-in language icon must be visually seated in the Admin header")
+
+    require('import "./phase14ar-public-i18n.js";' in public_entry, "Public bilingual runtime must load before app")
+    for marker in ["zhagmag:ui-language:v1","phase14ar-public-language","websiteTitleGu","websiteTitleEn","document.documentElement","catalog|bootstrap"]:
+        require(marker in public, f"Missing Public bilingual marker: {marker}")
+    require("globalThis.fetch=async" in public, "Public runtime must observe the existing catalog request")
+    require("fetch(\"" not in public and "fetch('" not in public, "Public bilingual runtime must not issue standalone API calls")
+    require("phase14arSource" in public and "phase14arRendered" in public and "setDirectText" in public, "Public language switch must use tracked real text nodes")
+    require("queueMicrotask(scan)" in public and "requestAnimationFrame(scan)" not in public, "Public language switch must update before paint")
+    require("characterData:true" in public, "Public language runtime must observe React text changes")
+    require("observer?.disconnect()" in public and "observer?.observe(document.documentElement,OBSERVER_OPTIONS)" in public, "Public scan must isolate its own DOM mutations")
+    require("setTextIfChanged" in public and "setAttrIfChanged" in public and "setDocumentTitleIfChanged" in public, "Public DOM writes must be idempotent")
+    require('button.textContent=currentLanguage()' not in public, "Public language button must not rewrite identical text on every scan")
+    require("color:transparent" not in public_css and "content:attr(data-phase14ar-copy)" not in public_css, "Public must not use overlay translation text")
+    require(".quick-contact{display:flex!important" in public_css, "Mobile Public header must keep the language control visible")
+
+    require("const BROWSER_ATTEMPTS = 3;" in smoke, "Staging browser smoke retries must be bounded")
+    require("const BROWSER_TIMEOUT_MS = 15000;" in smoke, "Staging browser smoke must have a hard timeout")
+    require("timeout: BROWSER_TIMEOUT_MS" in smoke and 'killSignal: "SIGKILL"' in smoke, "Hung headless Chrome must be force-terminated")
+    require("Admin plain shell + no-store" in smoke and '"/admin/"' in smoke, "Staging smoke must verify the plain Admin shell without cache-busting")
+    require('x-zhagmag-admin-shell' in smoke and 'worker-ar-admin-r1' in smoke, "Staging smoke must verify the Admin shell freshness marker")
+    require("Admin mobile plain-path browser render + bilingual auth" in smoke, "Staging smoke must render the real Admin login UI on a mobile-sized plain path")
+    require('"--window-size=390,844"' in smoke and "Android 13; Mobile" in smoke, "Admin browser smoke must exercise a mobile viewport/user agent")
+    require('`${base}/admin/`' in smoke and "!adminBrowserRendered.includes('class=\"splash\"')" in smoke, "Admin browser smoke must use plain /admin/ and reject a stuck splash")
+    require("const guAuth =" in smoke and "const enAuth =" in smoke and "(guAuth || enAuth)" in smoke, "Admin browser smoke must accept the configured GU or EN language only when copy and marker agree")
+    require('data-phase14ar-auth-ready="GU"' in smoke and 'data-phase14ar-auth-ready="EN"' in smoke, "Admin browser smoke must verify the auth language-ready marker")
+    require("લૉગ ઇન" in smoke and "Sign in" in smoke, "Admin browser smoke must recognize both supported auth languages")
+    require('checkJsonPost("/api/auth/login", {},' in smoke and "Admin auth route validation" in smoke, "Staging smoke must validate login routing without credentials or D1 throttle writes")
+
+    require(package.get("version") == "0.14.5", "Version must remain 0.14.5")
+    require("tests/phase14ar_bilingual_branding_regression.py" in package["scripts"]["test:hardening"], "Phase14AR regression must run in test:hardening")
+    print("Phase 14AR bilingual preserved through Screen 4 staging chain + event-driven signed-in Admin navigation regression: PASS")
+
+if __name__ == "__main__":
+    main()
