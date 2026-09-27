@@ -3,6 +3,10 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val stagingBaseUrl = providers.gradleProperty("ZHAGMAG_STAGING_BASE_URL").orNull.orEmpty()
+    .trim()
+    .removeSuffix("/")
+
 val productionBaseUrl = providers.gradleProperty("ZHAGMAG_PRODUCTION_BASE_URL").orNull.orEmpty()
     .trim()
     .removeSuffix("/")
@@ -22,18 +26,40 @@ android {
     }
 
     flavorDimensions += "environment"
+
     productFlavors {
         create("staging") {
             dimension = "environment"
             applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
-            buildConfigField("String", "API_BASE_URL", "\"https://zhagmag-dresses-staging.patelnims26.workers.dev\"")
-            buildConfigField("String", "APP_ENVIRONMENT", "\"STAGING\"")
+
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"$stagingBaseUrl\""
+            )
+
+            buildConfigField(
+                "String",
+                "APP_ENVIRONMENT",
+                "\"STAGING\""
+            )
         }
+
         create("production") {
             dimension = "environment"
-            buildConfigField("String", "API_BASE_URL", "\"$productionBaseUrl\"")
-            buildConfigField("String", "APP_ENVIRONMENT", "\"PRODUCTION\"")
+
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                "\"$productionBaseUrl\""
+            )
+
+            buildConfigField(
+                "String",
+                "APP_ENVIRONMENT",
+                "\"PRODUCTION\""
+            )
         }
     }
 
@@ -41,9 +67,11 @@ android {
         debug {
             isMinifyEnabled = false
         }
+
         release {
             isMinifyEnabled = false
             isShrinkResources = false
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -68,6 +96,7 @@ dependencies {
     // Compose 1.12+ requires compileSdk 37. Keep the April 2026 stable BOM
     // while this app intentionally targets/compiles against stable API 36.
     val composeBom = platform("androidx.compose:compose-bom:2026.04.01")
+
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
