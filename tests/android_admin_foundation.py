@@ -93,19 +93,16 @@ required = [
     ROOT / "docs" / "ADMIN_SCREEN_10_SETTINGS.md",
 ]
 
+
 for path in required:
     if not path.exists():
         errors.append(f"Missing required Admin foundation file: {path.relative_to(ROOT)}")
 
-build_text = read(
-    ANDROID / "app" / "build.gradle.kts"
-)
-
 require_tokens(
-    build_text,
+    ANDROID / "app" / "build.gradle.kts",
     [
         'versionName = "0.14.5"',
-        "versionCode = 1",
+        'versionCode = 1',
         'ZHAGMAG_STAGING_BASE_URL',
         'ZHAGMAG_PRODUCTION_BASE_URL',
         'buildConfig = true',
@@ -149,6 +146,7 @@ else:
         errors.append(
             "Gujarati text detected in English-only Android strings."
         )
+        
 res_root = ANDROID / "app" / "src" / "main" / "res"
 if [p for p in res_root.glob("values-gu*") if p.exists()]:
     errors.append("Gujarati Android resource directories are not allowed.")
