@@ -1,0 +1,14 @@
+/* Phase 14X Fix1 — New Category form density parity with Add Item. Admin UI only. */
+.manage-grid>.form-card{padding:13px!important;border-radius:10px!important}
+.manage-grid>.form-card .form-title{align-items:center!important;margin-bottom:7px!important}
+.manage-grid>.form-card .form-title h2{font-size:1rem!important;line-height:1.2!important;margin:2px 0 5px!important}
+.manage-grid>.form-card>.form-grid{grid-template-columns:minmax(0,1.35fr) minmax(120px,.65fr)!important;gap:8px!important;margin:0 0 8px!important}
+.manage-grid>.form-card>.form-grid label,.manage-grid>.form-card>label{display:grid!important;gap:4px!important;margin:0!important;font-size:.76rem!important;font-weight:750!important}
+.manage-grid>.form-card>label{width:min(180px,100%);margin-bottom:8px!important}
+.manage-grid>.form-card input{min-height:39px!important;padding:8px 10px!important;border-radius:8px!important;font-size:.84rem!important}
+.manage-grid>.form-card>.switch-row{display:flex!important;align-items:center!important;gap:7px!important;flex-wrap:wrap!important;margin:2px 0 9px!important}
+.manage-grid>.form-card>.switch-row .check{display:inline-flex!important;align-items:center!important;gap:6px!important;min-height:34px!important;margin:0!important;padding:5px 8px!important;border:1px solid #eadfe4!important;border-radius:8px!important;background:#fbf9fa!important;font-size:.72rem!important;font-weight:750!important}
+.manage-grid>.form-card>.switch-row .check input{width:16px!important;height:16px!important;min-height:0!important;margin:0!important;padding:0!important}
+.manage-grid>.form-card>.primary.full{min-height:38px!important;margin-top:0!important;padding:8px 10px!important;border-radius:8px!important;font-size:.78rem!important}
+@media(max-width:650px){.manage-grid>.form-card{padding:12px!important}.manage-grid>.form-card>.form-grid{grid-template-columns:minmax(0,1.45fr) minmax(96px,.55fr)!important;gap:7px!important}.manage-grid>.form-card input{min-height:42px!important;padding:7px 9px!important;font-size:16px!important}.manage-grid>.form-card>label{width:min(170px,100%)}.manage-grid>.form-card>.switch-row{gap:6px!important;margin-bottom:8px!important}.manage-grid>.form-card>.switch-row .check{min-height:36px!important;padding:5px 7px!important}.manage-grid>.form-card>.primary.full{min-height:42px!important}}
+@media(max-width:430px){.manage-grid>.form-card>.form-grid{grid-template-columns:1fr!important}.manage-grid>.form-card>label{width:100%}}

@@ -1,0 +1,9 @@
+/* Phase 14AA — final create/edit action parity. CSS-only. */
+.user-modal>.primary.full,
+.manage-grid>.form-card>.primary.full,
+.item-editor>.form-card>.primary.full,
+.customer-layout>.form-card>.primary.full{
+  position:static!important;bottom:auto!important;width:100%!important;
+  margin:12px 0 0!important;padding:9px 12px!important;
+  min-height:44px!important;border-radius:9px!important;box-shadow:none!important
+}

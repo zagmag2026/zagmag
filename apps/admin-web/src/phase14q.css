@@ -1,0 +1,48 @@
+/* Phase 14Q — Admin Form & Detail Structural UI. Admin-only visual/interaction layer. */
+:root{--erp-drawer-border:#eadfe4;--erp-drawer-shadow:-18px 0 48px rgba(51,23,37,.17);--erp-drawer-bg:#fff}
+
+.phase14q-add-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:6px 10px;border:1px solid #7d1747;border-radius:8px;background:#7d1747;color:#fff;font-size:.75rem;font-weight:850;cursor:pointer}
+.phase14q-add-button::before{content:"+";font-size:1rem;line-height:1}
+
+/* Customers and Bookings are list-first; forms live in a right-side editor drawer. */
+.customer-layout,.booking-layout{position:fixed!important;inset:0 0 0 auto!important;height:100dvh!important;z-index:92!important;margin:0!important;padding:58px 14px 18px!important;background:var(--erp-drawer-bg)!important;border-left:1px solid var(--erp-drawer-border);box-shadow:var(--erp-drawer-shadow)!important;overflow:auto!important;display:block!important;transform:translateX(102%);visibility:hidden;transition:transform .18s ease,visibility .18s ease}
+.customer-layout{width:min(580px,100vw)!important}.booking-layout{width:min(820px,100vw)!important}
+body.phase14q-customer-drawer-open .customer-layout,body.phase14q-booking-drawer-open .booking-layout{transform:translateX(0);visibility:visible}
+.customer-layout>.form-card,.booking-layout>.form-card{border:0!important;box-shadow:none!important;background:#fff!important;padding:0!important}
+.customer-layout>.info-card,.booking-layout>.info-card{display:none!important}
+.customer-layout .form-title,.booking-layout .form-title{position:sticky;top:-58px;z-index:4;margin:-58px -14px 12px!important;padding:11px 54px 11px 14px!important;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-bottom:1px solid #eee4e8}
+.customer-layout .form-title h2,.booking-layout .form-title h2{font-size:1.02rem!important}.customer-layout .form-title .eyebrow,.booking-layout .form-title .eyebrow{font-size:.65rem!important}
+.customer-layout .primary.full,.booking-layout .primary.full{position:sticky;bottom:-2px;z-index:3;margin-top:12px!important;box-shadow:0 -7px 18px rgba(255,255,255,.96),0 5px 16px rgba(72,26,48,.10)}
+body.phase14q-form-drawer-open{overflow:hidden}
+.phase14q-form-backdrop{position:fixed;inset:0;z-index:90;display:none;border:0;background:rgba(38,17,28,.34);padding:0;cursor:default}
+.phase14q-form-close{position:fixed;right:14px;top:12px;z-index:94;display:none;width:36px;height:36px;border:1px solid var(--erp-drawer-border);border-radius:9px;background:#fff;color:#5e4853;font-size:1.15rem;font-weight:900;cursor:pointer;box-shadow:0 5px 16px rgba(55,25,40,.10)}
+body.phase14q-form-drawer-open .phase14q-form-backdrop,body.phase14q-form-drawer-open .phase14q-form-close{display:block}
+
+/* Booking form remains dense but gains more room for multi-item lines. */
+.booking-layout .booking-form{max-width:none!important}.booking-layout .booking-lines{margin-top:8px!important}.booking-layout .booking-line{grid-template-columns:minmax(260px,1fr) 88px minmax(140px,.55fr) 36px!important;gap:7px!important}.booking-layout .booking-items-head{position:sticky;top:48px;z-index:2;background:#fff;padding:7px 0!important}.booking-layout .customer-picker{margin-bottom:8px!important}
+
+/* Categories: expanded category becomes a focused split-view on desktop. */
+@media(min-width:1051px){
+  .category-row.phase14q-category-expanded{display:grid!important;grid-template-columns:minmax(250px,.42fr) minmax(0,1.58fr);align-items:start;border:1px solid #e7dbe1!important;border-radius:10px!important;overflow:hidden;background:#fff}
+  .category-row.phase14q-category-expanded>.category-main{grid-column:1;grid-row:1;grid-template-columns:40px minmax(0,1fr)!important;align-content:start;min-height:100%;padding:11px!important;background:#fbf8f9;border-right:1px solid #eadfe4}
+  .category-row.phase14q-category-expanded>.category-main>.row-actions{grid-column:1/-1!important;justify-content:flex-start!important;flex-wrap:wrap;margin-top:6px}
+  .category-row.phase14q-category-expanded>.fields-zone{grid-column:2;grid-row:1;padding:11px 12px!important;border:0!important;background:#fff}
+  .category-row.phase14q-category-expanded .field-layout{grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr)!important}
+}
+
+/* Side drawers: keep operational contact actions available at the bottom. */
+.phase14q-detail-bar{position:sticky;bottom:0;z-index:4;display:flex;gap:6px;align-items:center;padding:9px 12px max(9px,env(safe-area-inset-bottom));margin-top:12px;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-top:1px solid #eadfe4;box-shadow:0 -9px 22px rgba(51,23,37,.07)}
+.phase14q-detail-bar>a,.phase14q-detail-bar>button{min-height:34px;padding:6px 9px;border-radius:8px;font-size:.72rem;font-weight:800}.phase14q-detail-bar>.ghost{margin-left:auto}
+
+@media(max-width:760px){
+  .phase14q-add-button{min-height:38px;padding:7px 9px;font-size:.72rem}
+  .customer-layout,.booking-layout{width:100vw!important;padding:60px 10px calc(14px + env(safe-area-inset-bottom))!important}
+  .customer-layout .form-title,.booking-layout .form-title{top:-60px;margin:-60px -10px 11px!important;padding:11px 52px 11px 10px!important}
+  .phase14q-form-close{top:max(10px,env(safe-area-inset-top));right:10px}
+  .booking-layout .booking-items-head{top:46px;display:block!important}.booking-layout .booking-items-head input{width:100%!important;margin-top:7px}
+  .booking-layout .booking-line{grid-template-columns:1fr 84px!important}.booking-layout .booking-line>.availability-pill{grid-column:1/-1}.booking-layout .booking-line>.icon-btn{grid-column:2;grid-row:1;align-self:end}
+  .phase14q-detail-bar{padding-left:10px;padding-right:10px}.phase14q-detail-bar>a{flex:1;text-align:center}.phase14q-detail-bar>.ghost{margin-left:0}
+}
+
+@media(max-width:430px){.phase14q-add-button{flex:1}.phase14q-detail-bar{display:grid;grid-template-columns:1fr 1fr}.phase14q-detail-bar>.ghost{grid-column:1/-1;width:100%}}
+@media(prefers-reduced-motion:reduce){.customer-layout,.booking-layout{transition:none!important}}

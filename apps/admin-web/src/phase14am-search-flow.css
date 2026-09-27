@@ -1,0 +1,39 @@
+/* Phase 14AM Fix2 — search/filter toolbars must stay in normal list flow.
+   Desktop/tablet UI-only override. Mobile Phase 14P filter bottom-sheet remains unchanged. */
+@media(min-width:761px){
+  .item-filters,
+  .customer-filters,
+  .booking-filters,
+  .pickup-toolbar,
+  .report-filters,
+  .users-toolbar,
+  .audit-filters{
+    position:relative!important;
+    top:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    left:auto!important;
+    z-index:auto!important;
+    transform:none!important;
+  }
+
+  /* Phase 14P added a shadow for sticky filters. Once the toolbar is back in normal
+     flow the shadow is unnecessary and can visually cover the following column head. */
+  .item-filters,
+  .customer-filters,
+  .booking-filters{box-shadow:none!important}
+
+  /* Keep every list/header surface in normal stacking order. Search/filter bars are
+     immediately followed by the native/ERP header and then the result rows. */
+  .list-card>.list-head,
+  .users-shell>.list-head,
+  .phase14p-column-head,
+  .report-count,
+  .settings-title{
+    position:relative!important;
+    top:auto!important;
+    z-index:auto!important;
+  }
+
+  .phase14p-column-head{margin-top:0!important}
+}

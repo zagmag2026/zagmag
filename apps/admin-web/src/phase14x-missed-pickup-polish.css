@@ -1,0 +1,15 @@
+/* Phase 14X Fix10 UI2 — missed pickup hierarchy polish. */
+.phase14x-missed-panel .dashboard-row>.phase14x-missed-identity,
+.phase14x-missed-list .pickup-card>.phase14x-missed-identity{order:0}
+.phase14x-missed-panel .dashboard-row>.phase14d-item-grid,
+.phase14x-missed-list .pickup-card>.phase14d-item-grid{order:1}
+.phase14x-missed-panel .dashboard-row>.dashboard-meta,
+.phase14x-missed-list .pickup-card>.pickup-qty{order:2}
+.phase14x-missed-list .pickup-card>small{order:3}
+.phase14x-missed-panel .dashboard-row>.dashboard-actions,
+.phase14x-missed-list .pickup-card>.quick-actions{order:4}
+.phase14x-missed-panel .dashboard-row>.phase14x-missed-identity{margin:0!important}
+.phase14x-missed-kpi-actionable{position:relative!important;padding-right:42px!important}
+.phase14x-missed-kpi-chevron{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:1.65rem;line-height:1;color:#9b2c46;opacity:.72;font-weight:500;pointer-events:none}
+.phase14x-missed-kpi-actionable:focus-visible{outline:3px solid rgba(155,44,70,.2);outline-offset:2px}
+@media(max-width:700px){.phase14x-missed-kpi-actionable{padding-right:36px!important}.phase14x-missed-kpi-chevron{right:13px;font-size:1.5rem}}

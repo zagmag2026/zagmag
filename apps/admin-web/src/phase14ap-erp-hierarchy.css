@@ -1,0 +1,190 @@
+/* Phase 14AP — all-page ERP visual hierarchy hardening.
+   Admin visual-only final override. No runtime, API, Worker, D1 or business-rule change. */
+:root{
+  --erp-head-bg:#f1f3f5;
+  --erp-head-border:#cfd4da;
+  --erp-row-border:#d8dde3;
+  --erp-major-shadow:0 1px 2px rgba(31,35,40,.045);
+}
+
+/* Major surfaces must read as separate ERP regions even when every body surface is white. */
+.list-card,.panel,.settings-shell,.history-panel{
+  border-color:var(--erp-head-border)!important;
+  box-shadow:var(--erp-major-shadow)!important;
+}
+.list-card>.list-head,.panel>.panel-head,.history-panel>.history-title,
+.settings-section>.settings-title,.report-count,.pickup-line-head,.return-line-head,
+.booking-items-head,.fields-head{
+  background:var(--erp-head-bg)!important;
+  border-color:var(--erp-head-border)!important;
+}
+.list-card>.list-head,.panel>.panel-head{
+  border-bottom:1px solid var(--erp-head-border)!important;
+}
+.list-card>.list-head{padding-top:10px!important;padding-bottom:9px!important}
+.panel>.panel-head{padding-top:10px!important;padding-bottom:10px!important}
+.history-panel>.history-title,.settings-section>.settings-title{
+  padding:10px 12px!important;
+  border:1px solid var(--erp-head-border)!important;
+  border-radius:8px!important;
+}
+.fields-head{padding:8px 9px!important;border-bottom:1px solid var(--erp-head-border)!important}
+
+/* Dashboard: 8 KPI cards including Missed Pickups are an explicit balanced 4 x 2 grid. */
+@media(min-width:761px){
+  .stats{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-template-rows:repeat(2,minmax(64px,auto))!important;
+    gap:8px!important;
+    align-items:stretch!important;
+  }
+  .stats>.stat{
+    grid-column:auto!important;
+    grid-row:auto!important;
+    min-height:64px!important;
+    height:auto!important;
+    padding:9px 11px!important;
+    align-self:stretch!important;
+  }
+  .stats>.stat:nth-child(4){grid-column:1!important;grid-row:1!important}
+  .stats>.stat:nth-child(5){grid-column:2!important;grid-row:1!important}
+  .stats>.phase14x-missed-kpi{grid-column:3!important;grid-row:1!important}
+  .stats>.stat:nth-child(7){grid-column:4!important;grid-row:1!important}
+  .stats>.stat:nth-child(1){grid-column:1!important;grid-row:2!important}
+  .stats>.stat:nth-child(2){grid-column:2!important;grid-row:2!important}
+  .stats>.stat:nth-child(3){grid-column:3!important;grid-row:2!important}
+  .stats>.stat:nth-child(8){grid-column:4!important;grid-row:2!important}
+  .stats>.stat:nth-child(-n+3),.stats>.stat:nth-child(n+4){
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    align-items:center!important;
+    background:#fff!important;
+  }
+  .stats>.stat strong{font-size:1.05rem!important;margin:0!important}
+}
+
+/* KPI identity without pastel: white body + semantic top rule. */
+.stats>.stat{border-color:var(--erp-row-border)!important;box-shadow:none!important}
+.stats>.stat:nth-child(4){border-top:3px solid #3b9566!important}
+.stats>.stat:nth-child(5){border-top:3px solid #c78a24!important}
+.stats>.phase14x-missed-kpi{border-top:3px solid #c84a63!important}
+.stats>.stat:nth-child(7){border-top:3px solid #8963bc!important}
+.stats>.stat:nth-child(1){border-top:3px solid #7d1747!important}
+.stats>.stat:nth-child(2){border-top:3px solid #4c83ba!important}
+.stats>.stat:nth-child(3){border-top:3px solid #69707a!important}
+.stats>.stat:nth-child(8){border-top:3px solid #a1283a!important}
+
+/* Dashboard panels size to their own content instead of stretching to the tallest neighbour. */
+.live-grid{
+  align-items:start!important;
+  grid-auto-rows:max-content!important;
+}
+.live-grid>.dashboard-panel{
+  align-self:start!important;
+  min-height:0!important;
+  height:auto!important;
+}
+.live-grid>.dashboard-panel>.empty{min-height:108px!important;padding:28px 14px!important}
+.dashboard-panel .dashboard-list{display:grid!important;gap:0!important}
+.dashboard-panel .dashboard-row{border-color:var(--erp-row-border)!important}
+.phase14x-missed-panel>.panel-head,.overdue-panel>.panel-head{border-left:3px solid #c84a63!important}
+
+/* Master/list row separation: white bodies remain, borders become easier to scan. */
+.category-row,.item-card,.customer-card,.booking-card,.pickup-card,.user-card,
+.template-card,.audit-card,.field-row,.detail-items article,.dashboard-row,.report-row{
+  border-color:var(--erp-row-border)!important;
+}
+.category-row{border-left:3px solid #8a5d12!important}
+.customer-card{border-left:3px solid #7d1747!important}
+.user-card{border-left:3px solid #69707a!important}
+
+/* Operational records keep a semantic accent line, never a tinted card body. */
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone]{
+  border-left:3px solid var(--op-accent)!important;
+  box-shadow:none!important;
+}
+.status-booked{border-left:3px solid #4c83ba!important}
+.status-partially_given{border-left:3px solid #c78a24!important}
+.status-given{border-left:3px solid #8963bc!important}
+.status-partially_returned{border-left:3px solid #c78a24!important}
+.status-returned{border-left:3px solid #3b9566!important}
+.status-cancelled{border-left:3px solid #8b8c96!important}
+.return-card.is-overdue,.danger-report{border-left:3px solid #c84a63!important}
+
+/* Category KPI cards: distinct by rule color, not fill color. */
+.mini-stats>article{border-color:var(--erp-row-border)!important;background:#fff!important}
+.mini-stats>article:nth-child(1){border-top:3px solid #7d1747!important}
+.mini-stats>article:nth-child(2){border-top:3px solid #3b9566!important}
+.mini-stats>article:nth-child(3){border-top:3px solid #4c83ba!important}
+.mini-stats>article:nth-child(4){border-top:3px solid #8a5d12!important}
+
+/* Queue/search hierarchy: tabs or section heading first, controls second, records third. */
+.pickup-toolbar,.report-tabs,.settings-tabs,.users-toolbar,.audit-filters{
+  border-color:var(--erp-head-border)!important;
+}
+.report-tabs,.settings-tabs,.audit-filters{background:var(--erp-head-bg)!important}
+.pickup-toolbar{background:#fff!important;border-bottom:1px solid var(--erp-head-border)!important}
+.report-filters{background:#fff!important;border-bottom:1px solid var(--erp-head-border)!important}
+.report-count{border-bottom:1px solid var(--erp-head-border)!important}
+.report-row{border-bottom:1px solid var(--erp-row-border)!important}
+
+/* Users was the one master page with Search before its section title: reorder visually only. */
+.users-shell{display:flex!important;flex-direction:column!important}
+.users-shell>.list-head{order:1!important}
+.users-shell>.users-toolbar{order:2!important}
+.users-shell>.users-grid,.users-shell>.empty{order:3!important}
+.users-shell>.pager{order:4!important}
+.users-shell>.users-toolbar{border-top:0!important;border-bottom:1px solid var(--erp-head-border)!important}
+
+/* Settings / templates / audit: white content, neutral group headers and stronger dividers. */
+.settings-tabs{border-bottom:1px solid var(--erp-head-border)!important}
+.settings-section>.settings-title{margin-bottom:14px!important}
+.toggle-row{border-color:var(--erp-row-border)!important}
+.template-card{overflow:hidden!important}
+.template-head{padding-bottom:8px!important;border-bottom:1px solid var(--erp-row-border)!important}
+.audit-list{border-color:var(--erp-head-border)!important}
+.audit-card{border-top-color:var(--erp-row-border)!important}
+.audit-diff>div{border-color:var(--erp-row-border)!important}
+
+/* Detail drawers: create readable blocks without bringing pastel back. */
+.detail-meta,.pickup-contact{
+  border:1px solid var(--erp-row-border)!important;
+  border-radius:8px!important;
+  background:#fff!important;
+}
+.pickup-line-head,.return-line-head{
+  border-top:1px solid var(--erp-head-border)!important;
+  border-bottom:1px solid var(--erp-head-border)!important;
+}
+.pickup-line:not(.pickup-line-head),.return-line:not(.return-line-head){
+  border-bottom-color:var(--erp-row-border)!important;
+}
+.timeline>h3{padding-bottom:7px!important;border-bottom:1px solid var(--erp-head-border)!important}
+
+/* Mobile keeps the same hierarchy and balanced KPI order. */
+@media(max-width:760px){
+  .stats{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:7px!important;
+  }
+  .stats>.stat{
+    grid-column:auto!important;
+    grid-row:auto!important;
+    min-height:62px!important;
+    padding:8px 9px!important;
+  }
+  .stats>.stat:nth-child(4){grid-column:1!important;grid-row:1!important}
+  .stats>.stat:nth-child(5){grid-column:2!important;grid-row:1!important}
+  .stats>.phase14x-missed-kpi{grid-column:1!important;grid-row:2!important}
+  .stats>.stat:nth-child(7){grid-column:2!important;grid-row:2!important}
+  .stats>.stat:nth-child(1){grid-column:1!important;grid-row:3!important}
+  .stats>.stat:nth-child(2){grid-column:2!important;grid-row:3!important}
+  .stats>.stat:nth-child(3){grid-column:1!important;grid-row:4!important}
+  .stats>.stat:nth-child(8){grid-column:2!important;grid-row:4!important}
+  .live-grid{grid-template-columns:1fr!important}
+  .live-grid>.dashboard-panel{width:100%!important}
+  .list-card>.list-head,.panel>.panel-head{padding-left:10px!important;padding-right:10px!important}
+  .settings-section>.settings-title,.history-panel>.history-title{padding:9px 10px!important}
+}

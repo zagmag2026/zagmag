@@ -1,0 +1,11 @@
+/* Phase 14J global UI standard: compact labels, generic placeholders, Icon + Name actions. */
+.ui-clean-hidden{display:none!important}
+:where(button,a)[data-ui-icon="1"]{display:inline-flex!important;align-items:center;justify-content:center;gap:.42rem}
+:where(button,a)[data-ui-icon="1"]::before{content:attr(data-ui-glyph);display:inline-grid;place-items:center;flex:0 0 auto;width:1.2rem;height:1.2rem;border-radius:.4rem;background:rgba(125,23,71,.08);color:currentColor;font-size:.78rem;font-weight:900;line-height:1}
+.tabs button[data-ui-icon="1"]::before,.settings-tabs button[data-ui-icon="1"]::before{width:1.45rem;height:1.45rem;border-radius:.5rem;background:rgba(125,23,71,.10);font-size:.9rem}
+.tabs button.active[data-ui-icon="1"]::before,.settings-tabs button.active[data-ui-icon="1"]::before{background:rgba(255,255,255,.18)}
+.wa-button[data-ui-icon="1"]::before{background:rgba(24,160,88,.12)}
+.call-button[data-ui-icon="1"]::before{background:rgba(42,101,184,.10)}
+.danger[data-ui-icon="1"]::before,.danger-link[data-ui-icon="1"]::before{background:rgba(188,45,58,.10)}
+input::placeholder,textarea::placeholder{font-weight:550;opacity:.82}
+@media(max-width:720px){:where(button,a)[data-ui-icon="1"]{gap:.34rem}.tabs button[data-ui-icon="1"]::before,.settings-tabs button[data-ui-icon="1"]::before{width:1.3rem;height:1.3rem}}

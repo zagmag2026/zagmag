@@ -1,0 +1,33 @@
+/* Phase 14X Fix9 — light semantic full-card + badge colors for operational status surfaces only. */
+[data-operational-tone="info"]{--op-bg:#eef7ff;--op-border:#c9def4;--op-badge:#d7eaff;--op-text:#245a91;--op-accent:#4c83ba}
+[data-operational-tone="danger"]{--op-bg:#fff1f3;--op-border:#f1c8d0;--op-badge:#f9d6dd;--op-text:#9b2c46;--op-accent:#c84a63}
+[data-operational-tone="warning"]{--op-bg:#fff8e8;--op-border:#ead8a9;--op-badge:#f8e6b8;--op-text:#8a5d12;--op-accent:#c78a24}
+[data-operational-tone="success"]{--op-bg:#eef9f2;--op-border:#c9e4d4;--op-badge:#d5efdf;--op-text:#236f48;--op-accent:#3b9566}
+[data-operational-tone="neutral"]{--op-bg:#f6f6f8;--op-border:#dedee4;--op-badge:#e8e8ed;--op-text:#5f606b;--op-accent:#8b8c96}
+[data-operational-tone="accent"]{--op-bg:#f6f2ff;--op-border:#ded2f5;--op-badge:#e9defb;--op-text:#67439b;--op-accent:#8963bc}
+
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone]{
+  background:var(--op-bg)!important;
+  border-color:var(--op-border)!important;
+  border-left-color:var(--op-accent)!important;
+}
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone] .chip,
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone] [data-operational-badge="1"]{
+  background:var(--op-badge)!important;
+  border:1px solid var(--op-border)!important;
+  color:var(--op-text)!important;
+}
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone] [data-operational-badge="1"] b{
+  color:var(--op-text)!important;
+}
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone="danger"]{
+  box-shadow:inset 3px 0 0 var(--op-accent)!important;
+}
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone] :where(.booking-dates span,.pickup-qty span,.dashboard-meta span,.report-metrics span){
+  border-color:color-mix(in srgb,var(--op-border) 78%,white)!important;
+}
+@media(max-width:700px){
+  :where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone]{
+    background:var(--op-bg)!important;
+  }
+}

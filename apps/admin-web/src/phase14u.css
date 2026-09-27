@@ -1,0 +1,8 @@
+/* Phase 14U — Native Continuity Cleanup. Admin UI only. */
+.phase14u-restore-view{display:inline-flex;align-items:center;justify-content:center;min-height:36px;max-width:min(520px,100%);padding:7px 10px;border:1px dashed #c9b1bd;border-radius:9px;background:#fffafc;color:#6e4056;font-size:.69rem;font-weight:850;line-height:1.2;text-align:left;white-space:normal}
+.phase14u-restore-view::before{content:"↶";margin-right:5px;font-size:.8rem}.phase14u-restore-view:hover{background:#fff4f8;border-color:#b891a4}.phase14u-restore-view:disabled{opacity:.58}
+.phase14u-refresh-badge{display:flex;align-items:center;gap:7px;width:max-content;max-width:100%;margin:8px 0 5px;padding:6px 9px;border:1px solid #e5d8de;border-radius:999px;background:#fffafc;color:#725b66;font-size:.68rem;font-weight:800}.phase14u-refresh-badge::before{content:"";width:8px;height:8px;border:1.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:phase14u-spin .8s linear infinite}
+.phase14u-stale-copy{position:relative!important;opacity:.58!important;filter:saturate(.78);pointer-events:none!important;user-select:none!important}.phase14u-stale-copy::after{content:"Previous results";position:absolute;right:7px;top:7px;z-index:3;padding:3px 6px;border-radius:999px;background:rgba(255,255,255,.92);border:1px solid #e5d8de;color:#806974;font-size:.59rem;font-weight:850}
+@keyframes phase14u-spin{to{transform:rotate(360deg)}}
+@media(max-width:760px){.phase14u-restore-view{width:100%;justify-content:flex-start;margin-top:7px;min-height:40px}.phase14u-refresh-badge{font-size:.65rem}}
+@media(prefers-reduced-motion:reduce){.phase14u-refresh-badge::before{animation:none!important}}

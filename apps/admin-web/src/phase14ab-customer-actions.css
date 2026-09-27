@@ -1,0 +1,98 @@
+/* Phase 14Z Fix2 — Reports item dedupe + Customers desktop/mobile action cleanup.
+   UI-only final override. No API/Worker/D1/business-rule change. */
+
+/* Customer source actions are owned by the More menu once Phase 14P builds it.
+   Later UI layers must never make the hidden source row visible again. */
+.customer-card>.row-actions.phase14p-source-group,
+.customer-card .phase14p-overflow-source{
+  display:none!important;
+}
+
+/* Identity/activity must remain visible on every responsive breakpoint. */
+.customer-card>.customer-head,
+.customer-card>.customer-stats{
+  display:grid!important;
+  visibility:visible!important;
+  opacity:1!important;
+  min-width:0!important;
+}
+.customer-card>.customer-stats{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+
+/* One compact contact row: WhatsApp, Call, History, then More on desktop. */
+.customer-card>.quick-actions{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:5px!important;
+  align-items:center!important;
+  width:100%!important;
+}
+.customer-card>.quick-actions>*{
+  min-width:0!important;
+  grid-column:auto!important;
+}
+.customer-card>.quick-actions>a,
+.customer-card>.quick-actions>button,
+.customer-card>.quick-actions>.phase14p-overflow>.phase14p-more-toggle{
+  width:100%!important;
+  min-height:32px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+.customer-card>.quick-actions>.phase14p-overflow{
+  display:inline-flex!important;
+  width:100%!important;
+  justify-self:stretch!important;
+}
+
+/* Desktop becomes a true 3-column ERP row: Customer | Activity | Contact / Manage. */
+@media(min-width:981px){
+  .phase14p-customers-columns{
+    grid-template-columns:minmax(260px,1.1fr) minmax(250px,.8fr) minmax(320px,auto)!important;
+  }
+  .phase14p-customers-columns>span:nth-child(4){display:none!important}
+  .customer-card{
+    grid-template-columns:minmax(260px,1.1fr) minmax(250px,.8fr) minmax(320px,auto)!important;
+    align-items:center!important;
+  }
+  .customer-card>.customer-head{grid-column:1!important;grid-row:1!important}
+  .customer-card>.customer-stats{grid-column:2!important;grid-row:1!important}
+  .customer-card>.quick-actions{grid-column:3!important;grid-row:1!important}
+}
+
+/* Mobile keeps all information, but removes the tall/redundant management section. */
+@media(max-width:760px){
+  .customer-card>.customer-stats{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  .customer-card>.quick-actions{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  .customer-card>.quick-actions>*{
+    grid-column:auto!important;
+  }
+  .customer-card>.quick-actions>.phase14p-overflow{
+    grid-column:1/-1!important;
+    width:auto!important;
+    justify-self:start!important;
+  }
+  .customer-card>.quick-actions>.phase14p-overflow>.phase14p-more-toggle{
+    width:auto!important;
+    min-width:92px!important;
+  }
+}
+
+@media(max-width:430px){
+  .customer-card>.customer-stats,
+  .customer-card>.quick-actions{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  .customer-card>.customer-stats span{
+    min-width:0!important;
+    overflow-wrap:anywhere!important;
+  }
+}

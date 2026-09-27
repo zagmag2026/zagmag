@@ -1,0 +1,23 @@
+/* Phase 14X Fix10 — missed pickup queue/dashboard presentation. */
+.phase14x-missed-tab{border-color:#f1c8d0!important;background:#fff7f8!important;color:#9b2c46!important}
+.phase14x-missed-tab.active{background:#f9d6dd!important;border-color:#e7aeb9!important;color:#87233b!important;box-shadow:inset 0 0 0 1px #e7aeb9}
+.list-card[data-phase14x-missed-mode="1"] .pickup-tabs button.active:not(.phase14x-missed-tab){background:#fff!important;border-color:#e8dfe3!important;color:#6f6268!important;box-shadow:none!important}
+.list-card[data-phase14x-missed-mode="1"]>.pickup-grid,
+.list-card[data-phase14x-missed-mode="1"]>.empty,
+.list-card[data-phase14x-missed-mode="1"]>.pager{display:none!important}
+.phase14x-missed-list{margin-top:10px}
+.phase14x-missed-state{border:1px dashed #f1c8d0;border-radius:10px;padding:14px;background:#fff8f9;color:#7c4050;font-size:.78rem;font-weight:700;line-height:1.35;text-align:center}
+.phase14x-missed-state.error{border-style:solid;background:#fff1f3;color:#9b2c46}
+.phase14x-missed-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.phase14x-missed-grid .pickup-card{margin:0!important}
+.phase14x-missed-pager{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px}
+.phase14x-missed-pager span{font-size:.72rem;font-weight:750;color:#695761}
+.phase14x-missed-kpi{cursor:pointer;background:#fff1f3!important;border-color:#f1c8d0!important}
+.phase14x-missed-kpi span,.phase14x-missed-kpi strong{color:#9b2c46!important}
+.phase14x-missed-panel{border-color:#f1c8d0!important}
+.phase14x-missed-panel>.panel-head{background:#fff7f8!important;border-bottom-color:#f1c8d0!important}
+.phase14x-missed-panel>.panel-head h2,.phase14x-missed-panel>.panel-head .count{color:#9b2c46!important}
+.phase14x-missed-panel .count{background:#f9d6dd!important;border:1px solid #f1c8d0!important}
+.phase14x-missed-open{background:#fff!important;border-color:#e7aeb9!important;color:#87233b!important}
+@media(max-width:820px){.phase14x-missed-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.phase14x-missed-tab{font-size:.68rem!important}.phase14x-missed-pager{justify-content:space-between}.phase14x-missed-pager button{flex:1}.phase14x-missed-pager span{white-space:nowrap}}

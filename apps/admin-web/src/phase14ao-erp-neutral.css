@@ -1,0 +1,182 @@
+/* Phase 14AO — final ERP no-pastel surface + button standard.
+   Admin visual-only override. No runtime, fetch/API, Worker, D1 or business-rule changes. */
+:root{
+  --erp-canvas:#f5f6f8;
+  --erp-surface:#fff;
+  --erp-surface-muted:#f3f4f6;
+  --erp-line:#dde1e6;
+  --erp-text:#25282d;
+  --erp-muted:#69707a;
+  --erp-brand:#7d1747;
+  --erp-danger:#a1283a;
+  --erp-success:#18794e;
+  --erp-info:#2859a9;
+  --erp-warning:#8a5d12;
+}
+
+/* Neutral ERP canvas and shells. */
+html,body,#root,.shell{background:var(--erp-canvas)!important}
+.topbar,.tabs,.list-card,.panel,.report-shell,.users-shell,.settings-shell,.form-card,.info-card,.placeholder,
+.auth-card,.history-panel,.user-modal,.password-modal,.phase14r-item-picker,.phase14r-discard-dialog{
+  background:var(--erp-surface)!important;
+}
+.info-card,.foundation,.template-editor,.settings-note,.placeholder-strip,
+.phase14r-selected-item,.phase14r-booking-review,.phase14r-stepper,.phase14r-picker-search{
+  background:var(--erp-surface)!important;
+  border-color:var(--erp-line)!important;
+}
+.auth-page{background:var(--erp-canvas)!important}
+.splash{background:var(--erp-surface)!important}
+
+/* KPI / master / operational cards: status is border/text, never full-card fill. */
+.stats .stat,.mini-stats>article,
+.stats>.stat:nth-child(-n+3),.stats>.stat:nth-child(n+4),
+.stats>.stat:nth-child(4),.stats>.stat:nth-child(5),.stats>.stat:nth-child(6),.stats>.stat:nth-child(7),
+.category-row,.item-card,.customer-card,.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row,
+.user-card,.template-card,.audit-card,.field-row,.detail-items article{
+  background:var(--erp-surface)!important;
+  border-color:var(--erp-line)!important;
+  box-shadow:none!important;
+}
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone]{
+  background:var(--erp-surface)!important;
+  border-color:var(--erp-line)!important;
+  border-left-color:var(--op-accent)!important;
+}
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone="danger"]{
+  box-shadow:inset 3px 0 0 var(--op-accent)!important;
+}
+.customer-card.archived,.user-card.is-archived{background:var(--erp-surface)!important}
+.danger-report{background:var(--erp-surface)!important}
+
+/* Neutral toolbars, headers, metric cells and editable surfaces. */
+.item-filters,.customer-filters,.booking-filters,.pickup-toolbar,.report-filters,.users-toolbar,.audit-filters,
+.report-tabs,.settings-tabs,.fields-zone,.toggle-row,.phase14p-column-head,
+.pickup-panel .pickup-line-head,.pickup-panel .return-line-head,
+.category-row.phase14q-category-expanded>.category-main{
+  background:var(--erp-surface)!important;
+  border-color:var(--erp-line)!important;
+}
+.customer-stats span,.booking-dates span,.pickup-qty span,.dashboard-meta span,.report-metrics span,
+.user-stats span,.detail-meta span,.qty-row span,.audit-diff>div,.pickup-panel .pickup-contact>span,
+.phase14r-review-grid span,.phase14r-booking-review li{
+  background:var(--erp-surface)!important;
+  border-color:var(--erp-line)!important;
+}
+section.list-card:has(> .item-filters) .qty-row span:nth-child(2),
+section.list-card:has(> .item-filters) .qty-row span:nth-child(3),
+section.list-card:has(> .item-filters) .qty-row span:nth-child(4){
+  background:var(--erp-surface)!important;
+  border-color:var(--erp-line)!important;
+}
+.empty,.empty.phase14x-empty-state{
+  background:var(--erp-surface)!important;
+  border-color:var(--erp-line)!important;
+}
+
+/* Neutral icon/avatar/placeholder tiles: no pink/blue/green/yellow pastel blocks. */
+.customer-avatar,.user-avatar,.prefix,.phase14x-ui3-category-card-icon,
+.phase14x-ui3-category-stats>article::before,.stats .stat.phase14x-kpi::before,
+.empty.phase14x-empty-state::before,.phase14r-selected-placeholder,.phase14r-picker-placeholder,
+section.list-card:has(> .item-filters) .item-photo,.item-photo{
+  background:var(--erp-surface-muted)!important;
+  border-color:var(--erp-line)!important;
+}
+
+/* Badges/chips remain semantic through border/text only. */
+.chip,.chip.good,.chip.public,.chip.required,.active-chip,.inactive-chip,
+.role-chip,.role-owner,.role-admin,.role-staff,.count,.pill,.corrected-label,
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone] .chip,
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone] [data-operational-badge="1"]{
+  background:var(--erp-surface)!important;
+}
+.chip.good,.active-chip,.role-staff{color:var(--erp-success)!important;border:1px solid #b9d5c6!important}
+.chip.public,.role-admin{color:var(--erp-info)!important;border:1px solid #c3cfe2!important}
+.chip.required,.role-owner{color:var(--erp-warning)!important;border:1px solid #d8c9a7!important}
+.inactive-chip{color:var(--erp-muted)!important;border:1px solid var(--erp-line)!important}
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone] .chip,
+:where(.booking-card,.pickup-card,.dashboard-row,.history-list article,.report-row)[data-operational-tone] [data-operational-badge="1"]{
+  border:1px solid var(--op-border)!important;
+  color:var(--op-text)!important;
+}
+
+/* Messages keep meaning without tinted panels. */
+.message.error{background:var(--erp-surface)!important;color:var(--erp-danger)!important;border:1px solid #d9aeb7!important}
+.message.success{background:var(--erp-surface)!important;color:var(--erp-success)!important;border:1px solid #b9d5c6!important}
+.settings-note{color:#655a48!important}
+
+/* Button system: primary solid brand, secondary white, destructive outlined except final confirm. */
+.primary,.phase14p-add-item,.phase14q-add-button{
+  background:var(--erp-brand)!important;
+  border-color:var(--erp-brand)!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+:where(.ghost,.danger-link,.icon-btn,.profile,.phase14p-filter-toggle,.phase14p-more-toggle,
+.phase14r-visual-picker-button,.phase14r-report-filter-toggle,.phase14q-form-close){
+  background:var(--erp-surface)!important;
+  border-color:var(--erp-line)!important;
+  color:#4f5660!important;
+  box-shadow:none!important;
+}
+.danger,.danger-link,.phase14p-more-menu button.danger{
+  background:var(--erp-surface)!important;
+  border-color:#d8aab4!important;
+  color:var(--erp-danger)!important;
+  box-shadow:none!important;
+}
+.phase14r-discard-confirm{
+  background:var(--erp-danger)!important;
+  border-color:var(--erp-danger)!important;
+  color:#fff!important;
+}
+.wa-button{
+  background:var(--erp-surface)!important;
+  border:1px solid #9fcbb2!important;
+  color:var(--erp-success)!important;
+}
+.call-button{
+  background:var(--erp-surface)!important;
+  border:1px solid #afc2df!important;
+  color:var(--erp-info)!important;
+}
+
+/* Icon glyphs must not carry pastel bubbles. */
+:where(button,a)[data-ui-icon="1"]::before,
+.tabs button[data-ui-icon="1"]::before,.settings-tabs button[data-ui-icon="1"]::before,
+.tabs button.active[data-ui-icon="1"]::before,.settings-tabs button.active[data-ui-icon="1"]::before,
+.wa-button[data-ui-icon="1"]::before,.call-button[data-ui-icon="1"]::before,
+.danger[data-ui-icon="1"]::before,.danger-link[data-ui-icon="1"]::before{
+  background:transparent!important;
+}
+
+/* Neutral hover/pressed language. */
+:where(.ghost,.icon-btn,.profile,.phase14p-filter-toggle,.phase14p-more-toggle,.phase14r-visual-picker-button,.phase14r-report-filter-toggle):hover,
+.phase14p-more-menu button:hover,.phase14p-more-menu button.danger:hover,
+.phase14r-picker-card:hover{
+  background:#f4f5f7!important;
+  border-color:#cfd4da!important;
+}
+.wa-button:hover,.call-button:hover,.danger:hover,.danger-link:hover{background:#f7f8fa!important}
+.primary:hover,.phase14p-add-item:hover,.phase14q-add-button:hover{filter:brightness(.96)}
+
+/* Active navigation remains a strong brand state; inactive navigation stays neutral. */
+.tabs button,.report-tabs button,.settings-tabs button{background:var(--erp-surface)!important}
+.tabs button.active,.report-tabs button.active,.settings-tabs button.active{
+  background:var(--erp-brand)!important;
+  border-color:var(--erp-brand)!important;
+  color:#fff!important;
+}
+
+/* Consistent ERP action geometry. */
+:where(.primary,.ghost,.danger,.danger-link,.icon-btn,.wa-button,.call-button,.profile,
+.phase14p-add-item,.phase14q-add-button,.phase14p-filter-toggle,.phase14p-more-toggle){
+  min-height:36px!important;
+  border-radius:8px!important;
+}
+@media(max-width:760px){
+  :where(.primary,.ghost,.danger,.danger-link,.icon-btn,.wa-button,.call-button,.profile,
+  .phase14p-add-item,.phase14q-add-button,.phase14p-filter-toggle,.phase14p-more-toggle){
+    min-height:42px!important;
+  }
+}

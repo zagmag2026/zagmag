@@ -1,0 +1,39 @@
+/* Phase 14AC — focused visual regression fix.
+   Admin UI only: Customers desktop row geometry + portal close visibility.
+   No runtime observer, fetch/API, Worker or D1 changes. */
+
+/* Portal close controls exist globally in the DOM, but must stay hidden until
+   their own drawer is actually open. Later shared button styling must never
+   force them visible on Dashboard or unrelated pages. */
+.phase14p-drawer-close,
+.phase14q-form-close{
+  display:none!important;
+}
+body.phase14p-item-drawer-open>.phase14p-drawer-close,
+body.phase14q-form-drawer-open>.phase14q-form-close{
+  display:grid!important;
+}
+
+/* Customer Master desktop is an ERP row list, not a two-column card gallery.
+   Each customer receives the full list width before its internal
+   Customer | Activity | Contact/Manage columns are calculated. */
+@media(min-width:981px){
+  .customer-grid,
+  .phase14x-ui3-customer-grid{
+    grid-template-columns:minmax(0,1fr)!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  .customer-card,
+  .phase14x-ui3-customer-card.customer-card{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow:visible!important;
+  }
+  .customer-card>.customer-head,
+  .customer-card>.customer-stats,
+  .customer-card>.quick-actions{
+    min-width:0!important;
+  }
+}

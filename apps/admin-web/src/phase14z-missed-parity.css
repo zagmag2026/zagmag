@@ -1,0 +1,214 @@
+/* Phase 14Z — Missed Pickup exact Dashboard visual parity.
+   Visual-only final layer. Uses the Phase 14Y geometry; no DOM runtime or data behavior. */
+
+/* The panel itself must look like every other Dashboard operational panel. */
+.phase14x-missed-panel{
+  background:#fff!important;
+  border-color:var(--ui-line,#eadfe4)!important;
+  border-radius:var(--ui-shell-r,14px)!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+.phase14x-missed-panel>.panel-head{
+  min-height:44px!important;
+  padding:9px 11px!important;
+  background:#fff!important;
+  border-bottom:1px solid var(--ui-line,#eadfe4)!important;
+}
+.phase14x-missed-panel>.panel-head h2{
+  margin:0!important;
+  color:var(--ui-text,#2d1c25)!important;
+  font-size:.9rem!important;
+  line-height:1.2!important;
+}
+.phase14x-missed-panel>.panel-head small{
+  display:block!important;
+  margin-top:2px!important;
+  color:var(--ui-muted,#806b75)!important;
+  font-size:.64rem!important;
+  line-height:1.25!important;
+}
+.phase14x-missed-panel>.panel-head .count{
+  min-width:25px!important;
+  min-height:22px!important;
+  padding:3px 7px!important;
+  border:1px solid #efcbd5!important;
+  border-radius:999px!important;
+  background:#fbe3e9!important;
+  color:#982b49!important;
+  font-size:.61rem!important;
+}
+.phase14x-missed-panel>.dashboard-list{background:#fff!important}
+
+/* Same card anatomy as a normal Dashboard row; only the status tone is semantic. */
+.phase14x-missed-panel .dashboard-row.phase14x-ui3-missed-card{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:6px!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:8px 10px!important;
+  border:0!important;
+  border-bottom:1px solid #f1e5e9!important;
+  border-radius:0!important;
+  background:#fff7f9!important;
+  box-shadow:none!important;
+}
+.phase14x-missed-panel .dashboard-row.phase14x-ui3-missed-card:last-child{border-bottom:0!important}
+.phase14x-missed-panel .phase14x-ui3-missed-head{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:start!important;
+  gap:7px!important;
+  min-width:0!important;
+}
+.phase14x-missed-panel .phase14x-ui3-missed-head>div{min-width:0!important}
+.phase14x-missed-panel .phase14x-ui3-missed-head strong{
+  display:block!important;
+  margin:0!important;
+  color:var(--ui-text,#2d1c25)!important;
+  font-size:.82rem!important;
+  line-height:1.2!important;
+  overflow-wrap:anywhere!important;
+}
+.phase14x-missed-panel .phase14x-ui3-mobile{
+  display:block!important;
+  margin-top:2px!important;
+  color:var(--ui-muted,#806b75)!important;
+  font-size:.66rem!important;
+  line-height:1.2!important;
+  text-decoration:none!important;
+}
+.phase14x-missed-panel .phase14x-ui3-missed-head>.chip{
+  align-self:start!important;
+  min-height:24px!important;
+  padding:4px 8px!important;
+  border:1px solid #efc6d1!important;
+  border-radius:9px!important;
+  background:#f9dce4!important;
+  color:#942b49!important;
+  font-size:.61rem!important;
+  line-height:1.1!important;
+  white-space:nowrap!important;
+}
+
+/* Item identity uses the same compact inner-card geometry as other operational rows. */
+.phase14x-missed-panel .dashboard-row>.phase14d-item-grid{
+  margin:1px 0!important;
+  gap:5px!important;
+}
+.phase14x-missed-panel .dashboard-row>.phase14d-item-grid .phase14d-item-card{
+  grid-template-columns:48px minmax(0,1fr)!important;
+  gap:8px!important;
+  min-height:58px!important;
+  padding:6px 8px!important;
+  border:1px solid var(--ui-line,#eadfe4)!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+.phase14x-missed-panel .phase14d-item-thumb{
+  width:48px!important;
+  height:48px!important;
+  border-radius:9px!important;
+  background:#f7f2f5!important;
+  border-color:var(--ui-line,#eadfe4)!important;
+}
+.phase14x-missed-panel .phase14d-item-thumb.is-placeholder{padding:4px!important}
+.phase14x-missed-panel .phase14d-item-thumb.is-placeholder>span{font-size:.67rem!important}
+.phase14x-missed-panel .phase14d-item-thumb.is-placeholder>small{font-size:.5rem!important}
+.phase14x-missed-panel .phase14d-item-copy{gap:1px!important}
+.phase14x-missed-panel .phase14d-item-copy strong{font-size:.8rem!important;line-height:1.2!important}
+.phase14x-missed-panel .phase14d-item-copy span,
+.phase14x-missed-panel .phase14d-item-copy small{font-size:.64rem!important;line-height:1.25!important}
+
+/* Three aligned compact metrics: Booking / Give Pending / Pickup. */
+.phase14x-missed-panel .dashboard-row>.dashboard-meta{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.55fr) minmax(0,.72fr) minmax(0,1fr)!important;
+  gap:5px!important;
+  margin:0!important;
+  min-width:0!important;
+}
+.phase14x-missed-panel .dashboard-row>.dashboard-meta>span{
+  display:block!important;
+  min-width:0!important;
+  min-height:36px!important;
+  padding:5px 7px!important;
+  border:1px solid #eee3e8!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:var(--ui-muted,#806b75)!important;
+  font-size:.58rem!important;
+  line-height:1.15!important;
+  overflow:hidden!important;
+}
+.phase14x-missed-panel .dashboard-row>.dashboard-meta>span>b{
+  display:block!important;
+  margin-top:2px!important;
+  color:var(--ui-text,#2d1c25)!important;
+  font-size:.7rem!important;
+  line-height:1.15!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.phase14x-missed-panel .dashboard-row>.dashboard-meta>.phase14x-ui3-booking-metric>b{font-size:.64rem!important;letter-spacing:-.01em!important}
+
+/* Every action uses the same geometry. Keep all safe workflow actions visible. */
+.phase14x-missed-panel .dashboard-row>.dashboard-actions{
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:5px!important;
+  margin:0!important;
+  width:100%!important;
+}
+.phase14x-missed-panel .dashboard-row>.dashboard-actions>*{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:0!important;
+  min-height:32px!important;
+  margin:0!important;
+  padding:5px 6px!important;
+  border-radius:8px!important;
+  font-size:.65rem!important;
+  line-height:1.1!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+.phase14x-missed-panel .phase14x-missed-open{
+  background:#fff!important;
+  border-color:#dfcbd3!important;
+  color:var(--ui-brand,#7d1747)!important;
+}
+
+/* KPI keeps semantic meaning but uses the one global KPI icon/chevron owner. */
+.phase14x-missed-kpi{
+  border-color:#efd8df!important;
+  background:#fff8fa!important;
+  box-shadow:none!important;
+}
+.phase14x-missed-kpi span{color:var(--ui-muted,#806b75)!important}
+.phase14x-missed-kpi strong{color:#982b49!important}
+
+@media(max-width:700px){
+  .phase14x-missed-panel .dashboard-row.phase14x-ui3-missed-card{padding:8px!important;gap:5px!important}
+  .phase14x-missed-panel .phase14x-ui3-missed-head{gap:6px!important}
+  .phase14x-missed-panel .phase14x-ui3-missed-head strong{font-size:.8rem!important}
+  .phase14x-missed-panel .phase14x-ui3-mobile{font-size:.64rem!important}
+  .phase14x-missed-panel .phase14x-ui3-missed-head>.chip{font-size:.58rem!important;padding:4px 7px!important}
+  .phase14x-missed-panel .dashboard-row>.dashboard-meta{grid-template-columns:minmax(0,1.45fr) minmax(0,.75fr) minmax(0,1fr)!important}
+  .phase14x-missed-panel .dashboard-row>.dashboard-actions{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .phase14x-missed-panel .dashboard-row>.dashboard-actions>*{min-height:34px!important;font-size:.64rem!important}
+}
+
+@media(max-width:430px){
+  .phase14x-missed-panel>.panel-head{padding:8px 9px!important}
+  .phase14x-missed-panel .dashboard-row>.phase14d-item-grid .phase14d-item-card{grid-template-columns:44px minmax(0,1fr)!important;padding:6px!important;gap:7px!important}
+  .phase14x-missed-panel .phase14d-item-thumb{width:44px!important;height:44px!important}
+  .phase14x-missed-panel .dashboard-row>.dashboard-meta{grid-template-columns:minmax(0,1.5fr) minmax(0,.7fr) minmax(0,1fr)!important;gap:4px!important}
+  .phase14x-missed-panel .dashboard-row>.dashboard-meta>span{padding:5px!important}
+  .phase14x-missed-panel .dashboard-row>.dashboard-meta>span>b{font-size:.66rem!important}
+  .phase14x-missed-panel .dashboard-row>.dashboard-meta>.phase14x-ui3-booking-metric>b{font-size:.6rem!important}
+}

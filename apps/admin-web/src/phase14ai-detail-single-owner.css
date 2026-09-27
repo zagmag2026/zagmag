@@ -1,0 +1,247 @@
+/* Phase 14AI — detail/history action single-owner + mobile operational rows.
+   UI-only. No API, Worker, D1 or business-rule changes. */
+
+:root{
+  --phase14ai-line:#eadfe4;
+  --phase14ai-soft:#fbf8fa;
+  --phase14ai-text:#2d1c25;
+  --phase14ai-muted:#806b75;
+}
+
+/* Phase14Q used to append a second WhatsApp / Call / Close strip to every
+   history panel. Native React detail headers/contact actions are now the
+   single visual owner. Keep the legacy runtime node inert if an older layer
+   creates it during the same render frame. */
+.history-panel > .phase14q-detail-bar,
+.phase14q-detail-bar{
+  display:none!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+/* Pickup/Return: Phase14T owns the one sticky Save footer. Hide the React
+   source action structurally as well as by class so a transient class miss or
+   React replacement can never expose a second Save button. */
+.pickup-panel.phase14t-op-panel > .primary.full:not(.phase14t-op-save),
+.pickup-panel > .phase14t-source-save{
+  display:none!important;
+}
+
+/* While a correction editor is open the correction action is the only Save
+   action. Parent pickup/return mutation controls stay out of the action path. */
+.pickup-panel:has(.correction-card) > .primary.full,
+.pickup-panel:has(.correction-card) > .pickup-actions,
+.pickup-panel:has(.correction-card) > label{
+  display:none!important;
+}
+
+/* One compact native contact row in Pickup/Return details. */
+.pickup-panel .pickup-contact{
+  position:relative!important;
+  z-index:1!important;
+}
+.pickup-panel .pickup-contact > a{
+  text-decoration:none!important;
+  font-weight:850!important;
+}
+
+/* Detail header remains the only close owner and stays reachable while the
+   panel scrolls on both desktop and mobile. */
+.history-panel > .history-title{
+  position:sticky!important;
+  top:-22px!important;
+  z-index:8!important;
+  margin:-22px -22px 12px!important;
+  padding:14px 22px 12px!important;
+  background:rgba(255,255,255,.98)!important;
+  backdrop-filter:blur(10px)!important;
+  border-bottom:1px solid var(--phase14ai-line)!important;
+}
+.history-panel > .history-title > button{
+  flex:0 0 auto!important;
+}
+
+/* Desktop operational tables stay dense and aligned. */
+.pickup-panel .pickup-line:not(.pickup-line-head) > b,
+.pickup-panel .return-line:not(.return-line-head) > b{
+  min-width:0!important;
+  text-align:center!important;
+}
+
+@media(max-width:760px){
+  .history-panel{
+    padding:14px 10px calc(18px + env(safe-area-inset-bottom))!important;
+  }
+  .history-panel > .history-title{
+    top:-14px!important;
+    margin:-14px -10px 10px!important;
+    padding:11px 10px!important;
+    align-items:flex-start!important;
+    gap:8px!important;
+  }
+  .history-panel > .history-title > div{
+    min-width:0!important;
+  }
+  .history-panel > .history-title h2{
+    overflow-wrap:anywhere!important;
+  }
+
+  /* Native contact actions: two buttons, then full-width operational meta. */
+  .pickup-panel .pickup-contact{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:7px!important;
+    margin:8px 0 10px!important;
+  }
+  .pickup-panel .pickup-contact > a{
+    min-height:42px!important;
+  }
+  .pickup-panel .pickup-contact > span{
+    grid-column:1/-1!important;
+    min-height:38px!important;
+  }
+
+  /* Mobile uses cards rather than squeezing desktop column headers. */
+  .pickup-panel .pickup-line-head,
+  .pickup-panel .return-line-head{
+    display:none!important;
+  }
+  .pickup-panel .pickup-lines,
+  .pickup-panel .return-lines{
+    display:grid!important;
+    gap:8px!important;
+    padding:8px!important;
+    border:0!important;
+    border-radius:0!important;
+    overflow:visible!important;
+    background:transparent!important;
+  }
+  .pickup-panel .pickup-line:not(.pickup-line-head),
+  .pickup-panel .return-line:not(.return-line-head){
+    position:relative!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:7px!important;
+    min-height:0!important;
+    padding:10px!important;
+    border:1px solid var(--phase14ai-line)!important;
+    border-radius:11px!important;
+    background:#fff!important;
+  }
+  .pickup-panel .pickup-line:not(.pickup-line-head) > div:first-child,
+  .pickup-panel .return-line:not(.return-line-head) > div:first-child{
+    grid-column:1/-1!important;
+    min-width:0!important;
+    padding-bottom:2px!important;
+  }
+  .pickup-panel .pickup-line:not(.pickup-line-head) > div:first-child strong,
+  .pickup-panel .return-line:not(.return-line-head) > div:first-child strong{
+    display:block!important;
+    overflow-wrap:anywhere!important;
+    color:var(--phase14ai-text)!important;
+    font-size:.86rem!important;
+  }
+  .pickup-panel .pickup-line:not(.pickup-line-head) > b,
+  .pickup-panel .return-line:not(.return-line-head) > b{
+    min-height:50px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    justify-content:center!important;
+    gap:2px!important;
+    padding:7px 9px!important;
+    border:1px solid #f0e5ea!important;
+    border-radius:9px!important;
+    background:var(--phase14ai-soft)!important;
+    color:var(--phase14ai-text)!important;
+    text-align:left!important;
+    font-size:.88rem!important;
+  }
+  .pickup-panel .pickup-line:not(.pickup-line-head) > b:nth-child(2)::before{
+    content:"Booked";
+  }
+  .pickup-panel .pickup-line:not(.pickup-line-head) > b:nth-child(3)::before{
+    content:"Already Given";
+  }
+  .pickup-panel .return-line:not(.return-line-head) > b:nth-child(2)::before{
+    content:"Given";
+  }
+  .pickup-panel .return-line:not(.return-line-head) > b:nth-child(3)::before{
+    content:"Returned";
+  }
+  .pickup-panel .pickup-line:not(.pickup-line-head) > b::before,
+  .pickup-panel .return-line:not(.return-line-head) > b::before{
+    color:var(--phase14ai-muted)!important;
+    font-size:.62rem!important;
+    font-weight:750!important;
+    line-height:1.15!important;
+  }
+
+  /* Generated grid labels keep number/text inputs unambiguous without adding
+     another DOM action owner. */
+  .pickup-panel .pickup-line:not(.pickup-line-head)::after{
+    content:"Give Now";
+    grid-column:1/-1!important;
+    color:var(--phase14ai-muted)!important;
+    font-size:.64rem!important;
+    font-weight:800!important;
+    line-height:1.1!important;
+    margin-top:2px!important;
+  }
+  .pickup-panel .pickup-line:not(.pickup-line-head) > input:last-child{
+    grid-column:1/-1!important;
+    min-height:44px!important;
+  }
+
+  .pickup-panel .return-line:not(.return-line-head)::before{
+    content:"Return Now";
+    grid-column:1/-1!important;
+    color:var(--phase14ai-muted)!important;
+    font-size:.64rem!important;
+    font-weight:800!important;
+    line-height:1.1!important;
+    margin-top:2px!important;
+  }
+  .pickup-panel .return-line:not(.return-line-head) > input:nth-child(4){
+    grid-column:1/-1!important;
+    min-height:44px!important;
+  }
+  .pickup-panel .return-line:not(.return-line-head)::after{
+    content:"Condition Note";
+    grid-column:1/-1!important;
+    color:var(--phase14ai-muted)!important;
+    font-size:.64rem!important;
+    font-weight:800!important;
+    line-height:1.1!important;
+    margin-top:2px!important;
+  }
+  .pickup-panel .return-line:not(.return-line-head) > input:nth-child(5){
+    grid-column:1/-1!important;
+    min-height:44px!important;
+  }
+
+  .pickup-panel .pickup-actions > .ghost{
+    width:100%!important;
+    min-height:42px!important;
+  }
+
+  /* One fixed operational footer. */
+  .phase14t-op-footer{
+    border-radius:0!important;
+  }
+}
+
+@media(max-width:430px){
+  .history-panel > .history-title > button{
+    min-width:42px!important;
+  }
+  .phase14t-op-footer{
+    grid-template-columns:1fr!important;
+    gap:6px!important;
+  }
+  .phase14t-op-summary{
+    text-align:center!important;
+  }
+  .phase14t-op-save{
+    width:100%!important;
+  }
+}

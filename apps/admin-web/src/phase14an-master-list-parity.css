@@ -1,0 +1,136 @@
+/* Phase 14AN — Customer/Booking list parity with the approved Item Master view.
+   Admin UI only. Items are intentionally untouched. No runtime, API, Worker or D1 changes. */
+
+/* Same list shell/header treatment as the approved master list. */
+section.list-card:has(> .customer-filters),
+section.list-card:has(> .booking-filters){
+  padding:0!important;
+  overflow:hidden!important;
+  box-shadow:0 5px 18px rgba(72,28,48,.045)!important;
+}
+section.list-card:has(> .customer-filters)>.list-head,
+section.list-card:has(> .booking-filters)>.list-head{
+  padding:12px 15px 10px!important;
+  margin:0!important;
+  border-bottom:1px solid #eee3e8!important;
+  align-items:center!important;
+}
+section.list-card:has(> .customer-filters)>.list-head h2,
+section.list-card:has(> .booking-filters)>.list-head h2{
+  margin:0!important;
+  padding:0!important;
+  min-height:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:inherit!important;
+  display:block!important;
+  font-size:1.02rem!important;
+  letter-spacing:-.01em!important;
+}
+
+/* Customer had a later pill/inset treatment; return it to the common list shell. */
+.phase14x-ui3-customer-list{padding:0!important}
+.phase14x-ui3-customer-head{margin:0!important}
+.phase14x-ui3-customer-head h2{box-shadow:none!important}
+
+@media(min-width:761px){
+  section.list-card:has(> .customer-filters)>.customer-filters,
+  section.list-card:has(> .booking-filters)>.booking-filters{
+    margin:0!important;
+    padding:10px 15px!important;
+    gap:8px!important;
+    align-items:center!important;
+    background:#fcfafb!important;
+    border-top:0!important;
+    border-bottom:1px solid #eee3e8!important;
+    box-shadow:none!important;
+  }
+  section.list-card:has(> .customer-filters)>.customer-filters input,
+  section.list-card:has(> .customer-filters)>.customer-filters select,
+  section.list-card:has(> .booking-filters)>.booking-filters input,
+  section.list-card:has(> .booking-filters)>.booking-filters select{
+    min-height:40px!important;
+    padding:8px 10px!important;
+    border-radius:10px!important;
+    font-size:.86rem!important;
+  }
+  section.list-card:has(> .customer-filters)>.customer-filters>button,
+  section.list-card:has(> .booking-filters)>.booking-filters>button{
+    min-height:40px!important;
+    padding:8px 14px!important;
+    border-radius:10px!important;
+    white-space:nowrap!important;
+  }
+
+  section.list-card:has(> .customer-filters)>.pager,
+  section.list-card:has(> .booking-filters)>.pager{
+    margin:8px 0 0!important;
+    padding:10px 15px 14px!important;
+    border-top:1px solid #f0e7eb!important;
+  }
+}
+
+/* Desktop uses the same compact ERP row rhythm and spacing as the approved list. */
+@media(min-width:981px){
+  section.list-card:has(> .customer-filters)>.customer-grid,
+  section.list-card:has(> .booking-filters)>.booking-grid{
+    padding:6px 10px 4px!important;
+    gap:5px!important;
+  }
+  section.list-card:has(> .customer-filters) .customer-card,
+  section.list-card:has(> .booking-filters) .booking-card{
+    min-height:76px!important;
+    padding:8px 10px!important;
+    border-radius:8px!important;
+    box-shadow:none!important;
+    background:#fff!important;
+  }
+  section.list-card:has(> .customer-filters) .customer-card{gap:10px!important}
+  section.list-card:has(> .booking-filters) .booking-card{gap:4px 10px!important}
+  section.list-card:has(> .customer-filters)>.phase14p-column-head,
+  section.list-card:has(> .booking-filters)>.phase14p-column-head{
+    margin:0!important;
+    padding:7px 11px!important;
+  }
+}
+
+/* Tablet keeps the same shell rhythm while Phase 14P intentionally hides column heads. */
+@media(min-width:761px) and (max-width:980px){
+  section.list-card:has(> .customer-filters)>.customer-grid,
+  section.list-card:has(> .booking-filters)>.booking-grid{
+    padding:11px 15px 4px!important;
+    gap:8px!important;
+  }
+  section.list-card:has(> .customer-filters) .customer-card,
+  section.list-card:has(> .booking-filters) .booking-card{
+    border-radius:12px!important;
+    box-shadow:none!important;
+  }
+}
+
+/* Mobile keeps the existing Filters bottom-sheet behavior, but the visible list shell,
+   header, rows and pager follow the same spacing cadence as the approved master list. */
+@media(max-width:760px){
+  section.list-card:has(> .customer-filters)>.list-head,
+  section.list-card:has(> .booking-filters)>.list-head{
+    padding:10px 12px 8px!important;
+  }
+  section.list-card:has(> .customer-filters)>.customer-grid,
+  section.list-card:has(> .booking-filters)>.booking-grid{
+    padding:9px 10px 2px!important;
+    gap:7px!important;
+  }
+  section.list-card:has(> .customer-filters) .customer-card,
+  section.list-card:has(> .booking-filters) .booking-card{
+    padding:9px 10px!important;
+    border-radius:10px!important;
+    box-shadow:none!important;
+  }
+  section.list-card:has(> .customer-filters)>.pager,
+  section.list-card:has(> .booking-filters)>.pager{
+    margin:8px 0 0!important;
+    padding:10px 12px 12px!important;
+    border-top:1px solid #f0e7eb!important;
+  }
+}

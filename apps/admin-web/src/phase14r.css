@@ -1,0 +1,62 @@
+/* Phase 14R — User Experience Hardening. Admin-only UX; no API/D1/business-rule change. */
+:root{--ux-accent:#7d1747;--ux-accent-soft:#f8edf2;--ux-danger:#b53148;--ux-good:#18794e;--ux-border:#eadfe4;--ux-shadow:0 18px 54px rgba(48,22,35,.22)}
+
+/* Inline validation: error stays beside the exact field that needs attention. */
+.phase14r-inline-error{display:block;margin:4px 0 0;color:var(--ux-danger);font-size:.68rem;font-weight:800;line-height:1.35}
+:where(.customer-layout,.booking-layout) [aria-invalid="true"]{border-color:#cc4057!important;box-shadow:0 0 0 3px rgba(181,49,72,.12)!important}
+
+/* Unsaved-change confirmation. */
+.phase14r-discard-backdrop{position:fixed;inset:0;z-index:130;display:none;place-items:center;padding:18px;background:rgba(35,17,27,.46);backdrop-filter:blur(2px)}
+.phase14r-discard-backdrop.open{display:grid}.phase14r-discard-dialog{width:min(430px,100%);padding:18px;border:1px solid var(--ux-border);border-radius:15px;background:#fff;box-shadow:var(--ux-shadow);text-align:center}
+.phase14r-dialog-icon{display:grid;place-items:center;width:42px;height:42px;margin:0 auto 10px;border-radius:50%;background:#fff0f3;color:var(--ux-danger);font-size:1.1rem;font-weight:900}
+.phase14r-discard-dialog h2{margin:0;font-size:1.05rem;color:#35212b}.phase14r-discard-dialog p{margin:7px auto 15px;max-width:340px;color:#78636e;font-size:.78rem;line-height:1.45}
+.phase14r-dialog-actions{display:flex;justify-content:center;gap:8px}.phase14r-dialog-actions button{min-height:38px;padding:7px 12px;border-radius:8px;font-weight:850}
+.phase14r-discard-confirm{border:1px solid #a92d46;background:#a92d46;color:#fff}
+
+/* Visual item selection and selected-item confirmation. */
+.phase14r-visual-picker-button{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:max-content;min-height:29px;margin-top:5px;padding:4px 7px;border:1px solid #decbd4;border-radius:7px;background:#fff;color:#6a3c51;font-size:.65rem;font-weight:850;cursor:pointer}
+.phase14r-visual-picker-button::before{content:"▦";font-size:.72rem}.phase14r-visual-picker-button:hover{background:#fbf6f8;border-color:#cba8b8}
+.phase14r-selected-item{grid-column:1/-1;display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px;align-items:center;min-height:54px;padding:6px 8px;border:1px solid #eadfe4;border-radius:9px;background:#fbf9fa}
+.phase14r-selected-item img,.phase14r-selected-placeholder{width:48px;height:48px;border-radius:7px;object-fit:cover;background:#f2e7ec}.phase14r-selected-placeholder{display:grid;place-items:center;color:#80566a;font-size:.72rem;font-weight:900}
+.phase14r-selected-item>div{min-width:0}.phase14r-selected-item strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.76rem}.phase14r-selected-item small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px;color:#806b75;font-size:.62rem}.phase14r-selected-item em{display:block;margin-top:2px;color:#315e47;font-size:.62rem;font-style:normal;font-weight:800}.phase14r-selected-item.empty em{display:none}
+
+.phase14r-item-picker-backdrop{position:fixed;inset:0;z-index:132;display:none;align-items:stretch;justify-content:flex-end;background:rgba(35,17,27,.42);backdrop-filter:blur(2px)}
+.phase14r-item-picker-backdrop.open{display:flex}.phase14r-item-picker{width:min(720px,100vw);height:100dvh;padding:0;background:#fff;box-shadow:-18px 0 52px rgba(45,20,33,.22);overflow:hidden;display:flex;flex-direction:column}
+.phase14r-item-picker header{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--ux-border);background:#fff}.phase14r-item-picker header>div{min-width:0;flex:1}.phase14r-item-picker header span{display:block;color:#8a6d7b;font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em}.phase14r-item-picker h2{margin:2px 0 0;font-size:1.05rem}.phase14r-picker-search{padding:9px 12px;border-bottom:1px solid #f0e7eb;background:#fbf9fa}.phase14r-picker-search input{width:100%;min-height:40px;padding:8px 10px;border:1px solid #ddcfd6;border-radius:9px;font-size:.82rem}
+.phase14r-picker-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px;overflow:auto}.phase14r-picker-card{display:grid;grid-template-columns:78px minmax(0,1fr);gap:9px;align-items:center;padding:7px;border:1px solid #eadfe4;border-radius:10px;background:#fff;text-align:left;cursor:pointer}.phase14r-picker-card:hover{border-color:#cda9b8;background:#fffafb}.phase14r-picker-card:disabled{opacity:.48;cursor:not-allowed}.phase14r-picker-card>img,.phase14r-picker-placeholder{width:78px;height:92px;border-radius:8px;object-fit:cover;background:#f3e8ed}.phase14r-picker-placeholder{display:grid;place-items:center;color:#80586b;font-size:.8rem;font-weight:900}.phase14r-picker-copy{min-width:0}.phase14r-picker-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem}.phase14r-picker-copy small{display:block;margin-top:3px;color:#806b75;font-size:.66rem}.phase14r-picker-copy em{display:block;margin-top:7px;color:#315e47;font-size:.66rem;font-style:normal;font-weight:850}.phase14r-picker-empty{grid-column:1/-1;padding:28px;text-align:center;color:#806b75}
+body.phase14r-picker-open{overflow:hidden}
+
+/* Mobile booking step flow. Desktop retains the dense single-page ERP form. */
+.phase14r-stepper,.phase14r-step-controls{display:none}.phase14r-booking-review{padding:10px;border:1px solid #e7dbe1;border-radius:10px;background:#fbf9fa}.phase14r-review-title strong{display:block;font-size:.86rem}.phase14r-review-title span{display:block;margin-top:2px;color:#806b75;font-size:.67rem}.phase14r-review-grid{display:grid;grid-template-columns:1.4fr .8fr .8fr;gap:6px;margin-top:9px}.phase14r-review-grid span{padding:7px;border:1px solid #eadfe4;border-radius:8px;background:#fff;color:#806b75;font-size:.61rem}.phase14r-review-grid b{display:block;margin-top:2px;color:#35212b;font-size:.71rem}.phase14r-booking-review ul{display:grid;gap:4px;margin:8px 0 0;padding:0;list-style:none}.phase14r-booking-review li{display:flex;gap:8px;justify-content:space-between;padding:6px 7px;border-radius:7px;background:#fff;font-size:.69rem}.phase14r-booking-review li span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.phase14r-booking-review li b{white-space:nowrap}
+
+/* Reports inherit the operational mobile Filter-sheet pattern. */
+.phase14r-report-filter-bar{display:none}.phase14r-report-filter-toggle{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:38px;padding:7px 10px;border:1px solid #dfd0d7;border-radius:8px;background:#fff;color:#5e4853;font-size:.72rem;font-weight:850}.phase14r-report-filter-toggle::before{content:"≡"}
+.phase14r-report-filter-backdrop{display:none}
+
+/* More menu becomes a true bottom action sheet on mobile. */
+.phase14r-action-backdrop{display:none}.phase14r-action-title{display:none}.phase14r-context-actions{display:flex;gap:6px;align-items:center}.phase14r-context-actions button{min-height:34px;padding:6px 9px;border-radius:8px;font-size:.7rem;font-weight:850}
+
+/* Loading rows keep the page feeling alive without hiding existing data. */
+.empty{min-height:42px}.empty.compact{min-height:32px}
+
+@media(max-width:760px){
+  .phase14r-stepper{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:0 0 12px;padding:7px;border:1px solid #eadfe4;border-radius:10px;background:#fbf9fa}.phase14r-stepper span{display:grid;justify-items:center;gap:3px;color:#9a8490;font-size:.58rem;font-weight:800;text-align:center}.phase14r-stepper b{display:grid;place-items:center;width:24px;height:24px;border:1px solid #d9c9d1;border-radius:50%;background:#fff;font-size:.65rem}.phase14r-stepper span.active{color:#6b2446}.phase14r-stepper span.active b{border-color:var(--ux-accent);background:var(--ux-accent);color:#fff}.phase14r-stepper span.done{color:#347052}.phase14r-stepper span.done b{border-color:#9bc8ae;background:#edf8f2;color:#236044}.phase14r-stepper em{font-style:normal;line-height:1.15}
+  .booking-layout .booking-form [data-phase14r-step-group]{display:none!important}.booking-layout .booking-form [data-phase14r-step-group].phase14r-step-active{display:initial!important}.booking-layout .booking-form div[data-phase14r-step-group].phase14r-step-active,.booking-layout .booking-form section[data-phase14r-step-group].phase14r-step-active{display:grid!important}.booking-layout .booking-form button[data-phase14r-step-group].phase14r-step-active{display:inline-flex!important}.booking-layout .booking-form label[data-phase14r-step-group].phase14r-step-active{display:grid!important}
+  .phase14r-step-controls{position:sticky;bottom:-3px;z-index:6;display:flex;gap:7px;margin-top:12px;padding:8px 0 max(4px,env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(255,255,255,.88),#fff 30%)}.phase14r-step-controls button{flex:1;min-height:42px}.phase14r-step-next[hidden]{display:none!important}.booking-layout .booking-form>.primary.full[data-phase14r-step-group="4"]{bottom:49px!important}
+  .phase14r-review-grid{grid-template-columns:1fr 1fr}.phase14r-review-grid span:first-child{grid-column:1/-1}
+
+  .phase14r-item-picker{width:100vw}.phase14r-picker-grid{grid-template-columns:1fr;padding:8px}.phase14r-picker-card{grid-template-columns:72px minmax(0,1fr);min-height:88px}.phase14r-picker-card>img,.phase14r-picker-placeholder{width:72px;height:78px}.phase14r-item-picker header{padding-top:max(12px,env(safe-area-inset-top))}
+  .phase14r-selected-item{grid-template-columns:52px minmax(0,1fr)}.phase14r-selected-item img,.phase14r-selected-placeholder{width:52px;height:58px}
+
+  .phase14r-report-filter-bar{display:flex;justify-content:flex-end;padding:7px 8px;border-bottom:1px solid #eee4e8;background:#fff}.report-shell>.report-filters{position:fixed!important;left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom));top:auto!important;z-index:108!important;display:none!important;max-height:min(76vh,660px);overflow:auto;padding:12px!important;border:1px solid #e5d8de!important;border-radius:14px!important;background:#fff!important;box-shadow:0 20px 60px rgba(45,20,33,.24)!important;grid-template-columns:1fr!important}.report-shell.phase14r-report-filters-open>.report-filters{display:grid!important}.phase14r-report-filter-backdrop{position:fixed;inset:0;z-index:106;display:none;border:0;background:rgba(38,17,28,.38)}body.phase14r-report-filter-open .phase14r-report-filter-backdrop{display:block}body.phase14r-report-filter-open{overflow:hidden}.report-shell>.report-filters .report-search,.report-shell>.report-filters .report-filter-actions{grid-column:auto!important}
+
+  .phase14r-action-backdrop{position:fixed;inset:0;z-index:96;display:none;border:0;background:rgba(38,17,28,.40)}body.phase14r-action-sheet-open .phase14r-action-backdrop{display:block}body.phase14r-action-sheet-open{overflow:hidden}.phase14p-more-menu{bottom:max(8px,env(safe-area-inset-bottom))!important;padding:8px!important;border-radius:14px!important;box-shadow:0 20px 60px rgba(45,20,33,.26)!important}.phase14r-action-title{display:block;padding:5px 7px 9px;border-bottom:1px solid #eee3e8;margin-bottom:3px}.phase14r-action-title span{display:block;color:#8a7480;font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em}.phase14r-action-title strong{display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.8rem;color:#35212b}
+
+  .phase14q-detail-bar{flex-wrap:wrap}.phase14r-context-actions{order:-1;width:100%}.phase14r-context-actions button{flex:1;min-height:40px}
+}
+
+@media(max-width:430px){
+  .phase14r-dialog-actions{display:grid;grid-template-columns:1fr}.phase14r-dialog-actions button{width:100%}.phase14r-review-grid{grid-template-columns:1fr}.phase14r-review-grid span:first-child{grid-column:auto}.phase14r-picker-card{grid-template-columns:64px minmax(0,1fr)}.phase14r-picker-card>img,.phase14r-picker-placeholder{width:64px;height:72px}
+}
+
+@media(prefers-reduced-motion:reduce){.phase14r-item-picker-backdrop *,.phase14r-discard-backdrop *{scroll-behavior:auto!important;transition:none!important}}

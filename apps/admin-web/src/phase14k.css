@@ -1,0 +1,37 @@
+/* Phase 14K — ERP Item Master. Scoped to the Items list so other admin modules stay unchanged. */
+section.list-card:has(> .item-filters){padding:0!important;overflow:hidden;box-shadow:0 5px 18px rgba(72,28,48,.045)!important}
+section.list-card:has(> .item-filters)>.list-head{padding:12px 15px 10px!important;margin:0!important;border-bottom:1px solid #eee3e8;align-items:center}
+section.list-card:has(> .item-filters)>.list-head h2{margin:0!important;font-size:1.02rem!important;letter-spacing:-.01em}
+section.list-card:has(> .item-filters)>.item-filters{margin:0!important;padding:10px 15px!important;border-bottom:1px solid #eee3e8;background:#fcfafb;grid-template-columns:minmax(220px,2fr) minmax(145px,1fr) minmax(125px,.8fr) minmax(150px,1fr) auto auto!important;align-items:center;gap:8px!important}
+section.list-card:has(> .item-filters)>.item-filters input,
+section.list-card:has(> .item-filters)>.item-filters select{min-height:40px!important;border-radius:10px!important;padding:8px 10px!important;font-size:.86rem}
+section.list-card:has(> .item-filters)>.item-filters .archive-check{min-height:40px;display:inline-flex!important;align-items:center;gap:7px;padding:7px 9px!important;border:1px solid #eadde4;border-radius:10px;background:#fff;white-space:nowrap;font-size:.8rem;font-weight:700;color:#5e4b55}
+section.list-card:has(> .item-filters)>.item-filters .archive-check input{min-height:0!important;width:16px;height:16px;margin:0}
+section.list-card:has(> .item-filters)>.item-filters>button{min-height:40px!important;padding:8px 14px!important;border-radius:10px!important;white-space:nowrap;background:#87164b!important;color:#fff!important;border-color:#87164b!important}
+section.list-card:has(> .item-filters)>.items-grid{grid-template-columns:1fr!important;gap:8px!important;padding:11px 15px 4px}
+section.list-card:has(> .item-filters) .item-card{grid-template-columns:112px minmax(0,1fr)!important;min-height:132px;border-radius:12px!important;box-shadow:none!important;border-color:#eadfe4!important;overflow:hidden}
+section.list-card:has(> .item-filters) .item-photo{min-height:132px!important;background:linear-gradient(145deg,#f2e7ec,#faf6f8)!important;font-size:1.2rem!important}
+section.list-card:has(> .item-filters) .item-photo img{object-position:center top}
+section.list-card:has(> .item-filters) .stock-badge{display:none!important}
+section.list-card:has(> .item-filters) .item-card-body{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.95fr);grid-template-areas:"title qty" "fields qty" "actions actions";gap:8px 14px;padding:11px 13px!important;align-content:center}
+section.list-card:has(> .item-filters) .item-title{grid-area:title;align-self:start;gap:8px}
+section.list-card:has(> .item-filters) .item-title strong{font-size:.98rem;line-height:1.2}
+section.list-card:has(> .item-filters) .item-title>div:first-child>span{display:block;margin-top:3px;font-size:.72rem}
+section.list-card:has(> .item-filters) .item-title .chips{justify-content:flex-end;flex-shrink:0}
+section.list-card:has(> .item-filters) .qty-row{grid-area:qty;margin:0!important;align-self:stretch;grid-template-columns:repeat(4,minmax(58px,1fr))!important;gap:6px!important}
+section.list-card:has(> .item-filters) .qty-row span{display:flex;flex-direction:column;justify-content:center;min-height:58px;border:1px solid #eee5e9;border-radius:9px!important;padding:7px 8px!important;background:#faf8f9!important;font-size:.67rem!important}
+section.list-card:has(> .item-filters) .qty-row b{font-size:1rem!important;line-height:1.1;margin-top:4px!important}
+section.list-card:has(> .item-filters) .qty-row span:nth-child(2){background:#fff8e9!important;border-color:#f1dfb7}
+section.list-card:has(> .item-filters) .qty-row span:nth-child(3){background:#eef5ff!important;border-color:#d7e4f7}
+section.list-card:has(> .item-filters) .qty-row span:nth-child(4){background:#edf8f2!important;border-color:#cfe9da}
+section.list-card:has(> .item-filters) .qty-row span:nth-child(4) b{color:#18794e!important}
+section.list-card:has(> .item-filters) .field-summary{grid-area:fields;margin:0!important;display:flex!important;flex-wrap:wrap;gap:5px 12px!important;align-self:start}
+section.list-card:has(> .item-filters) .field-summary>span{padding:0!important;font-size:.74rem!important}
+section.list-card:has(> .item-filters) .field-summary small{display:inline!important;margin-right:4px;font-size:.68rem;color:#927c87}
+section.list-card:has(> .item-filters) .field-summary small::after{content:":"}
+section.list-card:has(> .item-filters) .row-actions{grid-area:actions;justify-content:flex-end!important;align-items:center!important;gap:6px!important;padding-top:7px;margin-top:1px;border-top:1px solid #f0e7eb}
+section.list-card:has(> .item-filters) .row-actions button{min-height:34px!important;padding:6px 10px!important;border-radius:9px!important;font-size:.76rem!important}
+section.list-card:has(> .item-filters)>.pager{margin:8px 0 0!important;padding:10px 15px 14px;border-top:1px solid #f0e7eb}
+@media(max-width:1050px){section.list-card:has(> .item-filters)>.item-filters{grid-template-columns:minmax(220px,2fr) repeat(3,minmax(120px,1fr))!important}section.list-card:has(> .item-filters) .item-card-body{grid-template-columns:1fr;grid-template-areas:"title" "qty" "fields" "actions"}section.list-card:has(> .item-filters) .row-actions{justify-content:flex-start!important}}
+@media(max-width:700px){section.list-card:has(> .item-filters){border-radius:14px!important}section.list-card:has(> .item-filters)>.list-head{padding:10px 12px 8px!important}section.list-card:has(> .item-filters)>.item-filters{padding:9px 12px!important;grid-template-columns:1fr 1fr!important;gap:7px!important}section.list-card:has(> .item-filters)>.item-filters>input:first-child{grid-column:1/-1}section.list-card:has(> .item-filters)>.item-filters select:nth-of-type(3){grid-column:1/-1}section.list-card:has(> .item-filters)>.item-filters .archive-check{grid-column:1/2;min-width:0}section.list-card:has(> .item-filters)>.item-filters>button{grid-column:2/3;width:100%}section.list-card:has(> .item-filters)>.items-grid{padding:9px 10px 2px!important}section.list-card:has(> .item-filters) .item-card{grid-template-columns:92px minmax(0,1fr)!important;min-height:154px}section.list-card:has(> .item-filters) .item-photo{min-height:154px!important}section.list-card:has(> .item-filters) .item-card-body{padding:9px 10px!important;gap:7px!important}section.list-card:has(> .item-filters) .item-title strong{font-size:.91rem}section.list-card:has(> .item-filters) .qty-row{grid-template-columns:repeat(2,1fr)!important;gap:5px!important}section.list-card:has(> .item-filters) .qty-row span{min-height:49px;padding:6px 7px!important}section.list-card:has(> .item-filters) .row-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}section.list-card:has(> .item-filters) .row-actions button{width:100%;padding:6px 4px!important}section.list-card:has(> .item-filters)>.pager{padding:10px 12px 12px!important}}
+@media(max-width:430px){section.list-card:has(> .item-filters) .item-card{grid-template-columns:84px minmax(0,1fr)!important}section.list-card:has(> .item-filters) .item-photo{min-height:158px!important}section.list-card:has(> .item-filters) .row-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}

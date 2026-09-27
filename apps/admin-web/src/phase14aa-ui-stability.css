@@ -1,0 +1,131 @@
+/* Phase 14AA — user-view UI stability + cross-page parity hardening.
+   Visual-only final layer: no runtime observer, fetch, API, Worker or D1 changes. */
+
+/* Reports: Phase14D owns the full item grid. Hide the legacy direct single-item
+   decoration when that grid exists, so every booked item is visible exactly once. */
+.report-primary:has(> .phase14d-item-grid) > .phase14d-item-card{display:none!important}
+
+/* Customers: identity/activity/contact must never disappear in desktop ERP mode. */
+.customer-card>.customer-head,
+.customer-card>.customer-stats{visibility:visible!important;opacity:1!important}
+.customer-card>.customer-head{display:grid!important}
+.customer-card>.customer-stats{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.customer-card>.quick-actions{min-width:0!important}
+.customer-card:has(.phase14p-overflow)>.row-actions,
+.customer-card>.row-actions.phase14p-source-group{display:none!important}
+.customer-card .phase14p-overflow-source{display:none!important}
+
+@media(min-width:981px){
+  .phase14x-ui3-customer-card.customer-card{
+    grid-template-columns:minmax(260px,1.1fr) minmax(250px,.8fr) minmax(330px,1.1fr)!important;
+    gap:10px!important;align-items:center!important
+  }
+  .phase14x-ui3-customer-card>.customer-head{grid-column:1!important;grid-row:1!important}
+  .phase14x-ui3-customer-card>.customer-stats{grid-column:2!important;grid-row:1!important}
+  .phase14x-ui3-customer-card>.quick-actions{
+    grid-column:3!important;grid-row:1!important;display:grid!important;
+    grid-template-columns:repeat(4,minmax(76px,1fr))!important;gap:5px!important;align-items:center!important
+  }
+  .phase14x-ui3-customer-card>.quick-actions>*{width:100%!important;min-width:0!important;text-align:center!important}
+}
+
+/* Mobile customer anatomy: Identity -> 3 equal metrics -> WhatsApp/Call/History -> More. */
+@media(max-width:980px){
+  .phase14x-ui3-customer-card.customer-card{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+  .phase14x-ui3-customer-card>.customer-head,
+  .phase14x-ui3-customer-card>.customer-stats,
+  .phase14x-ui3-customer-card>.quick-actions{grid-column:1!important;grid-row:auto!important;width:100%!important}
+  .phase14x-ui3-customer-card>.customer-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .phase14x-ui3-customer-card>.quick-actions{
+    display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important
+  }
+  .phase14x-ui3-customer-card>.quick-actions>a,
+  .phase14x-ui3-customer-card>.quick-actions>button{width:100%!important;min-width:0!important;text-align:center!important}
+  .phase14x-ui3-customer-card>.quick-actions>.phase14p-overflow{grid-column:1/-1!important;justify-self:start!important;width:auto!important}
+  .phase14x-ui3-customer-card>.quick-actions>.phase14p-overflow>.phase14p-more-toggle{width:auto!important;min-width:96px!important}
+}
+@media(max-width:430px){
+  .phase14x-ui3-customer-card>.customer-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .phase14x-ui3-customer-card>.customer-stats span{padding:6px 5px!important}
+  .phase14x-ui3-customer-card>.quick-actions{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+
+/* One create/edit form grammar across User, Category, Item, Customer and Booking. */
+.user-modal,
+.password-modal,
+body.phase14x-category-drawer-open .manage-grid>.form-card,
+.item-editor>.form-card,
+.customer-layout>.form-card,
+.booking-layout>.form-card{
+  --form-control-h:42px;
+  color:#2d1c25!important
+}
+.user-modal input,.user-modal select,.user-modal textarea,
+.password-modal input,.password-modal select,.password-modal textarea,
+.manage-grid>.form-card input,.manage-grid>.form-card select,.manage-grid>.form-card textarea,
+.item-editor>.form-card input,.item-editor>.form-card select,.item-editor>.form-card textarea,
+.customer-layout>.form-card input,.customer-layout>.form-card select,.customer-layout>.form-card textarea,
+.booking-layout>.form-card input,.booking-layout>.form-card select,.booking-layout>.form-card textarea{
+  min-height:var(--form-control-h)!important;border:1px solid #eadfe4!important;border-radius:10px!important;
+  padding:8px 10px!important;background:#fff!important;font-size:.82rem!important;box-shadow:none
+}
+.user-modal input:focus,.user-modal select:focus,.user-modal textarea:focus,
+.password-modal input:focus,.password-modal select:focus,.password-modal textarea:focus,
+.manage-grid>.form-card input:focus,.manage-grid>.form-card select:focus,.manage-grid>.form-card textarea:focus,
+.item-editor>.form-card input:focus,.item-editor>.form-card select:focus,.item-editor>.form-card textarea:focus,
+.customer-layout>.form-card input:focus,.customer-layout>.form-card select:focus,.customer-layout>.form-card textarea:focus,
+.booking-layout>.form-card input:focus,.booking-layout>.form-card select:focus,.booking-layout>.form-card textarea:focus{
+  border-color:#bb4b7e!important;box-shadow:0 0 0 3px rgba(182,46,105,.13)!important;outline:0!important
+}
+
+/* Close is always the same compact Material-symbol control. */
+.phase14p-drawer-close,
+.phase14q-form-close,
+.manage-grid>.form-card .phase14x-category-cancel,
+.user-modal>.form-title>button,
+.password-modal>.form-title>button{
+  width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;padding:0!important;
+  display:grid!important;place-items:center!important;border:1px solid #eadfe4!important;border-radius:9px!important;
+  background:#fff!important;color:#654f5a!important;font-size:0!important;line-height:1!important;box-shadow:none!important
+}
+.phase14p-drawer-close::before,
+.phase14q-form-close::before,
+.manage-grid>.form-card .phase14x-category-cancel::before,
+.user-modal>.form-title>button::before,
+.password-modal>.form-title>button::before{
+  content:"close"!important;font-family:"Material Symbols Rounded"!important;font-size:1.2rem!important;font-weight:400!important;
+  font-style:normal!important;line-height:1!important;letter-spacing:normal!important;text-transform:none!important;
+  font-feature-settings:"liga"!important;font-variation-settings:"FILL" 0,"wght" 500,"GRAD" 0,"opsz" 20!important
+}
+
+/* User editor behaves like the same compact side sheet instead of a tall centered card. */
+.history-backdrop:has(> .user-modal),
+.history-backdrop:has(> .password-modal){align-items:stretch!important;justify-content:flex-end!important;padding:0!important}
+.user-modal{
+  width:min(500px,100vw)!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;
+  padding:14px!important;border:0!important;border-left:1px solid #eadfe4!important;border-radius:0!important;
+  box-shadow:-18px 0 48px rgba(51,23,37,.17)!important;overflow:auto!important;align-content:start!important
+}
+.user-modal>.form-title{position:sticky!important;top:-14px!important;z-index:4!important;margin:-14px -14px 12px!important;padding:11px 14px!important;background:rgba(255,255,255,.98)!important;border-bottom:1px solid #eee4e8!important}
+.user-modal>.primary.full{margin-top:12px!important;min-height:44px!important;border-radius:9px!important}
+.password-modal{align-self:center!important;margin-right:14px!important;border-radius:14px!important}
+
+/* Checkbox/toggle rows use the same compact pill geometry. */
+.user-active,.customer-active,.switch-row>.check,.manage-grid>.form-card .check{
+  min-height:40px!important;padding:7px 9px!important;border:1px solid #eadfe4!important;border-radius:9px!important;background:#fbf8fa!important
+}
+
+/* Primary create/save actions share one consistent shape. */
+.user-modal>.primary.full,
+.manage-grid>.form-card>.primary.full,
+.item-editor>.form-card>.primary.full,
+.customer-layout>.form-card>.primary.full{
+  min-height:44px!important;font-size:.8rem!important;font-weight:850!important
+}
+
+@media(max-width:760px){
+  .user-modal{width:100vw!important;padding:12px!important;border-left:0!important}
+  .user-modal>.form-title{top:-12px!important;margin:-12px -12px 11px!important;padding:10px 12px!important}
+  .password-modal{width:calc(100vw - 20px)!important;margin:auto!important;max-height:calc(100dvh - 20px)!important}
+  .user-modal>.form-grid{grid-template-columns:1fr!important}
+}

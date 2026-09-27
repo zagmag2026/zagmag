@@ -1,0 +1,7 @@
+/* Phase 14X Fix7 — New Booking item result and quantity-availability clarity. */
+.phase14x-booking-item-empty,.phase14x-booking-availability-error{margin:8px 0 0;border:1px solid #eadfe4;border-radius:10px;padding:9px 11px;font-size:.76rem;font-weight:700;line-height:1.35}
+.phase14x-booking-item-empty{background:#faf7f9;color:#715f68}
+.phase14x-booking-availability-error{background:#fff8e9;border-color:#f0dfbd;color:#755b2c}
+.availability-pill.phase14x-checking{background:#f3eff1!important;color:#79656f!important}
+.availability-pill.phase14x-unavailable{background:#fff8e9!important;color:#8a6320!important}
+@media(max-width:650px){.phase14x-booking-item-empty,.phase14x-booking-availability-error{font-size:.74rem;padding:8px 10px}}

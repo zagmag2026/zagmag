@@ -1,0 +1,13 @@
+/* Phase 14X — actionable KPI cards + settled empty-state clarity. UI only. */
+.stats .stat.phase14x-kpi{position:relative;cursor:pointer;user-select:none;padding-left:48px!important;padding-right:28px!important;transition:transform .12s ease,border-color .12s ease,box-shadow .12s ease,background-color .12s ease!important}
+.stats .stat.phase14x-kpi::before{content:attr(data-phase14x-glyph);position:absolute;left:10px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#f7eaf0;color:#7d1747;font-size:.84rem;font-weight:900;line-height:1}
+.stats .stat.phase14x-kpi::after{content:"›";position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#9a7e8b;font-size:1.05rem;font-weight:900}
+.stats .stat.phase14x-kpi:hover{border-color:#d9bfcb!important;background:#fffafb!important;box-shadow:0 5px 16px rgba(80,29,54,.07)!important}.stats .stat.phase14x-kpi:active{transform:translateY(1px)}.stats .stat.phase14x-kpi:focus-visible{outline:2px solid #b62e69!important;outline-offset:2px!important}
+.stats .stat.phase14x-kpi span{line-height:1.2}.stats .stat.phase14x-kpi strong{line-height:1.05}
+.stats .stat.phase14x-kpi.danger-stat::before{background:#fff0f3;color:#b53148}
+.empty.phase14x-empty-state{position:relative!important;min-height:118px!important;padding:50px 16px 34px!important;color:#5f4b55!important;background:linear-gradient(180deg,#fff,#fdfafb)!important;text-align:center!important;font-size:.82rem!important;font-weight:800!important;overflow:visible!important}
+.empty.phase14x-empty-state::before{content:"⌕";position:absolute;top:16px;left:50%;transform:translateX(-50%);display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#f7eaf0;color:#7d1747;font-size:.82rem;font-weight:900}
+.empty.phase14x-empty-state::after{content:attr(data-phase14x-hint);position:absolute;left:14px;right:14px;bottom:14px;color:#8a7580;font-size:.66rem;font-weight:600;line-height:1.35}
+.pager[hidden]{display:none!important}
+@media(max-width:760px){.stats .stat.phase14x-kpi{min-height:70px!important;padding-left:44px!important;padding-right:24px!important}.stats .stat.phase14x-kpi::before{left:8px;width:28px;height:28px;border-radius:8px}.stats .stat.phase14x-kpi::after{right:8px}.empty.phase14x-empty-state{min-height:108px!important;padding-top:47px!important}}
+@media(prefers-reduced-motion:reduce){.stats .stat.phase14x-kpi{transition:none!important}}
