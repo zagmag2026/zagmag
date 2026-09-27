@@ -1,0 +1,41 @@
+UI/login batch 1-9 validation pass 2 @ 389d04792cfc892c466b8346e0e6a3a8ed238933
+Booking Billing lifecycle issues 1-10 staging validation
+Retry issues 1-10 after configured Worker regression alignment
+Final issues 1-10 staging retry after lifecycle guard alignment
+Finance history partial payment booking UI staging validation
+Finance history staging retry after Customer regression alignment
+Finance history staging retry after Booking badge regression alignment
+Finance history staging retry after Payment radio regression alignment
+Booking preview payment tabs inline Bill validation
+Retry Booking preview payment staging after tab guard alignment
+Final Booking preview payment staging retry after metadata guard alignment
+Booking Preview Payment inline Bill final staging validation
+Booking Preview Payment inline Bill staging retry after UI guard alignment
+Edit Booking + compact Bill + full-return finalize validation
+Billing final UI PDF payment tabs Run79 tabs staging validation
+Billing final flow staging retry after Run79 regression alignment
+Billing final flow staging retry after UI Login Run79 guard alignment
+Billing final flow staging retry after component audit Run79 alignment
+Billing final flow staging retry after PDF guard correction
+Billing final flow staging retry after Billing regression syntax fix
+Billing final flow staging retry after clean Billing regression file
+Billing final flow staging retry after Reserved visibility regression alignment
+Screen-wise UI audit polish staging validation
+Screen-wise UI audit staging retry after public regression alignment
+Screen-wise UI audit staging retry after eligible-order address fix
+Issues 1-12 shared Order Preview payment history status UI staging validation
+Issues 1-12 staging retry after paired More regression alignment
+Issues 1-12 staging retry after Billing docs regression alignment
+Issues 1-12 final payment-history PDF-time validation
+Issues 1-12 staging retry after UI Login tab guard alignment
+Issues 1-12 staging retry after Booking Billing tab guard alignment
+Payment/Bill/Dashboard cleanup validation\n
+Retry Payment/Bill/Dashboard cleanup after validated regression fixes
+Dashboard Issue 6 — 34 KPI redesign active-chain validation
+Dashboard Issue 6 final staging validation after Admin Run 166 SUCCESS
+Step 1 refresh scope + Step 2 Item Master pagination staging validation
+Retry refresh/pagination after foundation + Dashboard guard alignment
+Retry refresh/pagination after Screen 5 regression alignment
+Retry refresh/pagination after Settings refresh guard correction
+Retry refresh/pagination after cross-domain Item paging guard alignment
+Step 3-7 interaction hardening staging validation

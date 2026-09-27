@@ -1,0 +1,51 @@
+Component Audit Batch 1-5 staging validation pass9 — compile restore
+Billing V1 merged-main staging APK validation
+UI issues 1-3 tabs gallery Billing shared components staging validation
+UI issues 1-3 validation retry after foundation guard alignment
+UI issues 1-3 validation retry after Billing named-action alignment
+Booking Billing lifecycle tabs numeric fields validation
+Booking Billing lifecycle validation retry after Return freshness guard
+Booking Billing lifecycle validation retry after worker delegation guard
+Booking Billing lifecycle validation retry after phase14d guard
+Booking Billing lifecycle validation retry with legacy delegation marker
+Booking Billing lifecycle validation retry after Phase14BE Return guard
+Booking Billing lifecycle validation retry after Phase14BG tab guard
+Booking Billing lifecycle final Admin Android validation after staging success
+Finance history partial payment booking badge Billing UI final staging APK validation
+Finance history Billing UI final APK retry after foundation badge alignment
+Finance history Billing UI compile retry after model and badge Row fix
+Booking Preview Payment inline Bill final Admin Android validation
+Booking Preview Payment inline Bill Admin Android retry after foundation guard alignment
+Edit Booking + compact Bill + full-return finalize final Admin Android validation
+Final Billing UI PDF payment tabs Run79 tabs Admin Android staging APK validation
+Final Billing Admin Android compile retry after Dashboard Billing callback wiring
+Screen-wise UI audit polish Admin Android staging APK validation
+Retry UI audit Admin Android after Billing eligible-order address fix
+Issues 1-12 shared Order Preview payment history status UI Admin Android staging validation
+Issues 1-12 Admin Android retry after foundation audit alignment
+Issues 1-12 retry after Order Preview Material3 opt-in fix
+Issues 1-12 final Admin Android validation after staging PASS
+Payment/Bill/Dashboard cleanup validation\n
+Retry Payment/Bill/Dashboard cleanup after dashboard regression fix
+Retry after Billing regression contract alignment
+Dashboard Issue 6 — 34 KPI redesign active-chain validation
+Dashboard Issue 6 validation retry after stale regression alignment
+Dashboard Issue 6 validation retry after Phase14BE guard alignment
+Dashboard Issue 6 validation retry after Phase14BH guard alignment
+Dashboard Issue 6 validation retry after WhatsApp stale guard alignment
+Dashboard Issue 6 validation retry after navigation guard alignment
+Dashboard Issue 6 compile retry after KPI Compose fixes
+Step 1 refresh scope + Step 2 Item Master pagination Admin Android validation
+Retry refresh/pagination after foundation + Dashboard guard alignment
+Retry refresh/pagination after Screen 5 regression alignment
+Retry refresh/pagination after Settings refresh guard correction
+Retry refresh/pagination after cross-domain Item paging guard alignment
+Step 3-7 interaction hardening Android validation
+Retry Step 3-7 Android after foundation guard alignment
+Retry Step 3-7 Android after shared confirmation guard correction
+
+Fix Step 3-7 last failed Android compile: Customer legacy retry callback + Settings keyboard helper
+
+Direct Final Bill → customer WhatsApp share implementation validation
+
+Direct Final Bill WhatsApp validation test-location fix
