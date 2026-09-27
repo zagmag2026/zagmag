@@ -4,7 +4,7 @@ compatibility_date = "2026-09-13"
 keep_vars = true
 
 [vars]
-APP_NAME = "ઝગમગ ડ્રેસીસ"
+APP_NAME = "Zag Mag App"
 APP_ENV = "production"
 PUBLIC_WHATSAPP_NUMBER = ""
 PUBLIC_CALL_NUMBER = ""
@@ -19,6 +19,6 @@ run_worker_first = ["/api/*", "/", "/index.html", "/admin", "/admin/", "/admin/i
 
 [[d1_databases]]
 binding = "DB"
-database_name = "zhagmag-dresses-production"
+database_name = "zagmag"
 database_id = "__PRODUCTION_D1_DATABASE_ID__"
 migrations_dir = "../database/migrations"
