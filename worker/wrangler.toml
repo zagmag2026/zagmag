@@ -10,7 +10,7 @@ compatibility_date = "2026-09-01"
 keep_vars = true
 
 [vars]
-APP_NAME = "ઝગમગ ડ્રેસીસ"
+APP_NAME = "App Name"
 APP_ENV = "staging"
 PUBLIC_WHATSAPP_NUMBER = ""
 PUBLIC_CALL_NUMBER = ""
@@ -23,6 +23,6 @@ COOKIE_SECURE = "true"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "zhagmag-dresses-staging"
+database_name = "zagmag"
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
 migrations_dir = "../database/migrations"
