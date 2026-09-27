@@ -1,0 +1,136 @@
+name: Build Admin Android
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_target:
+        description: "Android artifact to build"
+        required: true
+        default: staging_apk
+        type: choice
+        options:
+          - staging_apk
+          - production_apk
+          - production_aab
+          - production_both
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/android-admin-build-trigger"
+
+permissions:
+  contents: read
+  statuses: write
+
+concurrency:
+  group: zhagmag-admin-android-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Static Android foundation audit
+        run: |
+          python3 tests/android_admin_foundation.py
+          npm run test:hardening
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install Android SDK 36
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$SDKMANAGER" || { echo "sdkmanager not found at $SDKMANAGER"; exit 1; }
+          yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+          "$SDKMANAGER" "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Setup Gradle 9.6
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.6.0"
+
+      - name: Build selected artifact
+        env:
+          BUILD_TARGET: ${{ github.event_name == 'push' && 'staging_apk' || inputs.build_target }}
+          ZHAGMAG_PRODUCTION_BASE_URL: ${{ vars.ZHAGMAG_PRODUCTION_BASE_URL }}
+        working-directory: apps/admin-android
+        run: |
+          set -euo pipefail
+          case "$BUILD_TARGET" in
+            staging_apk)
+              gradle :app:assembleStagingDebug --no-daemon --stacktrace
+              ;;
+            production_apk)
+              test -n "$ZHAGMAG_PRODUCTION_BASE_URL" || { echo "ZHAGMAG_PRODUCTION_BASE_URL repository variable is required."; exit 1; }
+              gradle :app:assembleProductionRelease -PZHAGMAG_PRODUCTION_BASE_URL="$ZHAGMAG_PRODUCTION_BASE_URL" --no-daemon --stacktrace
+              ;;
+            production_aab)
+              test -n "$ZHAGMAG_PRODUCTION_BASE_URL" || { echo "ZHAGMAG_PRODUCTION_BASE_URL repository variable is required."; exit 1; }
+              gradle :app:bundleProductionRelease -PZHAGMAG_PRODUCTION_BASE_URL="$ZHAGMAG_PRODUCTION_BASE_URL" --no-daemon --stacktrace
+              ;;
+            production_both)
+              test -n "$ZHAGMAG_PRODUCTION_BASE_URL" || { echo "ZHAGMAG_PRODUCTION_BASE_URL repository variable is required."; exit 1; }
+              gradle :app:assembleProductionRelease :app:bundleProductionRelease -PZHAGMAG_PRODUCTION_BASE_URL="$ZHAGMAG_PRODUCTION_BASE_URL" --no-daemon --stacktrace
+              ;;
+            *)
+              echo "Unknown build target: $BUILD_TARGET"
+              exit 1
+              ;;
+          esac
+
+      - name: Upload APK/AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhagmag-admin-android-${{ github.run_number }}
+          path: |
+            apps/admin-android/app/build/outputs/apk/**/*.apk
+            apps/admin-android/app/build/outputs/bundle/**/*.aab
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Publish Android validation status
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VALIDATION_STATE: ${{ job.status }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$VALIDATION_STATE" = "success" ]; then
+            STATE=success
+            DESC="Admin Android staging APK validation passed"
+          else
+            STATE=failure
+            DESC="Admin Android staging APK validation failed"
+          fi
+          PAYLOAD="$(python3 - "$STATE" "$DESC" "$RUN_URL" <<'PY'
+          import json, sys
+          print(json.dumps({
+              "state": sys.argv[1],
+              "context": "admin-android-validation",
+              "description": sys.argv[2],
+              "target_url": sys.argv[3],
+          }))
+          PY
+          )"
+          curl --fail-with-body -sS -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$REPO/statuses/$SHA" \
+            -d "$PAYLOAD"

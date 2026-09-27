@@ -1,0 +1,137 @@
+name: Deploy Staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      configure_owner_setup_secret:
+        description: "Set/replace Initial Owner setup secret on this deploy"
+        required: true
+        default: false
+        type: boolean
+      run_smoke_test:
+        description: "Run staging smoke test after deploy (requires STAGING_BASE_URL variable)"
+        required: true
+        default: false
+        type: boolean
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/staging-run-trigger"
+
+permissions:
+  contents: read
+  statuses: write
+
+concurrency:
+  group: zhagmag-staging-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Install pinned dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Production hardening regression
+        run: npm run test:hardening
+
+      - name: Build same-origin staging assets
+        run: npm run build:staging
+
+      - name: Render staging Wrangler config
+        env:
+          STAGING_D1_DATABASE_ID: ${{ secrets.STAGING_D1_DATABASE_ID }}
+        run: npm run render:staging-config
+
+      - name: Staging preflight
+        run: npm run preflight:staging
+
+      - name: Apply D1 migrations
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler d1 migrations apply DB --remote --config worker/wrangler.staging.generated.toml
+
+      - name: Set initial owner setup secret
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.configure_owner_setup_secret }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          INITIAL_OWNER_SETUP_TOKEN: ${{ secrets.INITIAL_OWNER_SETUP_TOKEN }}
+        run: printf '%s' "$INITIAL_OWNER_SETUP_TOKEN" | npx wrangler secret put INITIAL_OWNER_SETUP_TOKEN --config worker/wrangler.staging.generated.toml
+
+      - name: Deploy staging Worker + static assets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+        run: |
+          umask 077
+          node <<'NODE'
+          const fs = require('node:fs');
+          const names = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
+          const values = Object.fromEntries(names.map((name) => [name, process.env[name] || '']));
+          const missing = names.filter((name) => !values[name]);
+          if (missing.length) {
+            console.error(`Missing required GitHub Actions secret(s): ${missing.join(', ')}`);
+            process.exit(1);
+          }
+          fs.writeFileSync('worker/.cloudinary-staging-secrets.json', JSON.stringify(values), { mode: 0o600 });
+          NODE
+          trap 'rm -f worker/.cloudinary-staging-secrets.json' EXIT
+          npx wrangler deploy --config worker/wrangler.staging.generated.toml --secrets-file worker/.cloudinary-staging-secrets.json
+
+      - name: Smoke test
+        if: ${{ github.event_name == 'push' || inputs.run_smoke_test }}
+        env:
+          STAGING_BASE_URL: ${{ vars.STAGING_BASE_URL }}
+        run: npm run smoke:staging
+
+      - name: Publish staging validation status
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VALIDATION_STATE: ${{ job.status }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$VALIDATION_STATE" = "success" ]; then
+            STATE=success
+            DESC="Deploy Staging validation passed"
+          else
+            STATE=failure
+            DESC="Deploy Staging validation failed"
+          fi
+          PAYLOAD="$(python3 - "$STATE" "$DESC" "$RUN_URL" <<'PY'
+          import json, sys
+          print(json.dumps({
+              "state": sys.argv[1],
+              "context": "deploy-staging-validation",
+              "description": sys.argv[2],
+              "target_url": sys.argv[3],
+          }))
+          PY
+          )"
+          curl --fail-with-body -sS -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$REPO/statuses/$SHA" \
+            -d "$PAYLOAD"
