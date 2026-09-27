@@ -31,6 +31,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -51,7 +52,10 @@ jobs:
         run: |
           set -euo pipefail
           SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
-          test -x "$SDKMANAGER" || { echo "sdkmanager not found at $SDKMANAGER"; exit 1; }
+          test -x "$SDKMANAGER" || {
+            echo "sdkmanager not found at $SDKMANAGER"
+            exit 1
+          }
           yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
           "$SDKMANAGER" "platforms;android-36" "build-tools;36.0.0"
 
@@ -64,25 +68,61 @@ jobs:
         env:
           BUILD_TARGET: ${{ github.event_name == 'push' && 'staging_apk' || inputs.build_target }}
           ZHAGMAG_PRODUCTION_BASE_URL: ${{ vars.ZHAGMAG_PRODUCTION_BASE_URL }}
+          ZHAGMAG_STAGING_BASE_URL: ${{ vars.STAGING_BASE_URL }}
         working-directory: apps/admin-android
         run: |
           set -euo pipefail
+
           case "$BUILD_TARGET" in
             staging_apk)
-              gradle :app:assembleStagingDebug --no-daemon --stacktrace
+              test -n "$ZHAGMAG_STAGING_BASE_URL" || {
+                echo "STAGING_BASE_URL repository variable is required."
+                exit 1
+              }
+
+              gradle :app:assembleStagingDebug \
+                -PZHAGMAG_STAGING_BASE_URL="$ZHAGMAG_STAGING_BASE_URL" \
+                --no-daemon \
+                --stacktrace
               ;;
+
             production_apk)
-              test -n "$ZHAGMAG_PRODUCTION_BASE_URL" || { echo "ZHAGMAG_PRODUCTION_BASE_URL repository variable is required."; exit 1; }
-              gradle :app:assembleProductionRelease -PZHAGMAG_PRODUCTION_BASE_URL="$ZHAGMAG_PRODUCTION_BASE_URL" --no-daemon --stacktrace
+              test -n "$ZHAGMAG_PRODUCTION_BASE_URL" || {
+                echo "ZHAGMAG_PRODUCTION_BASE_URL repository variable is required."
+                exit 1
+              }
+
+              gradle :app:assembleProductionRelease \
+                -PZHAGMAG_PRODUCTION_BASE_URL="$ZHAGMAG_PRODUCTION_BASE_URL" \
+                --no-daemon \
+                --stacktrace
               ;;
+
             production_aab)
-              test -n "$ZHAGMAG_PRODUCTION_BASE_URL" || { echo "ZHAGMAG_PRODUCTION_BASE_URL repository variable is required."; exit 1; }
-              gradle :app:bundleProductionRelease -PZHAGMAG_PRODUCTION_BASE_URL="$ZHAGMAG_PRODUCTION_BASE_URL" --no-daemon --stacktrace
+              test -n "$ZHAGMAG_PRODUCTION_BASE_URL" || {
+                echo "ZHAGMAG_PRODUCTION_BASE_URL repository variable is required."
+                exit 1
+              }
+
+              gradle :app:bundleProductionRelease \
+                -PZHAGMAG_PRODUCTION_BASE_URL="$ZHAGMAG_PRODUCTION_BASE_URL" \
+                --no-daemon \
+                --stacktrace
               ;;
+
             production_both)
-              test -n "$ZHAGMAG_PRODUCTION_BASE_URL" || { echo "ZHAGMAG_PRODUCTION_BASE_URL repository variable is required."; exit 1; }
-              gradle :app:assembleProductionRelease :app:bundleProductionRelease -PZHAGMAG_PRODUCTION_BASE_URL="$ZHAGMAG_PRODUCTION_BASE_URL" --no-daemon --stacktrace
+              test -n "$ZHAGMAG_PRODUCTION_BASE_URL" || {
+                echo "ZHAGMAG_PRODUCTION_BASE_URL repository variable is required."
+                exit 1
+              }
+
+              gradle :app:assembleProductionRelease \
+                :app:bundleProductionRelease \
+                -PZHAGMAG_PRODUCTION_BASE_URL="$ZHAGMAG_PRODUCTION_BASE_URL" \
+                --no-daemon \
+                --stacktrace
               ;;
+
             *)
               echo "Unknown build target: $BUILD_TARGET"
               exit 1
@@ -110,6 +150,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+
           if [ "$VALIDATION_STATE" = "success" ]; then
             STATE=success
             DESC="Admin Android staging APK validation passed"
@@ -117,8 +158,10 @@ jobs:
             STATE=failure
             DESC="Admin Android staging APK validation failed"
           fi
+
           PAYLOAD="$(python3 - "$STATE" "$DESC" "$RUN_URL" <<'PY'
           import json, sys
+
           print(json.dumps({
               "state": sys.argv[1],
               "context": "admin-android-validation",
@@ -127,6 +170,7 @@ jobs:
           }))
           PY
           )"
+
           curl --fail-with-body -sS -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
