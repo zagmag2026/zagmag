@@ -1365,11 +1365,10 @@ require_tokens(
     ["hasUnsavedSettings", "Discard unsaved changes?", "AppBackHeader(", 'title = "Settings"', "onDismissRequest = requestDismiss", "AppUnsavedChangesDialog("],
     "Screen 10 Back/unsaved navigation contract",
 )
-
 if errors:
-    print("Android Admin Screen 8 cumulative foundation audit FAILED")
+    print("Android Admin cumulative foundation audit FAILED")
     for error in errors:
         print(f"- {error}")
     sys.exit(1)
 
-print("Android Admin Screen 8 cumulative foundation audit passed")
+print("Android Admin cumulative foundation audit passed")
