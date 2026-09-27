@@ -115,25 +115,40 @@ require_tokens(
         '"$stagingBaseUrl"',
     ],
     "Admin Android Gradle/version/API URL contract",
-    build_text:
-        errors.append(message)
-manifest = read(ANDROID / "app" / "src" / "main" / "AndroidManifest.xml")
+)
+
+manifest = read(
+    ANDROID / "app" / "src" / "main" / "AndroidManifest.xml"
+)
+
 for token in [
     'android:usesCleartextTraffic="false"',
     'android:allowBackup="false"',
     'android:windowSoftInputMode="adjustResize"',
 ]:
     if token not in manifest:
-        errors.append(f"Android manifest global safety contract missing: {token}")
+        errors.append(
+            f"Android manifest global safety contract missing: {token}"
+        )
 
-strings_en = ANDROID / "app" / "src" / "main" / "res" / "values" / "strings.xml"
+strings_en = (
+    ANDROID
+    / "app"
+    / "src"
+    / "main"
+    / "res"
+    / "values"
+    / "strings.xml"
+)
+
 if not strings_en.exists():
     errors.append("English string resources are required.")
 else:
     ET.parse(strings_en)
     if re.search(r"[\u0A80-\u0AFF]", read(strings_en)):
-        errors.append("Gujarati text detected in English-only Android strings.")
-
+        errors.append(
+            "Gujarati text detected in English-only Android strings."
+        )
 res_root = ANDROID / "app" / "src" / "main" / "res"
 if [p for p in res_root.glob("values-gu*") if p.exists()]:
     errors.append("Gujarati Android resource directories are not allowed.")
