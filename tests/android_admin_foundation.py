@@ -97,24 +97,25 @@ for path in required:
     if not path.exists():
         errors.append(f"Missing required Admin foundation file: {path.relative_to(ROOT)}")
 
-build_text = read(ANDROID / "app" / "build.gradle.kts")
-for token, message in [
-    ('versionName = "0.14.5"', "Android versionName must remain 0.14.5."),
-    ('versionCode = 1', "Android versionCode must remain 1."),
-    (
-        'providers.gradleProperty("ZHAGMAG_STAGING_BASE_URL")',
-        "Staging API URL must be externally supplied through ZHAGMAG_STAGING_BASE_URL.",
-    ),
-    (
+build_text = read(
+    ANDROID / "app" / "build.gradle.kts"
+)
+
+require_tokens(
+    build_text,
+    [
+        'versionName = "0.14.5"',
+        "versionCode = 1",
+        'ZHAGMAG_STAGING_BASE_URL',
+        'ZHAGMAG_PRODUCTION_BASE_URL',
+        'buildConfig = true',
+        'create("staging")',
+        'buildConfigField(',
+        '"API_BASE_URL"',
         '"$stagingBaseUrl"',
-        "Staging flavor must use the externally supplied staging API URL.",
-    ),
-    (
-        'providers.gradleProperty("ZHAGMAG_PRODUCTION_BASE_URL")',
-        "Production API URL must remain externally supplied.",
-    ),
-]:
-    if token not in build_text:
+    ],
+    "Admin Android Gradle/version/API URL contract",
+) if token not in build_text:
         errors.append(message)
 manifest = read(ANDROID / "app" / "src" / "main" / "AndroidManifest.xml")
 for token in [
