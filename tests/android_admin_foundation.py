@@ -116,7 +116,6 @@ for token, message in [
 ]:
     if token not in build_text:
         errors.append(message)
-
 manifest = read(ANDROID / "app" / "src" / "main" / "AndroidManifest.xml")
 for token in [
     'android:usesCleartextTraffic="false"',
