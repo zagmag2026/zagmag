@@ -43,7 +43,7 @@ export function hasStaffPermission(user: SessionUser, permission: StaffPermissio
 }
 
 const encoder = new TextEncoder();
-const PASSWORD_ITERATIONS = 210_000;
+const PASSWORD_ITERATIONS = 100_000;
 const MIN_SUPPORTED_PBKDF2_ITERATIONS = 100_000;
 const MAX_SUPPORTED_PBKDF2_ITERATIONS = 600_000;
 
