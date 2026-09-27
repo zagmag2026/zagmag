@@ -1,0 +1,30 @@
+name = "zhagmag-dresses-staging"
+main = "src/phase14br-billing-v1.js"
+# Legacy Phase 14BE compatibility marker only (inactive): main = "src/phase14be-operational-lifecycle.js"
+# Legacy Screen 8 regression compatibility marker only (inactive): main = "src/phase14bd-screen8-reports.js"
+# Phase 14BR adds Billing V1 over Global Rental Reports while preserving the cumulative stack.
+# Legacy Global Rental Reports compatibility marker only (inactive): main = "src/phase14bq-global-rental-reports.js"
+# Legacy Phase 14BG compatibility marker only (inactive): main = "src/phase14bg-settings-whatsapp.js"
+# Legacy Screen 4 regression compatibility marker only (inactive): main = "src/phase14aw-screen4-bookings.js"
+compatibility_date = "2026-09-13"
+keep_vars = true
+
+[vars]
+APP_NAME = "ઝગમગ ડ્રેસીસ"
+APP_ENV = "staging"
+PUBLIC_WHATSAPP_NUMBER = ""
+PUBLIC_CALL_NUMBER = ""
+ALLOWED_ORIGINS = ""
+SESSION_TTL_HOURS = "12"
+COOKIE_SECURE = "true"
+
+[assets]
+directory = "../deploy/staging-assets"
+binding = "ASSETS"
+run_worker_first = ["/api/*", "/", "/index.html", "/admin", "/admin/", "/admin/index.html"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "zhagmag-dresses-staging"
+database_id = "__STAGING_D1_DATABASE_ID__"
+migrations_dir = "../database/migrations"

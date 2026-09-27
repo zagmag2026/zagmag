@@ -1,0 +1,24 @@
+name = "zhagmag-dresses"
+main = "src/phase14at-booking-lifecycle.js"
+compatibility_date = "2026-09-13"
+keep_vars = true
+
+[vars]
+APP_NAME = "ઝગમગ ડ્રેસીસ"
+APP_ENV = "production"
+PUBLIC_WHATSAPP_NUMBER = ""
+PUBLIC_CALL_NUMBER = ""
+ALLOWED_ORIGINS = ""
+SESSION_TTL_HOURS = "12"
+COOKIE_SECURE = "true"
+
+[assets]
+directory = "../deploy/production-assets"
+binding = "ASSETS"
+run_worker_first = ["/api/*", "/", "/index.html", "/admin", "/admin/", "/admin/index.html"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "zhagmag-dresses-production"
+database_id = "__PRODUCTION_D1_DATABASE_ID__"
+migrations_dir = "../database/migrations"

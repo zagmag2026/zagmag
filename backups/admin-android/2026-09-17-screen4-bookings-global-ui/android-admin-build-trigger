@@ -1,0 +1,8 @@
+Build Admin Android staging trigger
+Target: Screen 4 Bookings wizard + list + details refinement
+Scope: Reserved/Booked/Picked Up/Returned/All tabs; Search; compact status/item cards; 4-step Customer→Details→Items→Confirm wizard; date picker; inline New Customer; date-range availability; Booking Details action placement; Android system Back navigation
+Build: staging APK only
+Production Android identity: unchanged 0.14.5 / versionCode 1
+Worker contract: one date-range availability request for up to 300 bootstrap items
+Production: untouched
+Backup: backup/screen4-wizard-details-before-20260916

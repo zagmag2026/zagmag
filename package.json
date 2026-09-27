@@ -1,0 +1,29 @@
+{
+  "name": "zhagmag-dresses-rental-management",
+  "private": true,
+  "version": "0.14.5",
+  "workspaces": [
+    "apps/public-web",
+    "apps/admin-web",
+    "worker",
+    "shared"
+  ],
+  "scripts": {
+    "dev:public": "npm --workspace apps/public-web run dev",
+    "dev:admin": "npm --workspace apps/admin-web run dev",
+    "dev:worker": "npm --workspace worker run dev",
+    "build": "npm run build:shared && npm run build:public && npm run build:admin && npm run build:worker",
+    "build:shared": "npm --workspace shared run build",
+    "build:public": "npm --workspace apps/public-web run build",
+    "build:admin": "npm --workspace apps/admin-web run build",
+    "build:worker": "npm --workspace worker run build",
+    "test:hardening": "python3 tests/production_hardening.py && python3 tests/phase14d_regression.py && python3 tests/phase14e_regression.py && python3 tests/phase14h_regression.py && python3 tests/phase14l_regression.py && python3 tests/phase14m_regression.py && python3 tests/phase14n_regression.py && python3 tests/phase14o_regression.py && python3 tests/phase14p_regression.py && python3 tests/phase14q_regression.py && python3 tests/phase14r_regression.py && python3 tests/phase14s_regression.py && python3 tests/phase14t_regression.py && python3 tests/phase14u_regression.py && python3 tests/phase14v_regression.py && python3 tests/phase14w_regression.py && python3 tests/phase14x_regression.py && python3 tests/phase14x_category_form_regression.py && python3 tests/phase14x_category_drawer_regression.py && python3 tests/phase14x_icon_flicker_regression.py && python3 tests/phase14x_operational_status_regression.py && python3 tests/phase14x_missed_pickup_regression.py && python3 tests/phase14x_ui3_regression.py && python3 tests/phase14y_ui_uniformity_regression.py && python3 tests/phase14y_public_uniformity_regression.py && python3 tests/phase14z_missed_parity_regression.py && python3 tests/phase14aa_ui_stability_regression.py && python3 tests/phase14ac_visual_regression_fix.py && python3 tests/phase14ad_customer_canonical_regression.py && python3 tests/phase14ae_report_single_owner_regression.py && python3 tests/phase14af_form_canonical_regression.py && python3 tests/phase14ag_secondary_form_canonical_regression.py && python3 tests/phase14ah_remaining_ui_regression.py && python3 tests/phase14ai_detail_single_owner_regression.py && python3 tests/phase14aj_business_time_regression.py && python3 tests/phase14ak_partial_return_regression.py && python3 tests/phase14al_sequence_weekday_regression.py && python3 tests/phase14am_search_flow_regression.py && python3 tests/phase14an_master_list_parity_regression.py && python3 tests/phase14ao_erp_neutral_regression.py && python3 tests/phase14ap_erp_hierarchy_regression.py && python3 tests/phase14ar_bilingual_branding_regression.py && python3 tests/phase14as_booking_flow_regression.py && python3 tests/phase14at_booking_lifecycle_regression.py && python3 tests/phase14au_dashboard_screen2_regression.py && python3 tests/phase14av_customers_screen3_regression.py && python3 tests/phase14ba_screen5_item_management_regression.py && python3 tests/phase14bb_screen9_users_regression.py && python3 tests/phase14bc_screen10_settings_regression.py && python3 tests/phase14bd_screen8_reports_regression.py && python3 tests/phase14be_operational_lifecycle_regression.py && python3 tests/phase14bf_pending_improvements_regression.py && python3 tests/phase14bg_settings_whatsapp_regression.py && python3 tests/phase14bh_booking_related_feedback_ui_regression.py && python3 tests/phase14bm_whatsapp_status_groups_regression.py && python3 tests/phase14bn_whatsapp_flow_hardening_regression.py && python3 tests/phase14bq_global_reports_regression.py && python3 tests/phase14bu_working_hours_regression.py && python3 tests/phase14bv_audit_ist_timezone_regression.py && python3 tests/phase14cj_cross_domain_hardening_regression.py && python3 tests/phase14ck_groups7_12_hardening_regression.py && python3 tests/ui_batch_1to6_regression.py && python3 tests/groups13_18_hardening_regression.py && python3 tests/ui_login_batch_1to9_regression.py && python3 tests/booking_customer_quick_create_regression.py && python3 tests/item_image_viewer_regression.py && python3 tests/batch6_active_runtime_ui_regression.py && python3 tests/component_audit_batch1_5_regression.py && python3 tests/phase14br_billing_v1_regression.py && python3 tests/booking_billing_lifecycle_ui_regression.py && python3 tests/payment_bill_dashboard_cleanup_regression.py",
+    "build:staging": "node scripts/build-staging.mjs",
+    "render:staging-config": "node scripts/render-staging-config.mjs",
+    "preflight:staging": "node scripts/staging-preflight.mjs",
+    "smoke:staging": "node scripts/smoke-staging.mjs",
+    "staging:discover": "node scripts/discover-staging-d1.mjs",
+    "staging:activate": "node scripts/activate-staging.mjs",
+    "staging:verify": "node scripts/verify-staging-release.mjs"
+  }
+}

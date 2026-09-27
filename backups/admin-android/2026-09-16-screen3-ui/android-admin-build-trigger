@@ -1,0 +1,7 @@
+Build Admin Android staging trigger
+Target: Screen 3 Customers
+Scope: Screen 3 Customers + Screen 1/2 shared chrome + customer request coordination hardening
+Build: staging APK only
+Cloudflare/D1 deploy: not triggered by this file
+Production: untouched
+Source baseline before trigger: 6afa99f66d655a2f749e526e7e62248c943ddb1f

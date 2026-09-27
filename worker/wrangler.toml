@@ -1,0 +1,28 @@
+name = "zhagmag-dresses-api"
+main = "src/phase14br-billing-v1.js"
+# Legacy Phase 14BE compatibility marker only (inactive): main = "src/phase14be-operational-lifecycle.js"
+# Legacy Screen 8 regression compatibility marker only (inactive): main = "src/phase14bd-screen8-reports.js"
+# Phase 14BR adds Billing V1 over Global Rental Reports while preserving the cumulative stack.
+# Legacy Global Rental Reports compatibility marker only (inactive): main = "src/phase14bq-global-rental-reports.js"
+# Legacy Phase 14BG compatibility marker only (inactive): main = "src/phase14bg-settings-whatsapp.js"
+# Legacy Screen 4 regression compatibility marker only (inactive): main = "src/phase14aw-screen4-bookings.js"
+compatibility_date = "2026-09-01"
+keep_vars = true
+
+[vars]
+APP_NAME = "ઝગમગ ડ્રેસીસ"
+APP_ENV = "staging"
+PUBLIC_WHATSAPP_NUMBER = ""
+PUBLIC_CALL_NUMBER = ""
+ALLOWED_ORIGINS = "http://localhost:5173,http://localhost:5174"
+SESSION_TTL_HOURS = "12"
+COOKIE_SECURE = "true"
+
+# Set this as a secret, never commit a real value:
+# npx wrangler secret put INITIAL_OWNER_SETUP_TOKEN
+
+[[d1_databases]]
+binding = "DB"
+database_name = "zhagmag-dresses-staging"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "../database/migrations"

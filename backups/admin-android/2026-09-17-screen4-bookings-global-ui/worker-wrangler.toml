@@ -1,0 +1,23 @@
+name = "zhagmag-dresses-api"
+main = "src/phase14av-customers-screen3.js"
+# Screen 3 wrapper preserves Screen 2 + booking lifecycle cumulatively; production remains pinned separately.
+compatibility_date = "2026-09-01"
+keep_vars = true
+
+[vars]
+APP_NAME = "ઝગમગ ડ્રેસીસ"
+APP_ENV = "staging"
+PUBLIC_WHATSAPP_NUMBER = ""
+PUBLIC_CALL_NUMBER = ""
+ALLOWED_ORIGINS = "http://localhost:5173,http://localhost:5174"
+SESSION_TTL_HOURS = "12"
+COOKIE_SECURE = "true"
+
+# Set this as a secret, never commit a real value:
+# npx wrangler secret put INITIAL_OWNER_SETUP_TOKEN
+
+[[d1_databases]]
+binding = "DB"
+database_name = "zhagmag-dresses-staging"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "../database/migrations"
