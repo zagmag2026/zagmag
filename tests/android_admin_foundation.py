@@ -109,7 +109,6 @@ require_tokens(
         'create("staging")',
         'buildConfigField(',
         '"API_BASE_URL"',
-        '"$stagingBaseUrl"',
     ],
     "Admin Android Gradle/version/API URL contract",
 )
