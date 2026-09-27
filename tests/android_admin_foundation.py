@@ -106,7 +106,7 @@ for token, message in [
         "Staging API URL must be externally supplied through ZHAGMAG_STAGING_BASE_URL.",
     ),
     (
-        'buildConfigField("String", "API_BASE_URL", "\\"$stagingBaseUrl\\"")',
+        '"$stagingBaseUrl"',
         "Staging flavor must use the externally supplied staging API URL.",
     ),
     (
