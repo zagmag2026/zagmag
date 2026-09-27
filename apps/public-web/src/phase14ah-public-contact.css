@@ -1,0 +1,35 @@
+/* Phase 14AH — robust public footer contact icons.
+   Uses inline SVG icons inserted by the companion runtime so footer icons do not
+   depend on Material Symbols ligature rendering. */
+.footer-actions .phase14ah-footer-contact{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:7px!important;
+}
+.footer-actions .phase14ah-footer-contact::before{
+  content:none!important;
+  display:none!important;
+}
+.phase14ah-footer-icon{
+  width:1.22rem!important;
+  height:1.22rem!important;
+  min-width:1.22rem!important;
+  flex:0 0 1.22rem!important;
+  display:inline-grid!important;
+  place-items:center!important;
+  border-radius:.4rem!important;
+  color:currentColor!important;
+}
+.phase14ah-footer-icon svg{
+  width:1rem!important;
+  height:1rem!important;
+  display:block!important;
+  fill:currentColor!important;
+}
+.phase14ah-footer-icon.whatsapp{background:rgba(24,160,88,.12)!important}
+.phase14ah-footer-icon.call{background:rgba(42,101,184,.10)!important}
+@media(max-width:480px){
+  .footer-actions{width:100%!important;display:grid!important;grid-template-columns:1fr 1fr!important}
+  .footer-actions .phase14ah-footer-contact{width:100%!important;min-height:42px!important}
+}

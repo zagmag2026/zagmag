@@ -1,0 +1,5 @@
+/* Phase 14U — public native continuity + stale-while-refresh feedback. */
+.phase14u-refreshing{display:inline-flex;align-items:center;gap:7px;width:max-content;max-width:100%;margin:8px 0 10px;padding:6px 9px;border:1px solid rgba(219,197,207,.92);border-radius:999px;background:rgba(255,250,252,.96);color:#725665;font-size:.7rem;font-weight:850}.phase14u-refreshing::before{content:"";width:8px;height:8px;border:1.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:phase14u-public-spin .8s linear infinite}.item-grid.phase14u-stale-grid{opacity:.62;filter:saturate(.82);pointer-events:none;user-select:none;transition:opacity .15s ease}.item-grid.phase14u-stale-grid .item-card{transform:none!important}
+@keyframes phase14u-public-spin{to{transform:rotate(360deg)}}
+@media(max-width:700px){.phase14u-refreshing{margin:7px 0 9px;font-size:.66rem}.item-grid.phase14u-stale-grid{opacity:.68}}
+@media(prefers-reduced-motion:reduce){.phase14u-refreshing::before{animation:none!important}.item-grid.phase14u-stale-grid{transition:none!important}}

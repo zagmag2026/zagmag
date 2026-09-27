@@ -1,0 +1,18 @@
+/* Phase 14V — public request-integrity busy state. */
+body.phase14v-public-data-busy .category-chip,
+body.phase14v-public-data-busy .search-form button,
+body.phase14v-public-data-busy .pager button,
+body.phase14v-public-data-busy .availability-box button {
+  cursor: wait;
+  opacity: .68;
+}
+body.phase14v-public-data-busy [aria-disabled="true"] {
+  pointer-events: none;
+}
+body.phase14v-public-data-busy .availability-box input[type="date"]:disabled {
+  cursor: wait;
+  opacity: .74;
+}
+@media (prefers-reduced-motion: reduce) {
+  body.phase14v-public-data-busy * { scroll-behavior: auto !important; }
+}

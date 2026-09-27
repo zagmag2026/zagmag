@@ -1,0 +1,25 @@
+/* Phase 14AR — bilingual public/user view. Overlap-safe real text rendering. */
+.phase14ar-public-language{
+  min-height:36px;padding:6px 10px;border:1px solid rgba(125,23,71,.22);border-radius:9px;background:#fff;color:#4b1230;
+  font-weight:800;white-space:nowrap;cursor:pointer;flex:0 0 auto
+}
+.phase14ar-public-language:hover{background:#f4f5f6}
+/* Backward-safe cleanup for the retired pseudo-element translation path. */
+.phase14ar-public-copy{position:static!important;color:inherit!important}
+.phase14ar-public-copy::after{content:none!important;display:none!important}
+.phase14ar-public-copy>*{color:inherit!important}
+.topbar{flex-wrap:wrap}
+.brand-wrap{min-width:0!important;flex:1 1 220px}
+.brand{overflow-wrap:anywhere}
+.quick-contact{flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:760px){
+  .phase14ar-public-language{min-height:40px}
+  .quick-contact>.phase14ar-public-language{order:-1}
+  .topbar{gap:9px!important}
+}
+@media(max-width:430px){
+  .quick-contact{display:flex!important;margin-left:auto!important}
+  .quick-contact .mini-btn{display:none!important}
+  .phase14ar-public-language{min-height:36px;padding:6px 8px}
+  .brand-wrap{flex:1 1 calc(100% - 112px)}
+}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="gu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#7d1747" />
+    <meta name="app-revision" content="0.14.5-public-boot-r4" />
+    <meta name="public-boot-module" content="/src/phase14c.js" />
+    <title>ઝગમગ ડ્રેસીસ</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      if (new URLSearchParams(location.search).has("browser_smoke")) {
+        window.__zhagmagBootErrors = [];
+        const recordBootError = (value) => {
+          const text = value instanceof Error ? (value.stack || value.message) : String(value || "Unknown browser error");
+          window.__zhagmagBootErrors.push(text);
+        };
+        window.addEventListener("error", (event) => recordBootError(event.error || event.message || "Browser resource error"), true);
+        window.addEventListener("unhandledrejection", (event) => recordBootError(event.reason || "Unhandled promise rejection"));
+        window.setTimeout(() => {
+          const root = document.getElementById("root");
+          if (root && !root.querySelector(".app")) {
+            const diagnostic = document.createElement("pre");
+            diagnostic.id = "boot-diagnostic";
+            diagnostic.hidden = true;
+            diagnostic.textContent = window.__zhagmagBootErrors.length ? window.__zhagmagBootErrors.join("\n---\n") : "NO_BROWSER_ERROR_CAPTURED";
+            root.appendChild(diagnostic);
+          }
+        }, 6500);
+      }
+    </script>
+    <script type="module" src="/src/phase14c.js"></script>
+  </body>
+</html>
