@@ -115,7 +115,7 @@ require_tokens(
         '"$stagingBaseUrl"',
     ],
     "Admin Android Gradle/version/API URL contract",
-) if token not in build_text:
+    build_text:
         errors.append(message)
 manifest = read(ANDROID / "app" / "src" / "main" / "AndroidManifest.xml")
 for token in [
