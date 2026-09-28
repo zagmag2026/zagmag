@@ -331,7 +331,7 @@ These rules apply to every applicable Admin Android screen. Screen-specific docu
 - Use `AppCompactFixedTabs` when all tabs fit without horizontal scrolling. The row fills the available width and divides it **equally** between tabs; each label is centered in its equal-width cell.
 - Use `AppCompactScrollableTabs` when the tab set genuinely needs horizontal scrolling. The validated Run #79 behavior is authoritative: **0dp edge padding, 96dp minimum tab width**, 44dp height, shared divider/indicator, selected SemiBold and unselected Normal. Tab geometry/spacing/indicator behavior must not change; the shared tab label font is **16sp**.
 - Fixed/non-scroll tabs fill the available width equally. Scrollable tabs preserve the Run #79 minimum-width behavior and may grow for longer labels.
-- Customers and Category & Items use equal full-width tabs. Booking lifecycle, Reports, Settings main tabs and WhatsApp Centre use scrollable tabs. Booking Details uses equal-width fixed tabs for **Details | Pickup | Return | Bill | History**.
+- Customers and Category & Items use equal full-width tabs. Booking lifecycle, Reports, Settings main tabs and WhatsApp Centre use scrollable tabs. Booking Details uses scrollable tabs for **Details | Pickup | Return | Bill | History** with the validated **96dp minimum tab width**.
 - Changing a tab remains a presentation/navigation action and must not itself create a transient success popup.
 
 
