@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +39,7 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -152,10 +154,7 @@ internal fun Screen11Billing(
         if (!state.busy && !state.loading) {
             if (embedded) {
                 when (state.screen) {
-                    BillingScreen.EDIT -> {
-                        val id = state.billId
-                        if (id.isNullOrBlank()) onBack() else vm.openDetail(id)
-                    }
+                    BillingScreen.EDIT -> onBack()
                     BillingScreen.DETAIL, BillingScreen.SETTLEMENT, BillingScreen.SELECT_ORDER, BillingScreen.LIST -> onBack()
                 }
             } else {
@@ -193,14 +192,14 @@ internal fun Screen11Billing(
 
     if (!initialBookingId.isNullOrBlank() && state.screen == BillingScreen.LIST) {
         when {
-            state.loading -> LoadingState("Opening Bill…")
+            state.loading -> BillingCenteredLoading("Opening Bill…")
             !state.detailLoadError.isNullOrBlank() -> BillingLoadFailureScreen(
                 message = state.detailLoadError.orEmpty(),
                 onRetry = { vm.retryBookingBill(initialBookingId) },
                 onBack = performBack,
                 modifier = modifier
             )
-            else -> LoadingState("Opening Bill…")
+            else -> BillingCenteredLoading("Opening Bill…")
         }
     } else when (state.screen) {
         BillingScreen.LIST -> BillingListScreen(
@@ -256,7 +255,7 @@ internal fun Screen11Billing(
             modifier = modifier
         )
         BillingScreen.DETAIL -> when {
-            state.loading -> LoadingState()
+            state.loading -> BillingCenteredLoading()
             state.detail == null && !state.detailLoadError.isNullOrBlank() -> BillingLoadFailureScreen(
                 message = state.detailLoadError.orEmpty(),
                 onRetry = vm::retryDetail,
@@ -318,6 +317,32 @@ internal fun Screen11Billing(
                 performBack()
             }
         )
+    }
+}
+
+@Composable
+private fun BillingCenteredLoading(
+    label: String = "Loading…",
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(AppSpacing.sm)
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(28.dp),
+                strokeWidth = 2.5.dp
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = AppTextMuted
+            )
+        }
     }
 }
 
