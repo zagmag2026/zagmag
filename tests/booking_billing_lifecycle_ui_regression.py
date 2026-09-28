@@ -48,7 +48,8 @@ for token in ["ScrollableTabRow(", "edgePadding = 0.dp", "minTabWidth: androidx.
 if ".horizontalScroll(rememberScrollState())" in scroll or "minTabWidth: androidx.compose.ui.unit.Dp = 0.dp" in scroll:
     errors.append("Scrollable tabs must not regress to the post-Run-79 content-width implementation.")
 need(settings, "AppCompactScrollableTabs(", "Settings Run 79 scrollable tabs")
-need(details, "AppCompactFixedTabs(", "Booking Details Run 79 fixed tabs")
+need(details, "AppCompactScrollableTabs(", "Booking Details Run 79 scrollable tabs")
+need(details, "minTabWidth = 96.dp", "Booking Details Run 79 minimum tab width")
 need(read(ANDROID / "CustomerScreenV4.kt"), "AppCompactFixedTabs(", "Customer fixed tabs")
 need(read(ANDROID / "Screen5ItemManagement.kt"), "AppCompactFixedTabs(", "Category & Items fixed tabs")
 need(read(ANDROID / "Screen8Reports.kt"), "AppCompactScrollableTabs(", "Reports scrollable tabs")
