@@ -68,7 +68,7 @@ import com.nimsdeveloper.zhagmagdresses.admin.ui.components.DangerTextButton
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.ActionTone
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.AppBackHeader
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.AppDestructiveConfirmDialog
-import com.nimsdeveloper.zhagmagdresses.admin.ui.components.AppCompactFixedTabs
+import com.nimsdeveloper.zhagmagdresses.admin.ui.components.AppCompactScrollableTabs
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.AppFeedbackHost
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.AppFilterOption
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.AppSelectField
@@ -190,13 +190,14 @@ fun BookingDetailsScreen6(
                 onBack = viewModel::backFromEditor,
                 enabled = !viewModel.actionBusy
             )
-            AppCompactFixedTabs(
+            AppCompactScrollableTabs(
                 labels = detailTabs,
                 selectedIndex = tab,
                 onSelect = { index ->
                     viewModel.clearActionFeedback()
                     tab = index
                 },
+                minTabWidth = 96.dp,
                 modifier = Modifier.fillMaxWidth()
             )
             Screen11Billing(
@@ -250,13 +251,14 @@ fun BookingDetailsScreen6(
             }
         }
         item {
-            AppCompactFixedTabs(
+            AppCompactScrollableTabs(
                 labels = detailTabs,
                 selectedIndex = tab,
                 onSelect = { index ->
                     viewModel.clearActionFeedback()
                     tab = index
-                }
+                },
+                minTabWidth = 96.dp
             )
         }
 
