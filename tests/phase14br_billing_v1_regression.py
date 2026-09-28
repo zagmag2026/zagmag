@@ -84,6 +84,13 @@ for token in [
 if "pb.payment_status" in payment_classifier:
     errors.append("Booking payment classifier must derive from authoritative totals, not stored payment_status.")
 
+# Billing navigation/loading regression.
+need(billing_vm, "BillingScreen.EDIT -> {", "Billing ViewModel edit back branch")
+need(billing_vm, "screen = BillingScreen.LIST", "Billing ViewModel edit back returns to list")
+need(billing_ui, "BillingScreen.EDIT -> onBack()", "Billing embedded edit back")
+need(billing_ui, "private fun BillingCenteredLoading(", "Billing centered loading")
+need(billing_ui, "contentAlignment = Alignment.Center", "Billing centered loading alignment")
+
 # Final Bill direct customer WhatsApp share helper.
 for token in [
     'fun shareDirectToCustomerWhatsApp(',
