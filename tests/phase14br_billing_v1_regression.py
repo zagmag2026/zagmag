@@ -211,7 +211,8 @@ for token in [
 for token in [
     '!detail.booking.confirmationState.equals("RESERVED", true)',
     'listOf("Details", "Pickup", "Return", "Bill", "History")',
-    "AppCompactFixedTabs(",
+    "AppCompactScrollableTabs(",
+    "minTabWidth = 96.dp",
 ]:
     need(booking_details, token, "Booking Details lifecycle actions")
 need(booking_actions, 'SoftActionSpec(Icons.Rounded.ReceiptLong, "Bill"', "Shared Bill quick action")
@@ -246,7 +247,8 @@ if ".horizontalScroll(rememberScrollState())" in tab_family or "minTabWidth: and
     errors.append("Run #79 tabs regressed to the later content-width implementation.")
 need(customers, "AppCompactFixedTabs(", "Customers fixed tabs")
 need(screen5, "AppCompactFixedTabs(", "Category & Items fixed tabs")
-need(booking_details, "AppCompactFixedTabs(", "Booking Details fixed tabs")
+need(booking_details, "AppCompactScrollableTabs(", "Booking Details scrollable tabs")
+need(booking_details, "minTabWidth = 96.dp", "Booking Details minimum tab width")
 need(root_ui, "AppCompactScrollableTabs(", "Bookings scrollable tabs")
 need(reports, "AppCompactScrollableTabs(", "Reports scrollable tabs")
 if settings.count("AppCompactScrollableTabs(") < 2:
@@ -269,7 +271,7 @@ for token in [
     need(billing_doc, token, "Billing module")
 for token in [
     "96dp minimum tab width",
-    "Booking Details uses equal-width fixed tabs",
+    "Booking Details uses scrollable tabs",
     "icon + Label → icon + Status → icon + Date → icon + Day",
 ]:
     need(ui_rules, token, "Global UI rules")
