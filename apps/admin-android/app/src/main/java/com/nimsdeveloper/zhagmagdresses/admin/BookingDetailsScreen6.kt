@@ -187,7 +187,9 @@ fun BookingDetailsScreen6(
             MainScreenDateRow(businessDate)
             AppBackHeader(
                 title = "Booking Details",
-                onBack = viewModel::backFromEditor,
+                onBack = {
+                    if (tab == BILL6) tab = DETAIL6 else viewModel.backFromEditor()
+                },
                 enabled = !viewModel.actionBusy
             )
             AppCompactScrollableTabs(
