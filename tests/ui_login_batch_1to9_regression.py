@@ -126,7 +126,7 @@ need(
 need(
     booking_details,
     "AppCompactFixedTabs(",
-    "Active Booking Run 79 fixed tab component",
+    "Active Booking Details fixed tab component",
 )
 
 need(
