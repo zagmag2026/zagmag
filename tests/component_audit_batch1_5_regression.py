@@ -81,7 +81,7 @@ if "AppCompactScrollableTabs(" in fixed_tabs:
 if ".horizontalScroll(rememberScrollState())" in tab_family or "minTabWidth: androidx.compose.ui.unit.Dp = 0.dp" in tab_family:
     errors.append("Shared tabs regressed to the post-Run-79 content-width implementation.")
 need(settings, "AppCompactScrollableTabs(", "Settings main/WhatsApp tabs use Run 79 scrollable tabs")
-need(details, "AppCompactFixedTabs(", "Booking Details uses Run 79 fixed tabs")
+need(details, "AppCompactScrollableTabs(", "Booking Details uses Run 79 scrollable tabs")
 need(screen5, "AppCompactFixedTabs(", "Category & Items uses fixed tabs")
 
 # Batch 2: sections/actions/search and runtime quick-create.
