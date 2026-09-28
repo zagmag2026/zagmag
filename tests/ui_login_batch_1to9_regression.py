@@ -125,8 +125,13 @@ need(
 
 need(
     booking_details,
-    "AppCompactFixedTabs(",
-    "Active Booking Details fixed tab component",
+    "AppCompactScrollableTabs(",
+    "Active Booking Details scrollable tab component",
+)
+need(
+    booking_details,
+    "minTabWidth = 96.dp",
+    "Active Booking Details minimum tab width",
 )
 
 need(
