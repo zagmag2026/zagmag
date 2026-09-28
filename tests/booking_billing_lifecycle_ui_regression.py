@@ -295,6 +295,14 @@ for token in [
     "embedded = true",
 ]:
     need(details, token, "inline Booking Bill tab")
+
+# Bill opened from Booking Details must return to the same Booking Details tab
+# when the Bill screen header Back action is used.
+need(
+    details,
+    'if (tab == BILL6) tab = DETAIL6 else viewModel.backFromEditor()',
+    "Booking Details Bill header back navigation",
+)
 for token in ["embedded: Boolean = false", '"billing-embedded-', "if (!embedded)", '"Generate Bill"']:
     need(billing_ui, token, "embedded Billing workspace")
 
