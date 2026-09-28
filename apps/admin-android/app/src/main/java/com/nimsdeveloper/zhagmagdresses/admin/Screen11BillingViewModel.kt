@@ -534,13 +534,15 @@ internal class Screen11BillingViewModel(
                 loadList(1)
             }
             BillingScreen.EDIT -> {
-                val id = state.billId
-                if (id.isNullOrBlank()) {
-                    state = state.copy(screen = BillingScreen.LIST, error = null, message = null)
-                    loadList(1)
-                } else {
-                    openDetail(id)
-                }
+                state = state.copy(
+                    screen = BillingScreen.LIST,
+                    error = null,
+                    message = null,
+                    detail = null,
+                    detailLoadError = null,
+                    whatsapp = null
+                )
+                loadList(1)
             }
             BillingScreen.DETAIL -> {
                 state = state.copy(screen = BillingScreen.LIST, error = null, message = null, whatsapp = null)
