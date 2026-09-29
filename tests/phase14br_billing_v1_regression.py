@@ -106,7 +106,6 @@ for token in [
     'LabeledSectionCard(title = "Pickup / Return Status")',
     'LabeledSectionCard(title = "Amount Summary")',
     'LabeledSectionCard(title = "Notes")',
-    'LabeledSectionCard(title = "Actions")',
     'label = "Advance Received"',
     'label = "Other Received"',
     'BillingAmountRow("Total Received", state.totalReceivedAmount',
