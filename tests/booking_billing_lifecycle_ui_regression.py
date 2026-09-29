@@ -303,7 +303,7 @@ need(
     'if (tab == BILL6) tab = DETAIL6 else viewModel.backFromEditor()',
     "Booking Details Bill header back navigation",
 )
-for token in ["embedded: Boolean = false", '"billing-embedded-', "if (!embedded)", '"Generate Bill"']:
+for token in ["embedded: Boolean = false", '"billing-embedded-', "if (!embedded)", '"Create Quotation"']:
     need(billing_ui, token, "embedded Billing workspace")
 
 # Shared Order card/payment badge, Order Preview and merged Payment History.
@@ -344,7 +344,7 @@ if "SELECT ?,?,?,?,?,0,0 WHERE EXISTS (SELECT 1 FROM bookings WHERE id=? AND upd
 
 for token in [
     'title = if (bill.status == "DRAFT") "Quotation Header" else "Bill Header"',
-    'LabeledSectionCard(title = "Booking & Customer")',
+    'LabeledSectionCard(title = "Booking & Customer")',    'title = if (state.billId.isNullOrBlank()) "Create Quotation" else "Edit Quotation"',
     'LabeledSectionCard(title = "Items (${state.lines.size})")',
     'LabeledSectionCard(title = "Pickup / Return Status")',
     'LabeledSectionCard(title = "Amount Summary")',
@@ -359,6 +359,8 @@ for token in [
     'text = "Finalize Bill"',
     'text = "Print"',
 ]:
+    'Screen8PdfExporter.shareDirectToCustomerWhatsApp',
+    'Unable to download Quotation PDF.',
     need(billing_ui, token, "final compact Bill hierarchy")
 
 for token in [
