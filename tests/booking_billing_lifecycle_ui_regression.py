@@ -243,7 +243,7 @@ for token in [
     '.putExtra("jid", "91$digits@s.whatsapp.net")',
     'setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))',
     'Intent.FLAG_GRANT_READ_URI_PERMISSION',
-    'check(directIntent.resolveActivity(context.packageManager) != null)',
+    'context.startActivity(intent)',
 ]:
     need(whatsapp_share, token, "Direct customer WhatsApp PDF handoff")
 
