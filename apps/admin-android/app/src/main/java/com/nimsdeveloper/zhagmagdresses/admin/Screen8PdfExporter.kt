@@ -527,21 +527,38 @@ internal object Screen8PdfExporter {
         require(digits.length == 10) { "Customer mobile number is invalid." }
 
         val uri = contentUri(context, file)
-        val jid = "91$digits@s.whatsapp.net"
+        val readGrant = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        val whatsappPackage = "com.whatsapp"
+
         val intent = Intent(Intent.ACTION_SEND)
             .setType(MIME)
-            .setPackage("com.whatsapp")
+            .setPackage(whatsappPackage)
             .putExtra(Intent.EXTRA_STREAM, uri)
             .putExtra(Intent.EXTRA_SUBJECT, title)
             .putExtra(Intent.EXTRA_TEXT, title)
             .putExtra("jid", "91$digits@s.whatsapp.net")
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .addFlags(readGrant)
         intent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
 
         check(intent.resolveActivity(context.packageManager) != null) {
             "WhatsApp is not installed."
         }
-        context.startActivity(intent)
+        context.grantUriPermission(whatsappPackage, uri, readGrant)
+
+        try {
+            context.startActivity(intent)
+        } catch (firstError: Exception) {
+            val fallbackIntent = Intent(Intent.ACTION_SEND)
+                .setType(MIME)
+                .setPackage(whatsappPackage)
+                .putExtra(Intent.EXTRA_STREAM, uri)
+                .putExtra(Intent.EXTRA_SUBJECT, title)
+                .putExtra(Intent.EXTRA_TEXT, title)
+                .addFlags(readGrant)
+            fallbackIntent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
+            context.grantUriPermission(whatsappPackage, uri, readGrant)
+            context.startActivity(fallbackIntent)
+        }
     }
 
     fun print(context: Context, file: File, jobName: String) {
