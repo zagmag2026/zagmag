@@ -236,6 +236,14 @@ for token in [
     need(billing_pdf, token, "Billing PDF amount summary")
 whatsapp_share = read(ANDROID / "Screen8PdfExporter.kt")
 need(whatsapp_share, 'fun shareDirectToCustomerWhatsApp(', "Direct customer WhatsApp PDF handoff")
+need(whatsapp_share, 'fun shareQuotationDirectToCustomerWhatsApp(', "Quotation direct customer WhatsApp PDF handoff")
+for token in [
+    '.setComponent(ComponentName("com.whatsapp", "com.whatsapp.ContactPicker"))',
+    '.putExtra("jid", "91$digits@s.whatsapp.net")',
+    '.putExtra(Intent.EXTRA_STREAM, uri)',
+    'context.startActivity(intent)',
+]:
+    need(whatsapp_share, token, "Quotation direct customer WhatsApp PDF handoff")
 if '.setPackage("com.whatsapp")' not in whatsapp_share and '.setPackage(whatsappPackage)' not in whatsapp_share:
     errors.append("Direct customer WhatsApp PDF handoff: missing WhatsApp package binding")
 for token in [
