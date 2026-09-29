@@ -12,8 +12,8 @@ Historical standalone Bills, if any exist in non-production/history data, remain
 ### Item Master
 - Item Master has one fixed numeric `Rent` field.
 - Rent is the default rental rate only.
-- A Draft Bill auto-fills Rent Rate from Item Master.
-- Draft Rent Rate remains editable so the actually charged rent may differ from the Item Master default.
+- A Quotation auto-fills Rent Rate from Item Master.
+- Quotation Rent Rate remains editable so the actually charged rent may differ from the Item Master default.
 - Final Bills store snapshots; later Item Master Rent changes never alter old Final Bills.
 - Deposit, GST, late fee, damage charge and miscellaneous pricing remain out of scope.
 
@@ -24,14 +24,14 @@ Historical standalone Bills, if any exist in non-production/history data, remain
 - Focusing an amount/quantity field selects the complete current numeric value so typing replaces it directly.
 - Rent is not shown in the Booking flow.
 - Advance is saved for Reserve, Confirm and Directly Pickup.
-- A linked Draft Bill auto-fills the saved Booking Advance.
+- A linked Quotation auto-fills the saved Booking Advance.
 
 ## Bill entry
 There are two entry paths, both linked to an Order:
 
 1. **Booking / Order action → Bill**
    - Existing Bill → open that Bill.
-   - No Bill → open a Booking-seeded Bill Draft editor.
+   - No Bill → open a Booking-seeded Quotation editor.
    - Cancelled Order with an existing Bill → open the historical Bill.
    - Cancelled Order with Advance settlement but no Bill → open the read-only Advance Settlement view.
    - Cancelled Order with no Bill and no Advance → Bill action is hidden.
@@ -40,7 +40,7 @@ There are two entry paths, both linked to an Order:
    - Opens **Select Order**.
    - Shows only Orders that do not already have a Bill.
    - Search supports Order/Booking number, Customer name and Mobile.
-   - Selecting **Create Draft** creates the linked Draft server-side, then opens it.
+   - Selecting **Create Quotation** creates the linked Draft server-side, then opens it.
    - Cancelled Orders are not eligible for a new Bill.
 
 Direct/standalone Customer + Item Bill creation is removed.
@@ -93,7 +93,7 @@ Worker/D1 recalculates and validates monetary totals; Android values are not aut
 ## Lifecycle
 `Draft → Final → Cancelled`
 
-Draft:
+Quotation:
 - always linked to a **confirmed** Order for newly created Bills; Reserved Orders do not have Bills;
 - may be created from Booked onward and saved before Return completion;
 - Qty, Rent Rate, Discount, Advance Received, Other Received and Notes remain editable;
@@ -151,15 +151,15 @@ Pickup / Return Status is intentionally removed from the on-screen Bill Details 
 - Bill Header shows Bill No., a **compact calendar + DD-MM-YYYY Bill Date control at the top-right**, and a Draft / Finalized status badge.
 - Booking & Customer shows Customer Name → Mobile → optional Address → Order/Booking ID with consistent icons.
 - Bill list cards reuse the same identity order and final terminology: formatted Bill Date, **Bill Amount** and **Balance Due**; legacy `Net` / raw ISO-date wording is not shown.
-- Select Order cards use Customer Name → Mobile → optional Address → Order ID and do **not** repeat Pickup/Return badges. Bottom actions are **Order Preview | Create Draft** in one line.
-- Bills List linked cards use **Order Preview | Edit** for Draft and **Order Preview | View** for Finalized; standalone/legacy Bills hide Order Preview.
+- Select Order cards use Customer Name → Mobile → optional Address → Order ID and do **not** repeat Pickup/Return badges. Bottom actions are **Order Preview | Create Quotation** in one line.
+- Bills List linked cards use **Order Preview | Edit** for Quotation and **Order Preview | View** for Finalized; standalone/legacy Bills hide Order Preview.
 - Order Preview is one shared read-only Order Card component reused by Select Order and Bills List.
-- **Items (x)** contains all items in one section/card; each item is a separate compact row with image, name/code/category, Qty × Rent Rate and Line Amount. Draft Rent Rate is seeded from Item Master and remains editable; Finalized values are stored as snapshots.
+- **Items (x)** contains all items in one section/card; each item is a separate compact row with image, name/code/category, Qty × Rent Rate and Line Amount. Quotation Rent Rate is seeded from Item Master and remains editable; Finalized values are stored as snapshots.
 - Draft editor Pickup / Return shows Done / Pending, Date and Day. Bill Details omits this block.
 - Finalized Bill PDF retains Pickup / Return and shows **Status + Date + Day + actual event Time** using pickup/return event timestamps. If an actual event time is unavailable, no fake time is rendered.
 - Amount Summary is exactly: Item Total − Discount = Bill Amount; Advance Received + Other Received = Total Received; Bill Amount − Total Received = Balance Due. A single shared **Pending Payment | Part Payment | Full Payment** badge appears at the top-right of the Amount Summary. After Total Received, one separator precedes a normal emphasized Balance Due row; there is no nested Balance Due card and no duplicate bottom Payment Status row.
 - Notes are editable only in Draft.
-- Draft Actions: Save Draft | Finalize Bill. Finalize remains disabled and server-rejected until 100% Return.
+- Quotation Actions: Save Quotation | Finalize Bill. Finalize remains disabled and server-rejected until 100% Return.
 - Finalized Actions are unboxed shared buttons in two rows: **View | Share** then **Download | Print**. Existing View/Share/Download/Print behavior is unchanged.
 
 Booking lifecycle action visibility is state-based: Edit is Reserved-only; Reserved has no Bill. From Booked onward, Bill is available and Edit is removed.
@@ -271,7 +271,7 @@ Version remains `0.14.5`, Android versionCode `1`.
 
 ## Booking History payment integration
 - Booking Details → History merges lifecycle events with linked Bill audit events chronologically.
-- Payment history shows Bill Draft Created/Updated/Finalized/Cancelled and, when values changed, Bill Amount, Advance Received, Other Received, Total Received, Balance Due and Payment Status as old → new values.
+- Payment history shows Quotation Created/Updated/Finalized/Cancelled and, when values changed, Bill Amount, Advance Received, Other Received, Total Received, Balance Due and Payment Status as old → new values.
 - User/Staff and Date/Day/Time reuse the existing Booking History presentation when available.
 
 
@@ -287,3 +287,10 @@ Version remains `0.14.5`, Android versionCode `1`.
 - Select Order uses the same Loading → Failure/Retry → Successful Empty distinction and next-page retry.
 - Bill Detail load failure provides explicit Retry and Back.
 - Embedded Booking Details → Bill never remains on an indefinite opening spinner after failure/business block; it renders the reason with Retry + Back.
+
+
+## Quotation presentation
+- The editable internal `DRAFT` Bill lifecycle state is presented in Admin UI as **Quotation**; the underlying D1/Worker status remains `DRAFT` for compatibility and server authority.
+- A Quotation can be edited/saved before Finalize and its PDF can be viewed, downloaded, printed and shared directly to the customer's WhatsApp.
+- Quotation and Final Bill PDFs use the same layout/content hierarchy but have distinct visual colour themes and document titles.
+- Quotation PDF generation does not require a finalized Bill No.; it uses the linked Order/Booking as the reference.
