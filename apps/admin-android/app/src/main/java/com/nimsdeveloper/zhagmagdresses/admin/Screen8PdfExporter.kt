@@ -527,6 +527,7 @@ internal object Screen8PdfExporter {
         require(digits.length == 10) { "Customer mobile number is invalid." }
 
         val uri = contentUri(context, file)
+        val jid = "91$digits@s.whatsapp.net"
         val intent = Intent(Intent.ACTION_SEND)
             .setType(MIME)
             .setPackage("com.whatsapp")
@@ -535,7 +536,11 @@ internal object Screen8PdfExporter {
             .putExtra(Intent.EXTRA_TEXT, title)
             .putExtra("jid", "91$digits@s.whatsapp.net")
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
 
+        check(intent.resolveActivity(context.packageManager) != null) {
+            "WhatsApp is not installed."
+        }
         context.startActivity(intent)
     }
 
