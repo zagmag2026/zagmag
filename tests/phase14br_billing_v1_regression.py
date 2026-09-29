@@ -30,6 +30,7 @@ billing_vm = read(ANDROID / "Screen11BillingViewModel.kt")
 billing_repo = read(ANDROID / "Screen11BillingRepository.kt")
 billing_models = read(ANDROID / "Screen11BillingModels.kt")
 billing_pdf = read(ANDROID / "Screen11BillingPdfExporter.kt")
+billing_screen = read(ANDROID / "Screen11Billing.kt")
 billing_share = read(ANDROID / "Screen8PdfExporter.kt")
 booking_details = read(ANDROID / "BookingDetailsScreen6.kt")
 booking_actions = read(ANDROID / "BookingCardActions.kt")
@@ -199,9 +200,9 @@ for token in [
     'canvas.drawText(documentTitle,',
     'Zhagmag_Quotation_$safeNo.pdf',
     'Screen8PdfExporter.shareDirectToCustomerWhatsApp',
-    'Unable to share Quotation PDF.',
 ]:
     need(billing_pdf, token, "Quotation PDF workflow")
+need(billing_screen, 'error.message ?: "Unable to share Quotation PDF."', "Quotation PDF surfaced error")
 
 # Final PDF hierarchy.
 for token in [
