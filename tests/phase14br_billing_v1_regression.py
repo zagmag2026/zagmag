@@ -101,7 +101,6 @@ for token in [
 
 # Final Bill editor hierarchy.
 for token in [
-    'LabeledSectionCard(title = "Bill Header")',
     'LabeledSectionCard(title = "Booking & Customer")',
     'LabeledSectionCard(title = "Items (${state.lines.size})")',
     'LabeledSectionCard(title = "Pickup / Return Status")',
@@ -112,7 +111,7 @@ for token in [
     'label = "Other Received"',
     'BillingAmountRow("Total Received", state.totalReceivedAmount',
     "BillingBalanceDue(state.balanceAmount)",
-    'text = "Save Draft"',
+    'text = "Save Quotation"',
     'text = "Finalize Bill"',
     'text = "View"',
     'text = "Share"',
@@ -185,10 +184,28 @@ for token in ["val notes: String = """, "val pickupDate: String = """, "val retu
     need(billing_models, token, "Billing models")
 need(notes_migration, "ALTER TABLE bills ADD COLUMN notes TEXT", "Billing notes migration")
 
+# Quotation terminology and PDF lifecycle.
+for token in [
+    'label = "Add Quotation"',
+    'AppFilterOption("DRAFT", "Quotation")',
+    'text = "Create Quotation"',
+    'text = "Save Quotation"',
+    'title = if (bill.status == "DRAFT") "Quotation Header" else "Bill Header"',
+    'if (bill.status == "DRAFT" || !bill.billNo.isNullOrBlank())',
+    'title = if (bill.status == "DRAFT") "Quotation ${bill.bookingNo ?: ""}" else "Final Bill ${bill.billNo}"',
+]:
+    need(billing_ui, token, "Quotation UI workflow")
+for token in [
+    'val isQuotation = bill.status == "DRAFT"',
+    'canvas.drawText(documentTitle,',
+    'Zhagmag_Quotation_$safeNo.pdf',
+]:
+    need(billing_pdf, token, "Quotation PDF workflow")
+
 # Final PDF hierarchy.
 for token in [
     "PdfDocument()",
-    'canvas.drawText("BILL"',
+    'canvas.drawText(documentTitle,',
     '"Booking & Customer"',
     'Items (${detail.items.size})',
     '"Pickup / Return"',
