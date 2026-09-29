@@ -28,7 +28,8 @@ internal object Screen11BillingPdfExporter {
         detail: BillingDetail
     ): File {
         val bill = detail.bill
-        require(!bill.billNo.isNullOrBlank()) { "Finalize the Bill before creating PDF." }
+        val isQuotation = bill.status == "DRAFT"
+        if (!isQuotation) require(!bill.billNo.isNullOrBlank()) { "Finalize the Bill before creating PDF." }
 
         val pageWidth = 595
         val pageHeight = 842
@@ -50,19 +51,19 @@ internal object Screen11BillingPdfExporter {
         val muted = Paint(small).apply { color = Color.rgb(90, 101, 114) }
         val brand = Paint(bold).apply {
             textSize = 14f
-            color = Color.rgb(20, 73, 145)
+            color = if (isQuotation) Color.rgb(83, 72, 138) else Color.rgb(20, 73, 145)
         }
         val billTitle = Paint(bold).apply {
             textSize = 22f
-            color = Color.rgb(26, 49, 78)
+            color = if (isQuotation) Color.rgb(62, 55, 104) else Color.rgb(26, 49, 78)
         }
         val section = Paint(bold).apply {
             textSize = 9.5f
-            color = Color.rgb(20, 73, 145)
+            color = if (isQuotation) Color.rgb(83, 72, 138) else Color.rgb(20, 73, 145)
         }
         val amountStrong = Paint(bold).apply {
             textSize = 10.5f
-            color = Color.rgb(26, 49, 78)
+            color = if (isQuotation) Color.rgb(62, 55, 104) else Color.rgb(26, 49, 78)
         }
         val balancePaint = Paint(bold).apply {
             textSize = 13f
@@ -74,7 +75,7 @@ internal object Screen11BillingPdfExporter {
         }
         val cardBorder = Paint(line).apply { style = Paint.Style.STROKE }
         val softBlue = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.rgb(239, 246, 255)
+            color = if (isQuotation) Color.rgb(244, 242, 252) else Color.rgb(239, 246, 255)
             style = Paint.Style.FILL
         }
         val softGray = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -149,17 +150,18 @@ internal object Screen11BillingPdfExporter {
                 }
             }
             canvas.drawText(truncate(shopName, brand, 250f), margin + 42f, y + 15f, brand)
-            canvas.drawText("Rental Bill", margin + 42f, y + 29f, muted)
+            canvas.drawText(if (isQuotation) "Rental Quotation" else "Rental Bill", margin + 42f, y + 29f, muted)
 
-            canvas.drawText("BILL", pageWidth - margin - billTitle.measureText("BILL"), y + 15f, billTitle)
+            val documentTitle = if (isQuotation) "QUOTATION" else "BILL"
+            canvas.drawText(documentTitle, pageWidth - margin - billTitle.measureText(documentTitle), y + 15f, billTitle)
             val rightX = pageWidth - margin
             fun rightText(text: String, baseline: Float, paint: Paint = normal) {
                 canvas.drawText(text, rightX - paint.measureText(text), baseline, paint)
             }
-            rightText("Bill No.  ${bill.billNo}", y + 32f, bold)
+            if (isQuotation) rightText("Quotation  ${bill.bookingNo ?: "-"}", y + 32f, bold) else rightText("Bill No.  ${bill.billNo}", y + 32f, bold)
             rightText("Order  ${bill.bookingNo ?: "-"}", y + 44f, small)
             rightText("Date  ${formattedDate(bill.billDate)}", y + 56f, small)
-            rightText(if (bill.status == "FINAL") "FINALIZED" else bill.status, y + 68f, bold)
+            rightText(if (isQuotation) "QUOTATION" else "FINALIZED", y + 68f, bold)
             y += 78f
             canvas.drawLine(margin, y, pageWidth - margin, y, line)
             y += 14f
@@ -326,8 +328,8 @@ internal object Screen11BillingPdfExporter {
         }
 
         val dir = File(context.cacheDir, "report-pdfs").apply { mkdirs() }
-        val safeNo = bill.billNo!!.replace("/", "-").replace(" ", "_")
-        val file = File(dir, "Zhagmag_Bill_$safeNo.pdf")
+        val safeNo = (bill.billNo ?: "Quotation_${bill.bookingNo ?: "Order"}").replace("/", "-").replace(" ", "_")
+        val file = File(dir, if (isQuotation) "Zhagmag_Quotation_$safeNo.pdf" else "Zhagmag_Bill_$safeNo.pdf")
         file.outputStream().use(document::writeTo)
         document.close()
         return file
