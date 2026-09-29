@@ -1018,40 +1018,38 @@ private fun BillingEditScreen(
 
         item {
             val canFinalize = booking?.returnComplete == true
-            LabeledSectionCard(title = "Actions") {
-                if (!canFinalize) {
-                    Text(
-                        "Finalize Bill becomes available after 100% Return is complete.",
-                        color = AppTextMuted,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-                ResponsiveCompactPair(
-                    first = { child ->
-                        SecondaryButton(
-                            text = "Save Quotation",
-                            onClick = {
-                                dismissKeyboard()
-                                onSaveDraft()
-                            },
-                            modifier = child,
-                            enabled = !state.busy
-                        )
-                    },
-                    second = { child ->
-                        PrimaryButton(
-                            text = "Finalize Bill",
-                            onClick = {
-                                dismissKeyboard()
-                                onSaveFinal()
-                            },
-                            modifier = child,
-                            enabled = !state.busy && canFinalize,
-                            loading = state.busy
-                        )
-                    }
+            if (!canFinalize) {
+                Text(
+                    "Finalize Bill becomes available after 100% Return is complete.",
+                    color = AppTextMuted,
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
+            ResponsiveCompactPair(
+                first = { child ->
+                    SecondaryButton(
+                        text = "Save Quotation",
+                        onClick = {
+                            dismissKeyboard()
+                            onSaveDraft()
+                        },
+                        modifier = child,
+                        enabled = !state.busy
+                    )
+                },
+                second = { child ->
+                    PrimaryButton(
+                        text = "Finalize Bill",
+                        onClick = {
+                            dismissKeyboard()
+                            onSaveFinal()
+                        },
+                        modifier = child,
+                        enabled = !state.busy && canFinalize,
+                        loading = state.busy
+                    )
+                }
+            )
         }
     }
 }
@@ -1106,7 +1104,7 @@ private fun BillingDetailScreen(
                         ) {
                             InfoValueRow(
                                 Icons.Rounded.ReceiptLong,
-                                "Bill No. · ${bill.billNo ?: "Draft"}",
+                                if (bill.status == "DRAFT") "Quotation · ${bill.bookingNo ?: "-"}" else "Bill No. · ${bill.billNo}",
                                 emphasized = true
                             )
                             InfoValueRow(
@@ -1199,7 +1197,7 @@ private fun BillingDetailScreen(
                                             val file = Screen11BillingPdfExporter.create(context, branding, detail)
                                             Screen8PdfExporter.view(context, file)
                                         }.onSuccess { onPdfResult(null, null) }
-                                            .onFailure { onPdfResult(null, "Unable to open Bill PDF.") }
+                                            .onFailure { onPdfResult(null, if (bill.status == "DRAFT") "Unable to open Quotation PDF." else "Unable to open Bill PDF.") }
                                     },
                                     modifier = child,
                                     icon = { Icon(Icons.Rounded.Visibility, contentDescription = null, modifier = Modifier.size(18.dp)) }
@@ -1218,7 +1216,7 @@ private fun BillingDetailScreen(
                                                 title = if (bill.status == "DRAFT") "Quotation ${bill.bookingNo ?: ""}" else "Final Bill ${bill.billNo}"
                                             )
                                         }.onSuccess { onPdfResult(null, null) }
-                                            .onFailure { onPdfResult(null, "Unable to share Bill PDF.") }
+                                            .onFailure { onPdfResult(null, if (bill.status == "DRAFT") "Unable to share Quotation PDF." else "Unable to share Bill PDF.") }
                                     },
                                     modifier = child,
                                     icon = { Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp)) }
@@ -1234,7 +1232,7 @@ private fun BillingDetailScreen(
                                             val file = Screen11BillingPdfExporter.create(context, branding, detail)
                                             Screen8PdfExporter.download(context, file)
                                         }.onSuccess { onPdfResult(it, null) }
-                                            .onFailure { onPdfResult(null, "Unable to download Bill PDF.") }
+                                            .onFailure { onPdfResult(null, if (bill.status == "DRAFT") "Unable to download Quotation PDF." else "Unable to download Bill PDF.") }
                                     },
                                     modifier = child,
                                     icon = { Icon(Icons.Rounded.Download, contentDescription = null, modifier = Modifier.size(18.dp)) }
@@ -1248,7 +1246,7 @@ private fun BillingDetailScreen(
                                             val file = Screen11BillingPdfExporter.create(context, branding, detail)
                                             Screen8PdfExporter.print(context, file, if (bill.status == "DRAFT") "Quotation ${bill.bookingNo ?: ""}" else "Final Bill ${bill.billNo}")
                                         }.onSuccess { onPdfResult(null, null) }
-                                            .onFailure { onPdfResult(null, "Unable to print Bill PDF.") }
+                                            .onFailure { onPdfResult(null, if (bill.status == "DRAFT") "Unable to print Quotation PDF." else "Unable to print Bill PDF.") }
                                     },
                                     modifier = child,
                                     icon = { Icon(Icons.Rounded.Print, contentDescription = null, modifier = Modifier.size(18.dp)) }
