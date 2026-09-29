@@ -558,8 +558,12 @@ async function composePublicWhatsAppInquiry(request, env) {
     env.DB.prepare(`
       SELECT id,template_key,template_name,message_text,message_gu,message_en,linked_action,is_active
       FROM whatsapp_templates
-      WHERE is_active=1 AND UPPER(linked_action)='GENERAL_INQUIRY'
-      ORDER BY updated_at DESC, template_name COLLATE NOCASE
+      WHERE is_active=1
+        AND (UPPER(linked_action)='GENERAL_INQUIRY' OR LOWER(template_key)='general_inquiry')
+      ORDER BY
+        CASE WHEN UPPER(linked_action)='GENERAL_INQUIRY' THEN 0 ELSE 1 END,
+        updated_at DESC,
+        template_name COLLATE NOCASE
       LIMIT 1
     `)
   ];
@@ -645,7 +649,9 @@ async function composePublicWhatsAppInquiry(request, env) {
     shop_address: settings.address,
     website_title: settings.websiteTitle,
     website_url: settings.websiteUrl,
-    customer_name: "",
+    // Public inquiry has no authenticated/customer record. Keep the central template renderable
+    // without weakening placeholder validation used by Admin/booking WhatsApp actions.
+    customer_name: "there",
     customer_mobile: "",
     customer_address: "",
     booking_no: "",
