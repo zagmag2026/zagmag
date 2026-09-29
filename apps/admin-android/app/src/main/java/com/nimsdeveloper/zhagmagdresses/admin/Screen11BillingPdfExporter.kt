@@ -346,16 +346,12 @@ internal object Screen11BillingPdfExporter {
         customerMobile: String,
         title: String
     ) {
-        runCatching {
-            Screen8PdfExporter.shareDirectToCustomerWhatsApp(
-                context = context,
-                file = file,
-                customerMobile = customerMobile,
-                title = title
-            )
-        }.getOrElse {
-            error("Unable to share Quotation PDF.")
-        }
+        Screen8PdfExporter.shareDirectToCustomerWhatsApp(
+            context = context,
+            file = file,
+            customerMobile = customerMobile,
+            title = title
+        )
     }
 
 }
