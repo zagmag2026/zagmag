@@ -190,6 +190,8 @@ for token in [
     'text = "Create Quotation"',
     'text = "Save Quotation"',
     'title = if (bill.status == "DRAFT") "Quotation Header" else "Bill Header"',
+    'title = if (state.billId.isNullOrBlank()) "Create Quotation" else "Edit Quotation"',
+    'Text(label, style = MaterialTheme.typography.labelSmall, color = AppTextMuted)',
     'if (bill.status == "DRAFT" || !bill.billNo.isNullOrBlank())',
     'title = if (bill.status == "DRAFT") "Quotation ${bill.bookingNo ?: ""}" else "Final Bill ${bill.billNo}"',
 ]:
@@ -198,6 +200,8 @@ for token in [
     'val isQuotation = bill.status == "DRAFT"',
     'canvas.drawText(documentTitle,',
     'Zhagmag_Quotation_$safeNo.pdf',
+    'Screen8PdfExporter.shareDirectToCustomerWhatsApp',
+    'Unable to share Quotation PDF.',
 ]:
     need(billing_pdf, token, "Quotation PDF workflow")
 
