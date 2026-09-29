@@ -116,7 +116,7 @@ for token in [
     "fun openOrderSelector()",
     "fun createDraftFromOrder(bookingId: String)",
     'title = "Select Order"',
-    'text = "Create Draft"',
+    'text = "Create Quotation"',
     'placeholder = "Search Order ID, customer or mobile"',
 ]:
     need(billing_vm + billing_ui, token, "Order-linked Add Bill")
@@ -343,7 +343,7 @@ if "SELECT ?,?,?,?,?,0,0 WHERE EXISTS (SELECT 1 FROM bookings WHERE id=? AND upd
     errors.append("Edit Booking must not regress to seven values for six booking_items columns")
 
 for token in [
-    'LabeledSectionCard(title = "Bill Header")',
+    'title = if (bill.status == "DRAFT") "Quotation Header" else "Bill Header"',
     'LabeledSectionCard(title = "Booking & Customer")',
     'LabeledSectionCard(title = "Items (${state.lines.size})")',
     'LabeledSectionCard(title = "Pickup / Return Status")',
@@ -356,7 +356,7 @@ for token in [
     'label = "Discount"',
     'label = "Advance Received"',
     'label = "Other Received"',
-    'text = "Save Draft"',
+    'text = "Save Quotation"',
     'text = "Finalize Bill"',
     'text = "Print"',
 ]:
