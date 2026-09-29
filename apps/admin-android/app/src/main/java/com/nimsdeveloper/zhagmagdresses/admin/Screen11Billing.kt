@@ -233,6 +233,7 @@ internal fun Screen11Billing(
         )
         BillingScreen.EDIT -> BillingEditScreen(
             state = state,
+            branding = branding,
             businessDate = businessDate,
             onBack = requestBack,
             onDate = vm::setBillDate,
@@ -244,6 +245,10 @@ internal fun Screen11Billing(
             onNotes = vm::setNotes,
             onSaveDraft = { vm.saveDraft(false) },
             onSaveFinal = { vm.saveDraft(true) },
+            onPdfResult = { success, error ->
+                pdfSuccess = success
+                pdfError = error
+            },
             embedded = embedded,
             modifier = modifier
         )
@@ -780,6 +785,7 @@ private fun BillingAdvanceSettlementScreen(
 @Composable
 private fun BillingEditScreen(
     state: Screen11BillingState,
+    branding: AppBranding,
     businessDate: String,
     onBack: () -> Unit,
     onDate: (String) -> Unit,
@@ -791,10 +797,12 @@ private fun BillingEditScreen(
     onNotes: (String) -> Unit,
     onSaveDraft: () -> Unit,
     onSaveFinal: () -> Unit,
+    onPdfResult: (String?, String?) -> Unit,
     embedded: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val booking = state.bootstrap?.booking
+    val context = LocalContext.current
     val dismissKeyboard = rememberReliableKeyboardDismiss()
     val focusRequesters = remember(state.lines.map { it.itemId }) {
         List(state.lines.size * 2 + 3) { FocusRequester() }
@@ -816,7 +824,7 @@ private fun BillingEditScreen(
             item { MainScreenDateRow(businessDate) }
             item {
                 AppBackHeader(
-                    title = if (state.billId.isNullOrBlank()) "Create Bill" else "Edit Bill",
+                    title = if (state.billId.isNullOrBlank()) "Create Quotation" else "Edit Quotation",
                     onBack = onBack,
                     enabled = !state.busy
                 )
@@ -824,7 +832,7 @@ private fun BillingEditScreen(
         } else {
             item {
                 Text(
-                    if (state.billId.isNullOrBlank()) "Generate Bill" else "Edit Bill",
+                    if (state.billId.isNullOrBlank()) "Create Quotation" else "Edit Quotation",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -832,7 +840,7 @@ private fun BillingEditScreen(
         }
 
         item {
-            LabeledSectionCard(title = if (state.billId.isNullOrBlank()) "Quotation Header" else "Bill Header") {
+            LabeledSectionCard(title = "Quotation Header") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm),
@@ -844,15 +852,16 @@ private fun BillingEditScreen(
                     ) {
                         InfoValueRow(
                             Icons.Rounded.ReceiptLong,
-                            state.detail?.bill?.billNo ?: "Bill No. · Draft",
+                            "Quotation · ${state.detail?.bill?.bookingNo ?: state.bookingNo ?: "-"}",
                             emphasized = true
                         )
-                        StatusBadge("Draft", BadgeTone.WARNING)
+                        StatusBadge("Quotation", BadgeTone.WARNING)
                     }
                     BillingCompactDatePicker(
                         value = state.billDate,
                         onValueChange = onDate,
-                        enabled = !state.busy
+                        enabled = !state.busy,
+                        label = "Quotation Date"
                     )
                 }
             }
@@ -1015,6 +1024,86 @@ private fun BillingEditScreen(
                 )
             }
         }
+
+            if (state.detail?.bill?.status == "DRAFT" && state.detail != null) {
+                item {
+                    val quotationDetail = state.detail
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(AppSpacing.xs)
+                    ) {
+                        ResponsiveCompactPair(
+                            first = { child ->
+                                SecondaryButton(
+                                    text = "View",
+                                    onClick = {
+                                        runCatching {
+                                            val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
+                                            Screen8PdfExporter.view(context, file)
+                                        }.onSuccess { onPdfResult(null, null) }
+                                            .onFailure { onPdfResult(null, "Unable to open Quotation PDF.") }
+                                    },
+                                    modifier = child,
+                                    icon = { Icon(Icons.Rounded.Visibility, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                                )
+                            },
+                            second = { child ->
+                                SecondaryButton(
+                                    text = "Share",
+                                    onClick = {
+                                        runCatching {
+                                            val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
+                                            Screen11BillingPdfExporter.shareDirectToCustomerWhatsApp(
+                                                context = context,
+                                                file = file,
+                                                customerMobile = quotationDetail.bill.customerMobile,
+                                                title = "Quotation ${quotationDetail.bill.bookingNo ?: ""}"
+                                            )
+                                        }.onSuccess { onPdfResult(null, null) }
+                                            .onFailure { onPdfResult(null, "Unable to share Quotation PDF.") }
+                                    },
+                                    modifier = child,
+                                    icon = { Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                                )
+                            }
+                        )
+                        ResponsiveCompactPair(
+                            first = { child ->
+                                SecondaryButton(
+                                    text = "Download",
+                                    onClick = {
+                                        runCatching {
+                                            val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
+                                            Screen8PdfExporter.download(context, file)
+                                        }.onSuccess { onPdfResult(it, null) }
+                                            .onFailure { onPdfResult(null, "Unable to download Quotation PDF.") }
+                                    },
+                                    modifier = child,
+                                    icon = { Icon(Icons.Rounded.Download, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                                )
+                            },
+                            second = { child ->
+                                SecondaryButton(
+                                    text = "Print",
+                                    onClick = {
+                                        runCatching {
+                                            val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
+                                            Screen8PdfExporter.print(
+                                                context,
+                                                file,
+                                                "Quotation ${quotationDetail.bill.bookingNo ?: ""}"
+                                            )
+                                        }.onSuccess { onPdfResult(null, null) }
+                                            .onFailure { onPdfResult(null, "Unable to print Quotation PDF.") }
+                                    },
+                                    modifier = child,
+                                    icon = { Icon(Icons.Rounded.Print, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                                )
+                            }
+                        )
+                    }
+                }
+            }
 
         item {
             val canFinalize = booking?.returnComplete == true
@@ -1265,7 +1354,8 @@ private fun BillingCompactDatePicker(
     value: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    label: String = "Bill Date"
 ) {
     val context = LocalContext.current
     val selected = runCatching { LocalDate.parse(value) }.getOrElse { LocalDate.now() }
@@ -1299,7 +1389,7 @@ private fun BillingCompactDatePicker(
                 modifier = Modifier.size(18.dp)
             )
             Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                Text("Bill Date", style = MaterialTheme.typography.labelSmall, color = AppTextMuted)
+                Text(label, style = MaterialTheme.typography.labelSmall, color = AppTextMuted)
                 Text(
                     billingDisplayDate(value),
                     style = MaterialTheme.typography.labelLarge,
