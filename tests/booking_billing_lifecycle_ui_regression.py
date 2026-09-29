@@ -234,15 +234,18 @@ for token in [
     'canvas.drawText("Balance Due"',
 ]:
     need(billing_pdf, token, "Billing PDF amount summary")
+whatsapp_share = read(ANDROID / "Screen8PdfExporter.kt")
+need(whatsapp_share, 'fun shareDirectToCustomerWhatsApp(', "Direct customer WhatsApp PDF handoff")
+if '.setPackage("com.whatsapp")' not in whatsapp_share and '.setPackage(whatsappPackage)' not in whatsapp_share:
+    errors.append("Direct customer WhatsApp PDF handoff: missing WhatsApp package binding")
 for token in [
-    'setPackage("com.whatsapp")',
     '.putExtra(Intent.EXTRA_STREAM, uri)',
     '.putExtra("jid", "91$digits@s.whatsapp.net")',
     'setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))',
     'Intent.FLAG_GRANT_READ_URI_PERMISSION',
     'check(intent.resolveActivity(context.packageManager) != null)',
 ]:
-    need(read(ANDROID / "Screen8PdfExporter.kt"), token, "Direct customer WhatsApp PDF handoff")
+    need(whatsapp_share, token, "Direct customer WhatsApp PDF handoff")
 
 
 # 12. Five-step Booking flow, payment Booking tabs and inline fourth-position Bill tab.
