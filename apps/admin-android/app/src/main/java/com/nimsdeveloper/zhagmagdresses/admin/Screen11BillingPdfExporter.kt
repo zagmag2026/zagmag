@@ -354,4 +354,17 @@ internal object Screen11BillingPdfExporter {
         )
     }
 
+    fun shareQuotationDirectToCustomerWhatsApp(
+        context: Context,
+        file: File,
+        customerMobile: String,
+        title: String
+    ) {
+        Screen8PdfExporter.shareQuotationDirectToCustomerWhatsApp(
+            context = context,
+            file = file,
+            customerMobile = customerMobile,
+            title = title
+        )
+    }
 }
