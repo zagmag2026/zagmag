@@ -81,7 +81,7 @@ for label in ['"Pending Payment"', '"Part Payment"', '"Full Payment"']:
     need(billing_ui, label, "shared payment badge label")
 
 # Issue 3: finalized details actions are unboxed and remain exactly the two shared rows.
-actions_start = detail_body.find("if (!bill.billNo.isNullOrBlank())")
+actions_start = detail_body.find('if (bill.status == "DRAFT" || !bill.billNo.isNullOrBlank())')
 actions_body = detail_body[actions_start:]
 if 'LabeledSectionCard(title = "Actions")' in actions_body:
     errors.append("Finalized Bill Details actions must not be wrapped in an outer Actions card.")
