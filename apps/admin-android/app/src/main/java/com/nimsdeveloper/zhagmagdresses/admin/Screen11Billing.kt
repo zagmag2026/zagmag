@@ -1053,7 +1053,7 @@ private fun BillingEditScreen(
                                     onClick = {
                                         runCatching {
                                             val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
-                                            Screen11BillingPdfExporter.shareDirectToCustomerWhatsApp(
+                                            Screen11BillingPdfExporter.shareQuotationDirectToCustomerWhatsApp(
                                                 context = context,
                                                 file = file,
                                                 customerMobile = quotationDetail.bill.customerMobile,
