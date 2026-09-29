@@ -184,7 +184,7 @@ internal fun Screen11Billing(
             !initialBookingId.isNullOrBlank() &&
             state.screen == BillingScreen.LIST &&
             !state.loading &&
-            state.message == "Draft Bill deleted."
+            state.message == "Quotation deleted."
         ) {
             vm.openBookingBill(initialBookingId)
         }
@@ -288,9 +288,9 @@ internal fun Screen11Billing(
 
     if (showDeleteDraft) {
         AppDestructiveConfirmDialog(
-            title = "Delete Draft Bill?",
-            message = "This Draft Bill will be permanently deleted.",
-            confirmLabel = "Delete Draft",
+            title = "Delete Quotation?",
+            message = "This Quotation will be permanently deleted.",
+            confirmLabel = "Delete Quotation",
             busy = state.busy,
             onConfirm = {
                 showDeleteDraft = false
@@ -407,7 +407,7 @@ private fun BillingListScreen(
                 enabled = !state.loading && !state.busy,
                 action = {
                     CompactNewActionButton(
-                        label = "Add Bill",
+                        label = "Add Quotation",
                         enabled = !state.loading && !state.busy,
                         onClick = onAdd
                     )
@@ -441,7 +441,7 @@ private fun BillingListScreen(
                 second = { child ->
                     AppSingleSelectFilter(
                         label = "Bill Status", selected = state.statusFilter,
-                        options = listOf(AppFilterOption("", "All Status"), AppFilterOption("DRAFT", "Draft"), AppFilterOption("FINAL", "Final"), AppFilterOption("CANCELLED", "Cancelled")),
+                        options = listOf(AppFilterOption("", "All Status"), AppFilterOption("DRAFT", "Quotation"), AppFilterOption("FINAL", "Final"), AppFilterOption("CANCELLED", "Cancelled")),
                         resetValue = "", onApply = onStatusFilter, modifier = child, title = "Bill Status"
                     )
                 }
@@ -479,7 +479,7 @@ private fun BillingListScreen(
                             verticalArrangement = Arrangement.spacedBy(AppSpacing.xxs)
                         ) {
                             Text(
-                                bill.billNo ?: "Draft Bill",
+                                bill.billNo ?: "Quotation",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -691,7 +691,7 @@ private fun BillingOrderSelectorScreen(
                         },
                         second = { child ->
                             PrimaryButton(
-                                text = "Create Draft",
+                                text = "Create Quotation",
                                 onClick = { onCreateDraft(order.id) },
                                 modifier = child,
                                 enabled = !state.busy && !state.orderPreviewLoading,
@@ -832,7 +832,7 @@ private fun BillingEditScreen(
         }
 
         item {
-            LabeledSectionCard(title = "Bill Header") {
+            LabeledSectionCard(title = if (state.billId.isNullOrBlank()) "Quotation Header" else "Bill Header") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm),
@@ -1029,7 +1029,7 @@ private fun BillingEditScreen(
                 ResponsiveCompactPair(
                     first = { child ->
                         SecondaryButton(
-                            text = "Save Draft",
+                            text = "Save Quotation",
                             onClick = {
                                 dismissKeyboard()
                                 onSaveDraft()
@@ -1080,10 +1080,10 @@ private fun BillingDetailScreen(
     ) {
         if (!embedded) {
             item { MainScreenDateRow(businessDate) }
-            item { AppBackHeader(title = "Bill Details", onBack = onBack, enabled = !state.busy) }
+            item { AppBackHeader(title = if (detail?.bill?.status == "DRAFT") "Quotation Details" else "Bill Details", onBack = onBack, enabled = !state.busy) }
         } else {
             item {
-                Text("Bill Details", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(if (detail?.bill?.status == "DRAFT") "Quotation Details" else "Bill Details", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             }
         }
 
@@ -1094,7 +1094,7 @@ private fun BillingDetailScreen(
         } else {
             val bill = detail.bill
             item {
-                LabeledSectionCard(title = "Bill Header") {
+                LabeledSectionCard(title = if (bill.status == "DRAFT") "Quotation Header" else "Bill Header") {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -1184,7 +1184,7 @@ private fun BillingDetailScreen(
                 }
             }
 
-            if (!bill.billNo.isNullOrBlank()) {
+            if (bill.status == "DRAFT" || !bill.billNo.isNullOrBlank()) {
                 item {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -1215,7 +1215,7 @@ private fun BillingDetailScreen(
                                                 context = context,
                                                 file = file,
                                                 customerMobile = bill.customerMobile,
-                                                title = "Final Bill ${bill.billNo}"
+                                                title = if (bill.status == "DRAFT") "Quotation ${bill.bookingNo ?: ""}" else "Final Bill ${bill.billNo}"
                                             )
                                         }.onSuccess { onPdfResult(null, null) }
                                             .onFailure { onPdfResult(null, "Unable to share Bill PDF.") }
@@ -1246,7 +1246,7 @@ private fun BillingDetailScreen(
                                     onClick = {
                                         runCatching {
                                             val file = Screen11BillingPdfExporter.create(context, branding, detail)
-                                            Screen8PdfExporter.print(context, file, "Bill ${bill.billNo}")
+                                            Screen8PdfExporter.print(context, file, if (bill.status == "DRAFT") "Quotation ${bill.bookingNo ?: ""}" else "Final Bill ${bill.billNo}")
                                         }.onSuccess { onPdfResult(null, null) }
                                             .onFailure { onPdfResult(null, "Unable to print Bill PDF.") }
                                     },
