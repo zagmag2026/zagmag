@@ -1060,7 +1060,9 @@ private fun BillingEditScreen(
                                                 title = "Quotation ${quotationDetail.bill.bookingNo ?: ""}"
                                             )
                                         }.onSuccess { onPdfResult(null, null) }
-                                            .onFailure { onPdfResult(null, "Unable to share Quotation PDF.") }
+                                            .onFailure { error ->
+                                                onPdfResult(null, error.message ?: "Unable to share Quotation PDF.")
+                                            }
                                     },
                                     modifier = child,
                                     icon = { Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp)) }
