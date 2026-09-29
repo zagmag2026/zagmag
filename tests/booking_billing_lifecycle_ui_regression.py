@@ -349,7 +349,6 @@ for token in [
     'LabeledSectionCard(title = "Pickup / Return Status")',
     'LabeledSectionCard(title = "Amount Summary")',
     'LabeledSectionCard(title = "Notes")',
-    'LabeledSectionCard(title = "Actions")',
     "imageUrl = line.imageUrl",
     'label = "Qty"',
     'label = "Rent Rate"',
