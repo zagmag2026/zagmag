@@ -649,9 +649,9 @@ internal class Screen11BillingViewModel(
                     }.onSuccess { (data, detail) ->
                         if (data != null) {
                             openEditorState(data, detail)
-                            state = state.copy(message = "Bill draft saved.")
+                            state = state.copy(message = "Quotation saved.")
                         } else {
-                            state = state.copy(busy = false, message = "Bill draft saved.", detail = detail)
+                            state = state.copy(busy = false, message = "Quotation saved.", detail = detail)
                         }
                     }.onFailure(::failBusy)
                 }
@@ -691,7 +691,7 @@ internal class Screen11BillingViewModel(
             runCatching { repository.deleteDraft(bill.id) }
                 .onSuccess {
                     AdminDataFreshness.markBillingMutation()
-                    state = Screen11BillingState(message = "Draft Bill deleted.")
+                    state = Screen11BillingState(message = "Quotation deleted.")
                     loadList(1)
                 }.onFailure(::failBusy)
         }
