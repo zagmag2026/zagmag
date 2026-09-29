@@ -92,12 +92,10 @@ need(billing_ui, "private fun BillingCenteredLoading(", "Billing centered loadin
 need(billing_ui, "contentAlignment = Alignment.Center", "Billing centered loading alignment")
 
 # Final Bill direct customer WhatsApp share helper.
-for token in [
-    'fun shareDirectToCustomerWhatsApp(',
-    '.setPackage("com.whatsapp")',
-    '.putExtra("jid", "91$digits@s.whatsapp.net")',
-]:
-    need(billing_share, token, "Final Bill direct WhatsApp share helper")
+need(billing_share, 'fun shareDirectToCustomerWhatsApp(', "Final Bill direct WhatsApp share helper")
+if '.setPackage("com.whatsapp")' not in billing_share and '.setPackage(whatsappPackage)' not in billing_share:
+    errors.append('Final Bill direct WhatsApp share helper missing WhatsApp package binding.')
+need(billing_share, '.putExtra("jid", "91$digits@s.whatsapp.net")', "Final Bill direct WhatsApp share helper")
 
 # Final Bill editor hierarchy.
 for token in [
