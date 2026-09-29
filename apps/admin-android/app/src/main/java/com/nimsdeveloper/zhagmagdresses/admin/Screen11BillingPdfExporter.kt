@@ -334,4 +334,28 @@ internal object Screen11BillingPdfExporter {
         document.close()
         return file
     }
+    
+    /**
+     * Shares a Quotation PDF directly to the customer's WhatsApp chat.
+     * Keep the shared launcher in Screen8PdfExporter so the existing PDF
+     * sharing behavior remains centralized for Admin Android.
+     */
+    fun shareDirectToCustomerWhatsApp(
+        context: Context,
+        file: File,
+        customerMobile: String,
+        title: String
+    ) {
+        runCatching {
+            Screen8PdfExporter.shareDirectToCustomerWhatsApp(
+                context = context,
+                file = file,
+                customerMobile = customerMobile,
+                title = title
+            )
+        }.getOrElse {
+            error("Unable to share Quotation PDF.")
+        }
+    }
+
 }
