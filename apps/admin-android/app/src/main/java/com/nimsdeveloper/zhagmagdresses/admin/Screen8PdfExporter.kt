@@ -529,8 +529,7 @@ internal object Screen8PdfExporter {
         val uri = contentUri(context, file)
         val readGrant = Intent.FLAG_GRANT_READ_URI_PERMISSION
         val whatsappPackage = "com.whatsapp"
-
-        val intent = Intent(Intent.ACTION_SEND)
+        val directIntent = Intent(Intent.ACTION_SEND)
             .setType(MIME)
             .setPackage(whatsappPackage)
             .putExtra(Intent.EXTRA_STREAM, uri)
@@ -538,16 +537,20 @@ internal object Screen8PdfExporter {
             .putExtra(Intent.EXTRA_TEXT, title)
             .putExtra("jid", "91$digits@s.whatsapp.net")
             .addFlags(readGrant)
-        intent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
+        directIntent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
 
-        check(intent.resolveActivity(context.packageManager) != null) {
+        check(directIntent.resolveActivity(context.packageManager) != null) {
             "WhatsApp is not installed."
         }
-        context.grantUriPermission(whatsappPackage, uri, readGrant)
+
+        fun grantAndStart(intent: Intent) {
+            context.grantUriPermission(whatsappPackage, uri, readGrant)
+            context.startActivity(intent)
+        }
 
         try {
-            context.startActivity(intent)
-        } catch (firstError: Exception) {
+            grantAndStart(directIntent)
+        } catch (directError: Exception) {
             val fallbackIntent = Intent(Intent.ACTION_SEND)
                 .setType(MIME)
                 .setPackage(whatsappPackage)
@@ -556,8 +559,15 @@ internal object Screen8PdfExporter {
                 .putExtra(Intent.EXTRA_TEXT, title)
                 .addFlags(readGrant)
             fallbackIntent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
-            context.grantUriPermission(whatsappPackage, uri, readGrant)
-            context.startActivity(fallbackIntent)
+
+            try {
+                grantAndStart(fallbackIntent)
+            } catch (fallbackError: Exception) {
+                val detail = fallbackError.message?.takeIf { it.isNotBlank() }
+                    ?: directError.message?.takeIf { it.isNotBlank() }
+                    ?: fallbackError::class.java.simpleName
+                error("WhatsApp PDF share failed: $detail")
+            }
         }
     }
 
