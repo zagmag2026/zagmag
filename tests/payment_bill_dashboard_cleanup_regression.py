@@ -56,8 +56,17 @@ for legacy in ["activeBillPending", "activeBillPart", "activeBillFull"]:
         errors.append(f"Overlapping payment predicate returned: {legacy}")
 
 # Issues 4-5: no nested Balance Due card; one top badge; no duplicate bottom status row.
-if "BillingBalanceDue(" in billing_ui:
-    errors.append("Billing Summary must use the shared badge family instead of the retired Balance Due row helper.")
+edit_start = billing_ui.find("private fun BillingEditScreen(")
+detail_start = billing_ui.find("private fun BillingDetailScreen(")
+edit_amount = billing_ui[edit_start:detail_start]
+detail_body = billing_ui[detail_start:]
+if "BillingBalanceDue(state.balanceAmount)" not in edit_amount:
+    errors.append("Account/Quotation editor Amount Summary must retain the pre-badge Balance Due row.")
+if 'BillingAmountRow("Bill Amount", state.netAmount, strong = true)' not in edit_amount:
+    errors.append("Account/Quotation editor Amount Summary must retain the pre-badge Bill Amount row.")
+if "BillingBalanceDue(bill.balanceAmount)" in detail_body:
+    errors.append("Bill Details must replace the Balance Due row with the shared badge.")
+
 
 detail_start = billing_ui.find("private fun BillingDetailScreen(")
 detail_body = billing_ui[detail_start:]
@@ -74,12 +83,22 @@ for token in [
     "billingPaymentLabel(paymentStatus)",
 ]:
     need(summary_badges, token, "Bill Details Amount Summary badges")
+status_pos = summary_badges.find("billingPaymentLabel(paymentStatus)")
+amount_pos = summary_badges.find('StatusBadge("Bill Amount ₹$billAmount"')
+if status_pos < 0 or amount_pos < 0 or status_pos > amount_pos:
+    errors.append("Bill Details badge order must be Bill Status + Payment Status first, then Bill Amount + Balance Due.")
 for token in [
-    'label = "Save Quotation"',
-    'label = "Finalize Bill"',
-    "SoftActionButton(",
+    'text = "Save Quotation"',
+    'text = "Finalize Bill"',
+    "SecondaryButton(",
+    "PrimaryButton(",
+    "Icons.Rounded.Save",
+    "Icons.Rounded.CheckCircle",
 ]:
-    need(billing_ui, token, "Quotation shared actions")
+    need(billing_ui, token, "Quotation global actions")
+edit_actions = billing_ui[billing_ui.find("private fun BillingEditScreen("):billing_ui.find("private fun BillingDetailScreen(")]
+if "SoftActionButton(" in edit_actions:
+    errors.append("Save Quotation / Finalize Bill must not use SoftActionButton.")
 for token in [
     "state.balanceAmount > 0",
     "BILL_BALANCE_DUE",
