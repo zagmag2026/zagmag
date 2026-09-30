@@ -518,12 +518,6 @@ internal object Screen8PdfExporter {
      * Uses the customer's normalized Indian 10-digit mobile and WhatsApp's direct-chat JID
      * so the Android share chooser is not shown.
      */
-    /**
-     * Shares the PDF directly to the customer's primary WhatsApp chat.
-     * Android startActivity() is intentionally used as the availability check: on
-     * Android 11+ package visibility can make resolveActivity() return null even
-     * though an explicit package-targeted activity can still be started.
-     */
     fun shareDirectToCustomerWhatsApp(
         context: Context,
         file: File,
@@ -534,18 +528,48 @@ internal object Screen8PdfExporter {
         require(digits.length == 10) { "Customer mobile number is invalid." }
 
         val uri = contentUri(context, file)
-        val intent = Intent(Intent.ACTION_SEND)
+        val readGrant = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        val whatsappPackage = "com.whatsapp"
+        val directIntent = Intent(Intent.ACTION_SEND)
             .setType(MIME)
-            .setPackage("com.whatsapp")
+            .setPackage(whatsappPackage)
             .putExtra(Intent.EXTRA_STREAM, uri)
             .putExtra(Intent.EXTRA_SUBJECT, title)
             .putExtra(Intent.EXTRA_TEXT, title)
             .putExtra("jid", "91$digits@s.whatsapp.net")
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        intent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
+            .addFlags(readGrant)
+        directIntent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
 
-        context.grantUriPermission("com.whatsapp", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        context.startActivity(intent)
+        check(directIntent.resolveActivity(context.packageManager) != null) {
+            "WhatsApp is not installed."
+        }
+
+        fun grantAndStart(intent: Intent) {
+            context.grantUriPermission(whatsappPackage, uri, readGrant)
+            context.startActivity(intent)
+        }
+
+        try {
+            grantAndStart(directIntent)
+        } catch (directError: Exception) {
+            val fallbackIntent = Intent(Intent.ACTION_SEND)
+                .setType(MIME)
+                .setPackage(whatsappPackage)
+                .putExtra(Intent.EXTRA_STREAM, uri)
+                .putExtra(Intent.EXTRA_SUBJECT, title)
+                .putExtra(Intent.EXTRA_TEXT, title)
+                .addFlags(readGrant)
+            fallbackIntent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
+
+            try {
+                grantAndStart(fallbackIntent)
+            } catch (fallbackError: Exception) {
+                val detail = fallbackError.message?.takeIf { it.isNotBlank() }
+                    ?: directError.message?.takeIf { it.isNotBlank() }
+                    ?: fallbackError::class.java.simpleName
+                error("WhatsApp PDF share failed: $detail")
+            }
+        }
     }
     /**
      * Quotation-only direct customer handoff. The WhatsApp ContactPicker
