@@ -98,6 +98,12 @@ need(billing_share, '.setPackage("com.whatsapp")', "Direct customer WhatsApp pac
 if '.setPackage("com.whatsapp.w4b")' in billing_share or 'whatsappPackage = "com.whatsapp.w4b"' in billing_share:
     errors.append("Direct customer WhatsApp helper must use the verified normal WhatsApp package, not WhatsApp Business.")
 need(billing_share, '.putExtra("jid", "91$digits@s.whatsapp.net")', "Final Bill direct WhatsApp share helper")
+for token in [
+    'state.balanceAmount > 0',
+    'BILL_BALANCE_DUE',
+    'COALESCE(received_amount,0) >= COALESCE(net_amount,0)',
+]:
+    need(billing_ui + billing_vm + worker, token, "Billing finalization balance-due guard")
 
 # Final Bill editor hierarchy.
 for token in [
@@ -109,9 +115,11 @@ for token in [
     'label = "Advance Received"',
     'label = "Other Received"',
     'BillingAmountRow("Total Received", state.totalReceivedAmount',
-    "BillingBalanceDue(state.balanceAmount)",
-    'text = "Save Quotation"',
-    'text = "Finalize Bill"',
+    "BillingSummaryBadges(",
+    'StatusBadge("Bill Amount ₹$billAmount", BadgeTone.INFO)',
+    'StatusBadge("Balance Due ₹$balanceDue"',
+    'label = "Save Quotation"',
+    'label = "Finalize Bill"',
     'label = "View"',
     'label = "Share"',
     'Screen8PdfExporter.shareDirectToCustomerWhatsApp(',
@@ -188,7 +196,7 @@ for token in [
     'label = "Add Quotation"',
     'AppFilterOption("DRAFT", "Quotation")',
     'text = "Create Quotation"',
-    'text = "Save Quotation"',
+    'label = "Save Quotation"',
     'title = if (bill.status == "DRAFT") "Quotation Header" else "Bill Header"',
     'title = if (state.billId.isNullOrBlank()) "Create Quotation" else "Edit Quotation"',
     'Text(label, style = MaterialTheme.typography.labelSmall, color = AppTextMuted)',
