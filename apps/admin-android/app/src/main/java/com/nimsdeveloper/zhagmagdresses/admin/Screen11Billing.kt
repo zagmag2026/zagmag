@@ -965,12 +965,12 @@ private fun BillingEditScreen(
 
         item {
             LabeledSectionCard(title = "Amount Summary") {
-                BillingSummaryBadges(
-                    billAmount = state.netAmount,
-                    balanceDue = state.balanceAmount,
-                    billStatus = if (state.detail?.bill?.status == "FINAL") "Finalized" else "Draft",
-                    paymentStatus = state.paymentStatus
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    StatusBadge(billingPaymentLabel(state.paymentStatus), billingPaymentTone(state.paymentStatus))
+                }
                 BillingAmountRow("Item Total", state.totalRent)
                 AppTextField(
                     value = state.discountText,
@@ -983,6 +983,7 @@ private fun BillingEditScreen(
                     keyboardActions = KeyboardActions(onNext = { advanceFocus.requestFocus() }),
                     selectAllOnFocus = true
                 )
+                BillingAmountRow("Bill Amount", state.netAmount, strong = true)
                 AppTextField(
                     value = state.advanceText,
                     onValueChange = onAdvance,
@@ -1006,6 +1007,7 @@ private fun BillingEditScreen(
                 )
                 BillingAmountRow("Total Received", state.totalReceivedAmount, strong = true)
                 AppItemListDivider()
+                BillingBalanceDue(state.balanceAmount)
             }
         }
 
@@ -1074,33 +1076,37 @@ private fun BillingEditScreen(
 
         item {
             val canFinalize = booking?.returnComplete == true && state.balanceAmount <= 0
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(AppSpacing.sm)
-            ) {
-                SoftActionButton(
-                    icon = Icons.Rounded.Save,
-                    label = "Save Quotation",
-                    onClick = {
-                        dismissKeyboard()
-                        onSaveDraft()
-                    },
-                    modifier = Modifier.weight(1f),
-                    enabled = !state.busy,
-                    tone = ActionTone.INFO
-                )
-                SoftActionButton(
-                    icon = Icons.Rounded.CheckCircle,
-                    label = "Finalize Bill",
-                    onClick = {
-                        dismissKeyboard()
-                        onSaveFinal()
-                    },
-                    modifier = Modifier.weight(1f),
-                    enabled = !state.busy && canFinalize,
-                    tone = ActionTone.SUCCESS
-                )
-            }
+            ResponsiveCompactPair(
+                first = { child ->
+                    SecondaryButton(
+                        text = "Save Quotation",
+                        onClick = {
+                            dismissKeyboard()
+                            onSaveDraft()
+                        },
+                        modifier = child,
+                        enabled = !state.busy,
+                        icon = {
+                            Icon(Icons.Rounded.Save, contentDescription = null, modifier = Modifier.size(18.dp))
+                        }
+                    )
+                },
+                second = { child ->
+                    PrimaryButton(
+                        text = "Finalize Bill",
+                        onClick = {
+                            dismissKeyboard()
+                            onSaveFinal()
+                        },
+                        modifier = child,
+                        enabled = !state.busy && canFinalize,
+                        loading = state.busy,
+                        icon = {
+                            Icon(Icons.Rounded.CheckCircle, contentDescription = null, modifier = Modifier.size(18.dp))
+                        }
+                    )
+                }
+            )
         }
     }
 }
@@ -1319,15 +1325,6 @@ private fun BillingSummaryBadges(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            StatusBadge("Bill Amount ₹$billAmount", BadgeTone.INFO)
-            Spacer(Modifier.size(AppSpacing.xs))
-            StatusBadge("Balance Due ₹$balanceDue", if (balanceDue > 0) BadgeTone.WARNING else BadgeTone.SUCCESS)
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
             StatusBadge(billStatus, when (billStatus) {
                 "Finalized" -> BadgeTone.SUCCESS
                 "Cancelled" -> BadgeTone.ERROR
@@ -1335,6 +1332,15 @@ private fun BillingSummaryBadges(
             })
             Spacer(Modifier.size(AppSpacing.xs))
             StatusBadge(billingPaymentLabel(paymentStatus), billingPaymentTone(paymentStatus))
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            StatusBadge("Bill Amount ₹$billAmount", BadgeTone.INFO)
+            Spacer(Modifier.size(AppSpacing.xs))
+            StatusBadge("Balance Due ₹$balanceDue", if (balanceDue > 0) BadgeTone.WARNING else BadgeTone.SUCCESS)
         }
     }
 }
@@ -1463,6 +1469,23 @@ private fun billingPickupDone(status: String): Boolean =
 
 private fun billingPickupDoneFromDatesAndReturn(bill: BillingBill): Boolean =
     bill.returnComplete || bill.status == "FINAL" || bill.status == "CANCELLED"
+
+@Composable
+private fun BillingBalanceDue(amount: Int) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = AppSpacing.xxs),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text("Balance Due", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        Text(
+            "₹$amount",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = if (amount > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+        )
+    }
+}
 
 private fun billingDisplayDay(value: String): String =
     runCatching {
