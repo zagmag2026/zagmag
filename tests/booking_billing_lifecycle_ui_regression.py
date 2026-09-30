@@ -246,6 +246,13 @@ for token in [
     'grantAndStart(directIntent)',
 ]:
     need(whatsapp_share, token, "Direct customer WhatsApp PDF handoff")
+if 'resolveActivity(context.packageManager)' in whatsapp_share:
+    errors.append("Direct customer WhatsApp PDF handoff must not use resolveActivity() for WhatsApp installed detection.")
+for token in [
+    'catch (directError: android.content.ActivityNotFoundException)',
+    'error("WhatsApp is not installed.")',
+]:
+    need(whatsapp_share, token, "Direct customer WhatsApp PDF handoff runtime error handling")
 for token in [
     'setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))',
     'Intent.FLAG_GRANT_READ_URI_PERMISSION',
