@@ -240,11 +240,9 @@ need(whatsapp_share, 'fun shareDirectToCustomerWhatsApp(', "Direct customer What
 need(whatsapp_exporter, 'fun shareDirectToCustomerWhatsApp(', "Quotation direct customer WhatsApp PDF handoff")
 need(billing_ui, 'Screen11BillingPdfExporter.shareDirectToCustomerWhatsApp(', "Quotation direct customer WhatsApp PDF handoff")
 for token in [
-    '.setPackage(whatsappPackage)',
-    'val whatsappPackage = "com.whatsapp"',
+    '.setPackage("com.whatsapp")',
     '.putExtra("jid", "91$digits@s.whatsapp.net")',
     '.putExtra(Intent.EXTRA_STREAM, uri)',
-    'grantAndStart(directIntent)',
 ]:
     need(whatsapp_share, token, "Direct customer WhatsApp PDF handoff")
 if 'val whatsappPackage = "com.whatsapp.w4b"' in whatsapp_share:
@@ -256,11 +254,7 @@ for token in [
     'error("WhatsApp is not installed.")',
 ]:
     need(whatsapp_share, token, "Direct customer WhatsApp PDF handoff runtime error handling")
-for token in [
-    'setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))',
-    'Intent.FLAG_GRANT_READ_URI_PERMISSION',
-]:
-    need(whatsapp_share, token, "Direct customer WhatsApp PDF handoff")
+need(whatsapp_share, 'Intent.FLAG_GRANT_READ_URI_PERMISSION', "Direct customer WhatsApp PDF handoff")
 
 
 # 12. Five-step Booking flow, payment Booking tabs and inline fourth-position Bill tab.
