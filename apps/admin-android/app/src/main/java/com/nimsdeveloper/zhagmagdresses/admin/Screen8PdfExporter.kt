@@ -530,6 +530,7 @@ internal object Screen8PdfExporter {
         val intent = Intent(Intent.ACTION_SEND)
             .setType(MIME)
             .setPackage("com.whatsapp")
+            .setComponent(android.content.ComponentName("com.whatsapp", "com.whatsapp.ContactPicker"))
             .putExtra(Intent.EXTRA_STREAM, uri)
             .putExtra(Intent.EXTRA_SUBJECT, title)
             .putExtra(Intent.EXTRA_TEXT, title)
