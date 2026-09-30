@@ -513,7 +513,7 @@ internal object Screen8PdfExporter {
     }
 
     /**
-     * Shares the finalized bill PDF directly to the customer's primary WhatsApp chat.
+     * Shares the PDF directly to the customer's primary WhatsApp Business chat.
      * Uses the customer's normalized Indian 10-digit mobile and WhatsApp's direct-chat JID
      * so the Android share chooser is not shown.
      */
@@ -528,7 +528,7 @@ internal object Screen8PdfExporter {
 
         val uri = contentUri(context, file)
         val readGrant = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        val whatsappPackage = "com.whatsapp"
+        val whatsappPackage = "com.whatsapp.w4b"
         val directIntent = Intent(Intent.ACTION_SEND)
             .setType(MIME)
             .setPackage(whatsappPackage)
