@@ -157,9 +157,9 @@ Pickup / Return Status is intentionally removed from the on-screen Bill Details 
 - **Items (x)** contains all items in one section/card; each item is a separate compact row with image, name/code/category, Qty × Rent Rate and Line Amount. Quotation Rent Rate is seeded from Item Master and remains editable; Finalized values are stored as snapshots.
 - Draft editor Pickup / Return shows Done / Pending, Date and Day. Bill Details omits this block.
 - Finalized Bill PDF retains Pickup / Return and shows **Status + Date + Day + actual event Time** using pickup/return event timestamps. If an actual event time is unavailable, no fake time is rendered.
-- Amount Summary is exactly: Item Total − Discount = Bill Amount; Advance Received + Other Received = Total Received; Bill Amount − Total Received = Balance Due. A single shared **Pending Payment | Part Payment | Full Payment** badge appears at the top-right of the Amount Summary. After Total Received, one separator precedes a normal emphasized Balance Due row; there is no nested Balance Due card and no duplicate bottom Payment Status row.
+- Amount Summary is exactly: Item Total − Discount = Bill Amount; Advance Received + Other Received = Total Received; Bill Amount − Total Received = Balance Due. The top-right of Amount Summary uses the shared reusable **StatusBadge** family for **Bill Amount ₹X | Balance Due ₹Y**; directly below it, the same reusable badges show **Bill Status | Pending Payment / Part Payment / Full Payment**. The duplicate Bill Amount and Balance Due value rows are not rendered below the badges.
 - Notes are editable only in Draft.
-- Quotation Actions: Save Quotation | Finalize Bill. Finalize remains disabled and server-rejected until 100% Return.
+- Quotation Actions reuse the global shared **SoftActionButton** family with icon + label: **Save Quotation | Finalize Bill**. Finalize is disabled when **Balance Due > ₹0** and remains disabled/server-rejected until **100% Return + Balance Due = ₹0**.
 - Finalized Actions are unboxed shared buttons in one horizontal row: **View | Share | Download | Print**. Existing View/Share/Download/Print behavior is unchanged.
 
 Booking lifecycle action visibility is state-based: Edit is Reserved-only; Reserved has no Bill. From Booked onward, Bill is available and Edit is removed.
