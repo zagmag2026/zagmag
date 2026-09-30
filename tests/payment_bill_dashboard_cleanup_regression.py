@@ -80,13 +80,17 @@ if 'Text("Payment Status"' in detail_amount:
 for label in ['"Pending Payment"', '"Part Payment"', '"Full Payment"']:
     need(billing_ui, label, "shared payment badge label")
 
-# Issue 3: finalized details actions are unboxed and remain exactly the two shared rows.
+# Issue 3: finalized details actions reuse shared SoftActionButton controls in one horizontal row.
 actions_start = detail_body.find('if (bill.status == "DRAFT" || !bill.billNo.isNullOrBlank())')
 actions_body = detail_body[actions_start:]
 if 'LabeledSectionCard(title = "Actions")' in actions_body:
     errors.append("Finalized Bill Details actions must not be wrapped in an outer Actions card.")
-for token in ['text = "View"', 'text = "Share"', 'text = "Download"', 'text = "Print"', "ResponsiveCompactPair("]:
+if actions_body.count("SoftActionButton(") < 4:
+    errors.append("Bill Details actions must expose four shared SoftActionButton controls.")
+for token in ['label = "View"', 'label = "Share"', 'label = "Download"', 'label = "Print"', "SoftActionButton("]:
     need(actions_body, token, "Bill Details actions")
+if "ResponsiveCompactPair(" in actions_body:
+    errors.append("Bill Details actions must be a single horizontal shared-button row, not ResponsiveCompactPair rows.")
 
 # Issue 2: finalized PDF fields/spacing and actual-time-only rule.
 for token in [
