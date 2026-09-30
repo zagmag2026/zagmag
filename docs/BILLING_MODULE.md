@@ -159,7 +159,7 @@ Pickup / Return Status is intentionally removed from the on-screen Bill Details 
 - Finalized Bill PDF retains Pickup / Return and shows **Status + Date + Day + actual event Time** using pickup/return event timestamps. If an actual event time is unavailable, no fake time is rendered.
 - Amount Summary is exactly: Item Total − Discount = Bill Amount; Advance Received + Other Received = Total Received; Bill Amount − Total Received = Balance Due. The top-right of Amount Summary uses the shared reusable **StatusBadge** family for **Bill Amount ₹X | Balance Due ₹Y**; directly below it, the same reusable badges show **Bill Status | Pending Payment / Part Payment / Full Payment**. The duplicate Bill Amount and Balance Due value rows are not rendered below the badges.
 - Notes are editable only in Draft.
-- Quotation Actions reuse the global shared **SoftActionButton** family with icon + label: **Save Quotation | Finalize Bill**. Finalize is disabled when **Balance Due > ₹0** and remains disabled/server-rejected until **100% Return + Balance Due = ₹0**.
+- Quotation Actions reuse the existing global shared **SecondaryButton / PrimaryButton** components with icon + label: **Save Quotation | Finalize Bill**. Finalize is disabled when **Balance Due > ₹0** and remains disabled/server-rejected until **100% Return + Balance Due = ₹0**.
 - Finalized Actions are unboxed shared buttons in one horizontal row: **View | Share | Download | Print**. Existing View/Share/Download/Print behavior is unchanged.
 
 Booking lifecycle action visibility is state-based: Edit is Reserved-only; Reserved has no Bill. From Booked onward, Bill is available and Edit is removed.
