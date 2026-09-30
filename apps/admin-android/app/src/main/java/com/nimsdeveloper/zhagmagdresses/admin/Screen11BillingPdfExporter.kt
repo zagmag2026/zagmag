@@ -328,7 +328,8 @@ internal object Screen11BillingPdfExporter {
         }
 
         val dir = File(context.cacheDir, "report-pdfs").apply { mkdirs() }
-        val safeNo = (bill.billNo ?: "Quotation_${bill.bookingNo ?: "Order"}").replace("/", "-").replace(" ", "_")
+        val rawNo = (bill.billNo ?: bill.bookingNo ?: "Order").replace("/", "-").replace(" ", "_")
+        val safeNo = if (isQuotation) rawNo.removePrefix("Quotation_") else rawNo
         val file = File(dir, if (isQuotation) "Zhagmag_Quotation_$safeNo.pdf" else "Zhagmag_Bill_$safeNo.pdf")
         file.outputStream().use(document::writeTo)
         document.close()
