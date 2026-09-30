@@ -112,11 +112,11 @@ for token in [
     "BillingBalanceDue(state.balanceAmount)",
     'text = "Save Quotation"',
     'text = "Finalize Bill"',
-    'text = "View"',
-    'text = "Share"',
+    'label = "View"',
+    'label = "Share"',
     'Screen8PdfExporter.shareDirectToCustomerWhatsApp(',
-    'text = "Download"',
-    'text = "Print"',
+    'label = "Download"',
+    'label = "Print"',
     "BillingCompactDatePicker(",
     'InfoValueRow(Icons.Rounded.Person, bill.customerName',
     'InfoValueRow(Icons.Rounded.Phone, bill.customerMobile',
@@ -285,7 +285,7 @@ for token in [
 for token in [
     "Reserved Orders do not have Bills",
     "Advance Received + Other Received",
-    "Finalized Actions are unboxed shared buttons in two rows: **View | Share** then **Download | Print**.",
+    "Finalized Actions are unboxed shared buttons in one horizontal row: **View | Share | Download | Print**.",
     "Finalized values are stored as snapshots",
 ]:
     need(billing_doc, token, "Billing module")
