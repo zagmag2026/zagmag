@@ -1,7 +1,6 @@
 package com.nimsdeveloper.zhagmagdresses.admin
 
 import android.content.ContentValues
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -569,40 +568,6 @@ internal object Screen8PdfExporter {
                     ?: fallbackError::class.java.simpleName
                 error("WhatsApp PDF share failed: $detail")
             }
-        }
-    }
-    /**
-     * Quotation-only direct customer handoff. The WhatsApp ContactPicker
-     * receives the customer JID together with the PDF attachment so the
-     * Quotation opens for the selected customer instead of the generic share
-     * flow. The existing Final Bill helper above remains unchanged.
-     */
-    fun shareQuotationDirectToCustomerWhatsApp(
-        context: Context,
-        file: File,
-        customerMobile: String,
-        title: String
-    ) {
-        val digits = customerMobile.filter(Char::isDigit).takeLast(10)
-        require(digits.length == 10) { "Customer mobile number is invalid." }
-
-        val uri = contentUri(context, file)
-        val intent = Intent(Intent.ACTION_SEND)
-            .setType(MIME)
-            .setPackage("com.whatsapp")
-            .setComponent(ComponentName("com.whatsapp", "com.whatsapp.ContactPicker"))
-            .putExtra(Intent.EXTRA_STREAM, uri)
-            .putExtra(Intent.EXTRA_SUBJECT, title)
-            .putExtra(Intent.EXTRA_TEXT, title)
-            .putExtra("jid", "91$digits@s.whatsapp.net")
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        intent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
-
-        context.grantUriPermission("com.whatsapp", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        try {
-            context.startActivity(intent)
-        } catch (_: android.content.ActivityNotFoundException) {
-            shareDirectToCustomerWhatsApp(context, file, customerMobile, title)
         }
     }
     fun print(context: Context, file: File, jobName: String) {
