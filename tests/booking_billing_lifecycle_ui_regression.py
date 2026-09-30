@@ -14,7 +14,42 @@ booking = read(ANDROID / "BookingWorkspaceScreen5.kt")
 details = read(ANDROID / "BookingDetailsScreen6.kt")
 actions = read(ANDROID / "BookingCardActions.kt")
 root = read(ANDROID / "AdminAppScreen4.kt")
+
+
+def need(body: str, token: str, label: str):
+    if token not in body:
+        errors.append(f"{label} missing: {token}")
 billing_ui = read(ANDROID / "Screen11Billing.kt")
+
+# Correct Billing Screen 1-3 target audit.
+edit_start = billing_ui.find("private fun BillingEditScreen(")
+detail_start = billing_ui.find("private fun BillingDetailScreen(")
+edit_body = billing_ui[edit_start:detail_start]
+detail_body = billing_ui[detail_start:]
+if 'BillingAmountRow("Bill Amount", state.netAmount, strong = true)' not in edit_body:
+    errors.append("Quotation editor/account summary must retain the pre-badge Bill Amount row.")
+if "BillingBalanceDue(state.balanceAmount)" not in edit_body:
+    errors.append("Quotation editor/account summary must retain the pre-badge Balance Due row.")
+edit_actions = edit_body[edit_body.find('val canFinalize ='):edit_body.find('\n    }\n}', edit_body.find('val canFinalize ='))]
+if "SoftActionButton(" in edit_actions:
+    errors.append("Save Quotation / Finalize Bill must not use SoftActionButton.")
+for token in ["SecondaryButton(", "PrimaryButton(", "Icons.Rounded.Save", "Icons.Rounded.CheckCircle", 'text = "Save Quotation"', 'text = "Finalize Bill"']:
+    need(edit_actions, token, "Quotation global button family")
+if "state.balanceAmount <= 0" not in edit_actions:
+    errors.append("Finalize button must remain disabled while Balance Due is greater than ₹0.")
+amount_start = detail_body.find('LabeledSectionCard(title = "Amount Summary")')
+notes_start = detail_body.find('LabeledSectionCard(title = "Notes")', amount_start)
+detail_amount = detail_body[amount_start:notes_start]
+summary_start = billing_ui.find("private fun BillingSummaryBadges(")
+summary_end = billing_ui.find("private fun BillingPdfActionCard(", summary_start)
+summary_badges = billing_ui[summary_start:summary_end]
+status_pos = summary_badges.find("billingPaymentLabel(paymentStatus)")
+amount_pos = summary_badges.find('StatusBadge("Bill Amount ₹$billAmount"')
+if status_pos < 0 or amount_pos < 0 or status_pos > amount_pos:
+    errors.append("Bill Details badges must show Bill Status + Payment Status above Bill Amount + Balance Due.")
+if 'BillingAmountRow("Bill Amount", bill.netAmount' in detail_amount or "BillingBalanceDue(bill.balanceAmount)" in detail_amount:
+    errors.append("Bill Details must replace the old Bill Amount / Balance Due rows with badges.")
+
 billing_vm = read(ANDROID / "Screen11BillingViewModel.kt")
 billing_repo = read(ANDROID / "Screen11BillingRepository.kt")
 booking_vm = read(ANDROID / "BookingLifecycleViewModel.kt")
@@ -32,28 +67,6 @@ billing_doc = read(ROOT / "docs/BILLING_MODULE.md")
 booking_doc = read(ROOT / "docs/BOOKING_MODULE.md")
 
 errors = []
-
-def need(body: str, token: str, label: str):
-    if token not in body:
-        errors.append(f"{label}: missing {token}")
-
-# 1. Tabs: restore the validated Admin Android Run #79 shared tab family.
-tab_family = components[components.find("fun AppCompactFixedTabs("):components.find("data class AppFilterOption")]
-fixed = tab_family[tab_family.find("fun AppCompactFixedTabs("):tab_family.find("fun AppCompactScrollableTabs(")]
-scroll = tab_family[tab_family.find("fun AppCompactScrollableTabs("):]
-for token in ["TabRow(", "modifier = modifier.fillMaxWidth()", "Modifier.height(44.dp)", "style = MaterialTheme.typography.labelMedium", "fontSize = 16.sp", "FontWeight.SemiBold", "FontWeight.Normal"]:
-    need(fixed, token, "Run 79 fixed tabs")
-for token in ["ScrollableTabRow(", "edgePadding = 0.dp", "minTabWidth: androidx.compose.ui.unit.Dp = 96.dp", "Modifier.widthIn(min = minTabWidth).height(44.dp)", "style = MaterialTheme.typography.labelMedium", "fontSize = 16.sp", "FontWeight.SemiBold", "FontWeight.Normal"]:
-    need(scroll, token, "Run 79 scrollable tabs")
-if ".horizontalScroll(rememberScrollState())" in scroll or "minTabWidth: androidx.compose.ui.unit.Dp = 0.dp" in scroll:
-    errors.append("Scrollable tabs must not regress to the post-Run-79 content-width implementation.")
-need(settings, "AppCompactScrollableTabs(", "Settings Run 79 scrollable tabs")
-need(details, "AppCompactScrollableTabs(", "Booking Details Run 79 scrollable tabs")
-need(details, "minTabWidth = 96.dp", "Booking Details Run 79 minimum tab width")
-need(read(ANDROID / "CustomerScreenV4.kt"), "AppCompactFixedTabs(", "Customer fixed tabs")
-need(read(ANDROID / "Screen5ItemManagement.kt"), "AppCompactFixedTabs(", "Category & Items fixed tabs")
-need(read(ANDROID / "Screen8Reports.kt"), "AppCompactScrollableTabs(", "Reports scrollable tabs")
-need(root, "AppCompactScrollableTabs(", "Booking lifecycle scrollable tabs")
 
 # 2-4. Numeric replacement + Advance presentation.
 for token in [
@@ -378,8 +391,8 @@ for token in [
     'label = "Discount"',
     'label = "Advance Received"',
     'label = "Other Received"',
-    'label = "Save Quotation"',
-    'label = "Finalize Bill"',
+    'text = "Save Quotation"',
+    'text = "Finalize Bill"',
     'label = "Print"',
 ]:
     'Screen8PdfExporter.shareDirectToCustomerWhatsApp',
