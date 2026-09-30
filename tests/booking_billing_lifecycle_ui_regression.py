@@ -378,7 +378,7 @@ for token in [
     'label = "Other Received"',
     'text = "Save Quotation"',
     'text = "Finalize Bill"',
-    'text = "Print"',
+    'label = "Print"',
 ]:
     'Screen8PdfExporter.shareDirectToCustomerWhatsApp',
     'Unable to download Quotation PDF.',
