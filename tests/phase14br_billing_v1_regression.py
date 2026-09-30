@@ -94,7 +94,7 @@ need(billing_ui, "contentAlignment = Alignment.Center", "Billing centered loadin
 
 # Final Bill direct customer WhatsApp share helper.
 need(billing_share, 'fun shareDirectToCustomerWhatsApp(', "Final Bill direct WhatsApp share helper")
-need(billing_share, '.setPackage(whatsappPackage)', "Direct customer WhatsApp package binding")
+need(billing_share, '.setPackage("com.whatsapp")', "Direct customer WhatsApp package binding")
 if '.setPackage("com.whatsapp.w4b")' in billing_share or 'whatsappPackage = "com.whatsapp.w4b"' in billing_share:
     errors.append("Direct customer WhatsApp helper must use the verified normal WhatsApp package, not WhatsApp Business.")
 need(billing_share, '.putExtra("jid", "91$digits@s.whatsapp.net")', "Final Bill direct WhatsApp share helper")
