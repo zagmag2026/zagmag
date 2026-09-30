@@ -241,12 +241,14 @@ need(whatsapp_exporter, 'fun shareDirectToCustomerWhatsApp(', "Quotation direct 
 need(billing_ui, 'Screen11BillingPdfExporter.shareDirectToCustomerWhatsApp(', "Quotation direct customer WhatsApp PDF handoff")
 for token in [
     '.setPackage(whatsappPackage)',
-    'val whatsappPackage = "com.whatsapp.w4b"',
+    'val whatsappPackage = "com.whatsapp"',
     '.putExtra("jid", "91$digits@s.whatsapp.net")',
     '.putExtra(Intent.EXTRA_STREAM, uri)',
     'grantAndStart(directIntent)',
 ]:
     need(whatsapp_share, token, "Direct customer WhatsApp PDF handoff")
+if 'val whatsappPackage = "com.whatsapp.w4b"' in whatsapp_share:
+    errors.append("Direct customer WhatsApp PDF handoff must use normal WhatsApp, matching the verified 22-Sep flow.")
 if 'resolveActivity(context.packageManager)' in whatsapp_share:
     errors.append("Direct customer WhatsApp PDF handoff must not use resolveActivity() for WhatsApp installed detection.")
 for token in [
