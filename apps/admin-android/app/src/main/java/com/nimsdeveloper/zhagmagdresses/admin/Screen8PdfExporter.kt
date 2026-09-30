@@ -513,11 +513,10 @@ internal object Screen8PdfExporter {
     }
 
     /**
-     * Opens the customer's exact WhatsApp chat using the supported public wa.me
-     * deep link. WhatsApp does not expose a stable public Android API that can
-     * guarantee exact JID targeting and a PDF attachment in the same SEND intent.
-     * Keep the SEND/JID handoff as a compatibility fallback when the deep link
-     * cannot be opened.
+     * Sends the generated PDF directly to the customer's WhatsApp JID.
+     * The content URI is supplied both as EXTRA_STREAM and ClipData so the
+     * WhatsApp client receives an explicit readable PDF attachment while the
+     * JID targets the selected customer chat.
      */
     fun shareDirectToCustomerWhatsApp(
         context: Context,
@@ -527,21 +526,6 @@ internal object Screen8PdfExporter {
     ) {
         val digits = customerMobile.filter(Char::isDigit).takeLast(10)
         require(digits.length == 10) { "Customer mobile number is invalid." }
-
-        val chatUri = Uri.parse("https://wa.me/91$digits?text=" + Uri.encode(title))
-        val chatIntent = Intent(Intent.ACTION_VIEW)
-            .setData(chatUri)
-            .setPackage("com.whatsapp")
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-        try {
-            context.startActivity(chatIntent)
-            return
-        } catch (chatError: android.content.ActivityNotFoundException) {
-            // Fall through to the verified PDF SEND handoff below.
-        } catch (chatError: SecurityException) {
-            // Fall through to the verified PDF SEND handoff below.
-        }
 
         val uri = contentUri(context, file)
         val readGrant = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -553,7 +537,10 @@ internal object Screen8PdfExporter {
             .putExtra(Intent.EXTRA_SUBJECT, title)
             .putExtra(Intent.EXTRA_TEXT, title)
             .putExtra("jid", "91$digits@s.whatsapp.net")
-            .addFlags(readGrant)
+
+        directIntent.setClipData(android.content.ClipData.newRawUri(title, uri))
+        directIntent.addFlags(readGrant)
+
         try {
             context.grantUriPermission(whatsappPackage, uri, readGrant)
             context.startActivity(directIntent)
