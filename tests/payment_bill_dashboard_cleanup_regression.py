@@ -25,6 +25,7 @@ dashboard_worker = screen4
 dashboard_ui = read(ANDROID / "DashboardScreenV2.kt")
 billing_ui = read(ANDROID / "Screen11Billing.kt")
 billing_pdf = read(ANDROID / "Screen11BillingPdfExporter.kt")
+billing_vm = read(ANDROID / "Screen11BillingViewModel.kt")
 
 # Issue 1: one mutually-exclusive authoritative payment classifier everywhere that still
 # exposes per-order payment state.
@@ -55,26 +56,36 @@ for legacy in ["activeBillPending", "activeBillPart", "activeBillFull"]:
         errors.append(f"Overlapping payment predicate returned: {legacy}")
 
 # Issues 4-5: no nested Balance Due card; one top badge; no duplicate bottom status row.
-balance_start = billing_ui.find("private fun BillingBalanceDue")
-balance_end = billing_ui.find("private fun billingDisplayDay", balance_start)
-balance_body = billing_ui[balance_start:balance_end]
-need(balance_body, 'Text("Balance Due"', "Balance Due row")
-if "AppCard(" in balance_body:
-    errors.append("Balance Due must be a normal emphasized row, not an inner card.")
+if "BillingBalanceDue(" in billing_ui:
+    errors.append("Billing Summary must use the shared badge family instead of the retired Balance Due row helper.")
 
 detail_start = billing_ui.find("private fun BillingDetailScreen(")
 detail_body = billing_ui[detail_start:]
 amount_start = detail_body.find('LabeledSectionCard(title = "Amount Summary")')
 notes_start = detail_body.find('LabeledSectionCard(title = "Notes")', amount_start)
 detail_amount = detail_body[amount_start:notes_start]
+summary_start = billing_ui.find("private fun BillingSummaryBadges(")
+summary_end = billing_ui.find("private fun BillingPdfActionCard(", summary_start)
+summary_badges = billing_ui[summary_start:summary_end]
 for token in [
     "horizontalArrangement = Arrangement.End",
-    "StatusBadge(billingPaymentLabel(bill.paymentStatus)",
-    'BillingAmountRow("Total Received", bill.receivedAmount, strong = true)',
-    "AppItemListDivider()",
-    "BillingBalanceDue(bill.balanceAmount)",
+    'StatusBadge("Bill Amount ₹$billAmount", BadgeTone.INFO)',
+    'StatusBadge("Balance Due ₹$balanceDue"',
+    "billingPaymentLabel(paymentStatus)",
 ]:
-    need(detail_amount, token, "Bill Details Amount Summary")
+    need(summary_badges, token, "Bill Details Amount Summary badges")
+for token in [
+    'label = "Save Quotation"',
+    'label = "Finalize Bill"',
+    "SoftActionButton(",
+]:
+    need(billing_ui, token, "Quotation shared actions")
+for token in [
+    "state.balanceAmount > 0",
+    "BILL_BALANCE_DUE",
+    "COALESCE(received_amount,0) >= COALESCE(net_amount,0)",
+]:
+    need(billing_ui + billing_vm + billing_worker, token, "Billing balance guard")
 if 'Text("Payment Status"' in detail_amount:
     errors.append("Bill Details Amount Summary must not duplicate Payment Status at the bottom.")
 for label in ['"Pending Payment"', '"Part Payment"', '"Full Payment"']:
