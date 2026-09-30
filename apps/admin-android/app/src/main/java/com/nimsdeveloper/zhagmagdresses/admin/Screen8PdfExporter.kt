@@ -539,10 +539,6 @@ internal object Screen8PdfExporter {
             .addFlags(readGrant)
         directIntent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
 
-        check(directIntent.resolveActivity(context.packageManager) != null) {
-            "WhatsApp is not installed."
-        }
-
         fun grantAndStart(intent: Intent) {
             context.grantUriPermission(whatsappPackage, uri, readGrant)
             context.startActivity(intent)
@@ -550,6 +546,8 @@ internal object Screen8PdfExporter {
 
         try {
             grantAndStart(directIntent)
+        } catch (directError: android.content.ActivityNotFoundException) {
+            error("WhatsApp is not installed.")
         } catch (directError: Exception) {
             val fallbackIntent = Intent(Intent.ACTION_SEND)
                 .setType(MIME)
@@ -562,6 +560,8 @@ internal object Screen8PdfExporter {
 
             try {
                 grantAndStart(fallbackIntent)
+            } catch (fallbackError: android.content.ActivityNotFoundException) {
+                error("WhatsApp is not installed.")
             } catch (fallbackError: Exception) {
                 val detail = fallbackError.message?.takeIf { it.isNotBlank() }
                     ?: directError.message?.takeIf { it.isNotBlank() }
