@@ -541,8 +541,6 @@ internal object Screen8PdfExporter {
             .putExtra(Intent.EXTRA_TEXT, title)
             .putExtra("jid", "91$digits@s.whatsapp.net")
             .addFlags(readGrant)
-        directIntent.clipData = android.content.ClipData.newRawUri("PDF", uri)
-
         try {
             context.grantUriPermission(whatsappPackage, uri, readGrant)
             context.startActivity(directIntent)
