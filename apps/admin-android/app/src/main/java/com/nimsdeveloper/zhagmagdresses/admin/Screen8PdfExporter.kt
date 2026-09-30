@@ -513,13 +513,11 @@ internal object Screen8PdfExporter {
     }
 
     /**
-     * Opens the customer's primary WhatsApp chat with the generated PDF attached.
-     *
-     * Do not bind this flow to WhatsApp's internal ContactPicker component: that
-     * component is not a stable public Android entry point and can disappear or
-     * become non-exported across WhatsApp releases. The supported SEND handoff
-     * keeps the customer JID and PDF attachment together while targeting the
-     * installed standard WhatsApp package directly.
+     * Opens the customer's exact WhatsApp chat using the supported public wa.me
+     * deep link. WhatsApp does not expose a stable public Android API that can
+     * guarantee exact JID targeting and a PDF attachment in the same SEND intent.
+     * Keep the SEND/JID handoff as a compatibility fallback when the deep link
+     * cannot be opened.
      */
     fun shareDirectToCustomerWhatsApp(
         context: Context,
@@ -529,6 +527,21 @@ internal object Screen8PdfExporter {
     ) {
         val digits = customerMobile.filter(Char::isDigit).takeLast(10)
         require(digits.length == 10) { "Customer mobile number is invalid." }
+
+        val chatUri = Uri.parse("https://wa.me/91$digits?text=" + Uri.encode(title))
+        val chatIntent = Intent(Intent.ACTION_VIEW)
+            .setData(chatUri)
+            .setPackage("com.whatsapp")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        try {
+            context.startActivity(chatIntent)
+            return
+        } catch (chatError: android.content.ActivityNotFoundException) {
+            // Fall through to the verified PDF SEND handoff below.
+        } catch (chatError: SecurityException) {
+            // Fall through to the verified PDF SEND handoff below.
+        }
 
         val uri = contentUri(context, file)
         val readGrant = Intent.FLAG_GRANT_READ_URI_PERMISSION
