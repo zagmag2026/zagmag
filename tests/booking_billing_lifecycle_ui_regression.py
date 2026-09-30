@@ -241,6 +241,7 @@ need(whatsapp_exporter, 'fun shareDirectToCustomerWhatsApp(', "Quotation direct 
 need(billing_ui, 'Screen11BillingPdfExporter.shareDirectToCustomerWhatsApp(', "Quotation direct customer WhatsApp PDF handoff")
 for token in [
     '.setPackage(whatsappPackage)',
+    'val whatsappPackage = "com.whatsapp.w4b"',
     '.putExtra("jid", "91$digits@s.whatsapp.net")',
     '.putExtra(Intent.EXTRA_STREAM, uri)',
     'grantAndStart(directIntent)',
