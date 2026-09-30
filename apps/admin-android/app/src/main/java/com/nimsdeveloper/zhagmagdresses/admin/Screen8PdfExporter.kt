@@ -513,9 +513,13 @@ internal object Screen8PdfExporter {
     }
 
     /**
-     * Shares the PDF directly to the customer's primary WhatsApp chat.
-     * Preserve the verified 22-Sep contract: normal WhatsApp, customer JID,
-     * and the generated PDF attached in the same SEND intent.
+     * Opens the customer's primary WhatsApp chat with the generated PDF attached.
+     *
+     * Do not bind this flow to WhatsApp's internal ContactPicker component: that
+     * component is not a stable public Android entry point and can disappear or
+     * become non-exported across WhatsApp releases. The supported SEND handoff
+     * keeps the customer JID and PDF attachment together while targeting the
+     * installed standard WhatsApp package directly.
      */
     fun shareDirectToCustomerWhatsApp(
         context: Context,
@@ -527,20 +531,25 @@ internal object Screen8PdfExporter {
         require(digits.length == 10) { "Customer mobile number is invalid." }
 
         val uri = contentUri(context, file)
-        val intent = Intent(Intent.ACTION_SEND)
+        val readGrant = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        val whatsappPackage = "com.whatsapp"
+        val directIntent = Intent(Intent.ACTION_SEND)
             .setType(MIME)
             .setPackage("com.whatsapp")
-            .setComponent(android.content.ComponentName("com.whatsapp", "com.whatsapp.ContactPicker"))
             .putExtra(Intent.EXTRA_STREAM, uri)
             .putExtra(Intent.EXTRA_SUBJECT, title)
             .putExtra(Intent.EXTRA_TEXT, title)
             .putExtra("jid", "91$digits@s.whatsapp.net")
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            .addFlags(readGrant)
+        directIntent.clipData = android.content.ClipData.newRawUri("PDF", uri)
 
         try {
-            context.startActivity(intent)
+            context.grantUriPermission(whatsappPackage, uri, readGrant)
+            context.startActivity(directIntent)
         } catch (directError: android.content.ActivityNotFoundException) {
             error("WhatsApp is not installed.")
+        } catch (directError: SecurityException) {
+            error("Unable to share PDF to WhatsApp.")
         }
     }
 
