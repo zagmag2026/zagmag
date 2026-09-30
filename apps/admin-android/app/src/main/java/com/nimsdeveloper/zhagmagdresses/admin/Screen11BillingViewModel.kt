@@ -605,6 +605,13 @@ internal class Screen11BillingViewModel(
             )
             return
         }
+        if (finalizeAfterSave && state.balanceAmount > 0) {
+            state = state.copy(
+                error = "Bill cannot be finalized while Balance Due is greater than ₹0.",
+                message = null
+            )
+            return
+        }
         val validation = validateDraft()
         if (validation != null) {
             state = state.copy(error = validation, message = null)
