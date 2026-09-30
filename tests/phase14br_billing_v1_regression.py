@@ -26,6 +26,36 @@ worker = read(WORKER)
 screen4 = read(SCREEN4)
 payment_classifier = read(PAYMENT_CLASSIFIER)
 billing_ui = read(ANDROID / "Screen11Billing.kt")
+
+# Correct Billing Screen 1-3 target audit.
+edit_start = billing_ui.find("private fun BillingEditScreen(")
+detail_start = billing_ui.find("private fun BillingDetailScreen(")
+edit_body = billing_ui[edit_start:detail_start]
+detail_body = billing_ui[detail_start:]
+if 'BillingAmountRow("Bill Amount", state.netAmount, strong = true)' not in edit_body:
+    errors.append("Quotation editor/account summary must retain the pre-badge Bill Amount row.")
+if "BillingBalanceDue(state.balanceAmount)" not in edit_body:
+    errors.append("Quotation editor/account summary must retain the pre-badge Balance Due row.")
+edit_actions = edit_body[edit_body.find('val canFinalize ='):edit_body.find('\n    }\n}', edit_body.find('val canFinalize ='))]
+if "SoftActionButton(" in edit_actions:
+    errors.append("Save Quotation / Finalize Bill must not use SoftActionButton.")
+for token in ["SecondaryButton(", "PrimaryButton(", "Icons.Rounded.Save", "Icons.Rounded.CheckCircle", 'text = "Save Quotation"', 'text = "Finalize Bill"']:
+    need(edit_actions, token, "Quotation global button family")
+if "state.balanceAmount <= 0" not in edit_actions:
+    errors.append("Finalize button must remain disabled while Balance Due is greater than ₹0.")
+amount_start = detail_body.find('LabeledSectionCard(title = "Amount Summary")')
+notes_start = detail_body.find('LabeledSectionCard(title = "Notes")', amount_start)
+detail_amount = detail_body[amount_start:notes_start]
+summary_start = billing_ui.find("private fun BillingSummaryBadges(")
+summary_end = billing_ui.find("private fun BillingPdfActionCard(", summary_start)
+summary_badges = billing_ui[summary_start:summary_end]
+status_pos = summary_badges.find("billingPaymentLabel(paymentStatus)")
+amount_pos = summary_badges.find('StatusBadge("Bill Amount ₹$billAmount"')
+if status_pos < 0 or amount_pos < 0 or status_pos > amount_pos:
+    errors.append("Bill Details badges must show Bill Status + Payment Status above Bill Amount + Balance Due.")
+if 'BillingAmountRow("Bill Amount", bill.netAmount' in detail_amount or "BillingBalanceDue(bill.balanceAmount)" in detail_amount:
+    errors.append("Bill Details must replace the old Bill Amount / Balance Due rows with badges.")
+
 billing_vm = read(ANDROID / "Screen11BillingViewModel.kt")
 billing_repo = read(ANDROID / "Screen11BillingRepository.kt")
 billing_models = read(ANDROID / "Screen11BillingModels.kt")
@@ -118,8 +148,8 @@ for token in [
     "BillingSummaryBadges(",
     'StatusBadge("Bill Amount ₹$billAmount", BadgeTone.INFO)',
     'StatusBadge("Balance Due ₹$balanceDue"',
-    'label = "Save Quotation"',
-    'label = "Finalize Bill"',
+    'text = "Save Quotation"',
+    'text = "Finalize Bill"',
     'label = "View"',
     'label = "Share"',
     'Screen8PdfExporter.shareDirectToCustomerWhatsApp(',
@@ -196,7 +226,7 @@ for token in [
     'label = "Add Quotation"',
     'AppFilterOption("DRAFT", "Quotation")',
     'text = "Create Quotation"',
-    'label = "Save Quotation"',
+    'text = "Save Quotation"',
     'title = if (bill.status == "DRAFT") "Quotation Header" else "Bill Header"',
     'title = if (state.billId.isNullOrBlank()) "Create Quotation" else "Edit Quotation"',
     'Text(label, style = MaterialTheme.typography.labelSmall, color = AppTextMuted)',
