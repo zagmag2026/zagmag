@@ -89,6 +89,8 @@ import com.nimsdeveloper.zhagmagdresses.admin.ui.components.InlineRetryMessage
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.InfoValueRow
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.LabeledSectionCard
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.AppItemListDivider
+import com.nimsdeveloper.zhagmagdresses.admin.ui.components.ActionTone
+import com.nimsdeveloper.zhagmagdresses.admin.ui.components.SoftActionButton
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.LoadingState
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.LoadFailureState
 import com.nimsdeveloper.zhagmagdresses.admin.ui.components.PrimaryButton
@@ -1005,7 +1007,6 @@ private fun BillingEditScreen(
                 BillingAmountRow("Total Received", state.totalReceivedAmount, strong = true)
                 AppItemListDivider()
                 BillingBalanceDue(state.balanceAmount)
-                Text("Payment collection: Cash", color = AppTextMuted, style = MaterialTheme.typography.bodySmall)
             }
         }
 
@@ -1028,94 +1029,52 @@ private fun BillingEditScreen(
             if (state.detail?.bill?.status == "DRAFT" && state.detail != null) {
                 item {
                     val quotationDetail = state.detail
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(AppSpacing.xs)
-                    ) {
-                        ResponsiveCompactPair(
-                            first = { child ->
-                                SecondaryButton(
-                                    text = "View",
-                                    onClick = {
-                                        runCatching {
-                                            val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
-                                            Screen8PdfExporter.view(context, file)
-                                        }.onSuccess { onPdfResult(null, null) }
-                                            .onFailure { onPdfResult(null, "Unable to open Quotation PDF.") }
-                                    },
-                                    modifier = child,
-                                    icon = { Icon(Icons.Rounded.Visibility, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                    BillingPdfActionCard(
+                        onView = {
+                            runCatching {
+                                val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
+                                Screen8PdfExporter.view(context, file)
+                            }.onSuccess { onPdfResult(null, null) }
+                                .onFailure { onPdfResult(null, "Unable to open Quotation PDF.") }
+                        },
+                        onShare = {
+                            runCatching {
+                                val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
+                                Screen11BillingPdfExporter.shareDirectToCustomerWhatsApp(
+                                    context = context,
+                                    file = file,
+                                    customerMobile = quotationDetail.bill.customerMobile,
+                                    title = "Quotation ${quotationDetail.bill.bookingNo ?: ""}"
                                 )
-                            },
-                            second = { child ->
-                                SecondaryButton(
-                                    text = "Share",
-                                    onClick = {
-                                        runCatching {
-                                            val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
-                                            Screen11BillingPdfExporter.shareDirectToCustomerWhatsApp(
-                                                context = context,
-                                                file = file,
-                                                customerMobile = quotationDetail.bill.customerMobile,
-                                                title = "Quotation ${quotationDetail.bill.bookingNo ?: ""}"
-                                            )
-                                        }.onSuccess { onPdfResult(null, null) }
-                                            .onFailure { error ->
-                                                onPdfResult(null, error.message ?: "Unable to share Quotation PDF.")
-                                            }
-                                    },
-                                    modifier = child,
-                                    icon = { Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                            }.onSuccess { onPdfResult(null, null) }
+                                .onFailure { error ->
+                                    onPdfResult(null, error.message ?: "Unable to share Quotation PDF.")
+                                }
+                        },
+                        onDownload = {
+                            runCatching {
+                                val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
+                                Screen8PdfExporter.download(context, file)
+                            }.onSuccess { onPdfResult(it, null) }
+                                .onFailure { onPdfResult(null, "Unable to download Quotation PDF.") }
+                        },
+                        onPrint = {
+                            runCatching {
+                                val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
+                                Screen8PdfExporter.print(
+                                    context,
+                                    file,
+                                    "Quotation ${quotationDetail.bill.bookingNo ?: ""}"
                                 )
-                            }
-                        )
-                        ResponsiveCompactPair(
-                            first = { child ->
-                                SecondaryButton(
-                                    text = "Download",
-                                    onClick = {
-                                        runCatching {
-                                            val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
-                                            Screen8PdfExporter.download(context, file)
-                                        }.onSuccess { onPdfResult(it, null) }
-                                            .onFailure { onPdfResult(null, "Unable to download Quotation PDF.") }
-                                    },
-                                    modifier = child,
-                                    icon = { Icon(Icons.Rounded.Download, contentDescription = null, modifier = Modifier.size(18.dp)) }
-                                )
-                            },
-                            second = { child ->
-                                SecondaryButton(
-                                    text = "Print",
-                                    onClick = {
-                                        runCatching {
-                                            val file = Screen11BillingPdfExporter.create(context, branding, quotationDetail)
-                                            Screen8PdfExporter.print(
-                                                context,
-                                                file,
-                                                "Quotation ${quotationDetail.bill.bookingNo ?: ""}"
-                                            )
-                                        }.onSuccess { onPdfResult(null, null) }
-                                            .onFailure { onPdfResult(null, "Unable to print Quotation PDF.") }
-                                    },
-                                    modifier = child,
-                                    icon = { Icon(Icons.Rounded.Print, contentDescription = null, modifier = Modifier.size(18.dp)) }
-                                )
-                            }
-                        )
-                    }
+                            }.onSuccess { onPdfResult(null, null) }
+                                .onFailure { onPdfResult(null, "Unable to print Quotation PDF.") }
+                        }
+                    )
                 }
             }
 
         item {
             val canFinalize = booking?.returnComplete == true
-            if (!canFinalize) {
-                Text(
-                    "Finalize Bill becomes available after 100% Return is complete.",
-                    color = AppTextMuted,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
             ResponsiveCompactPair(
                 first = { child ->
                     SecondaryButton(
@@ -1275,78 +1234,112 @@ private fun BillingDetailScreen(
 
             if (bill.status == "DRAFT" || !bill.billNo.isNullOrBlank()) {
                 item {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(AppSpacing.xs)
-                    ) {
-                        ResponsiveCompactPair(
-                            first = { child ->
-                                SecondaryButton(
-                                    text = "View",
-                                    onClick = {
-                                        runCatching {
-                                            val file = Screen11BillingPdfExporter.create(context, branding, detail)
-                                            Screen8PdfExporter.view(context, file)
-                                        }.onSuccess { onPdfResult(null, null) }
-                                            .onFailure { onPdfResult(null, if (bill.status == "DRAFT") "Unable to open Quotation PDF." else "Unable to open Bill PDF.") }
-                                    },
-                                    modifier = child,
-                                    icon = { Icon(Icons.Rounded.Visibility, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                    BillingPdfActionCard(
+                        onView = {
+                            runCatching {
+                                val file = Screen11BillingPdfExporter.create(context, branding, detail)
+                                Screen8PdfExporter.view(context, file)
+                            }.onSuccess { onPdfResult(null, null) }
+                                .onFailure {
+                                    onPdfResult(
+                                        null,
+                                        if (bill.status == "DRAFT") "Unable to open Quotation PDF." else "Unable to open Bill PDF."
+                                    )
+                                }
+                        },
+                        onShare = {
+                            runCatching {
+                                val file = Screen11BillingPdfExporter.create(context, branding, detail)
+                                Screen8PdfExporter.shareDirectToCustomerWhatsApp(
+                                    context = context,
+                                    file = file,
+                                    customerMobile = bill.customerMobile,
+                                    title = if (bill.status == "DRAFT") "Quotation ${bill.bookingNo ?: ""}" else "Final Bill ${bill.billNo}"
                                 )
-                            },
-                            second = { child ->
-                                SecondaryButton(
-                                    text = "Share",
-                                    onClick = {
-                                        runCatching {
-                                            val file = Screen11BillingPdfExporter.create(context, branding, detail)
-                                            Screen8PdfExporter.shareDirectToCustomerWhatsApp(
-                                                context = context,
-                                                file = file,
-                                                customerMobile = bill.customerMobile,
-                                                title = if (bill.status == "DRAFT") "Quotation ${bill.bookingNo ?: ""}" else "Final Bill ${bill.billNo}"
-                                            )
-                                        }.onSuccess { onPdfResult(null, null) }
-                                            .onFailure { onPdfResult(null, if (bill.status == "DRAFT") "Unable to share Quotation PDF." else "Unable to share Bill PDF.") }
-                                    },
-                                    modifier = child,
-                                    icon = { Icon(Icons.Rounded.Share, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                            }.onSuccess { onPdfResult(null, null) }
+                                .onFailure {
+                                    onPdfResult(
+                                        null,
+                                        if (bill.status == "DRAFT") "Unable to share Quotation PDF." else "Unable to share Bill PDF."
+                                    )
+                                }
+                        },
+                        onDownload = {
+                            runCatching {
+                                val file = Screen11BillingPdfExporter.create(context, branding, detail)
+                                Screen8PdfExporter.download(context, file)
+                            }.onSuccess { onPdfResult(it, null) }
+                                .onFailure {
+                                    onPdfResult(
+                                        null,
+                                        if (bill.status == "DRAFT") "Unable to download Quotation PDF." else "Unable to download Bill PDF."
+                                    )
+                                }
+                        },
+                        onPrint = {
+                            runCatching {
+                                val file = Screen11BillingPdfExporter.create(context, branding, detail)
+                                Screen8PdfExporter.print(
+                                    context,
+                                    file,
+                                    if (bill.status == "DRAFT") "Quotation ${bill.bookingNo ?: ""}" else "Final Bill ${bill.billNo}"
                                 )
-                            }
-                        )
-                        ResponsiveCompactPair(
-                            first = { child ->
-                                SecondaryButton(
-                                    text = "Download",
-                                    onClick = {
-                                        runCatching {
-                                            val file = Screen11BillingPdfExporter.create(context, branding, detail)
-                                            Screen8PdfExporter.download(context, file)
-                                        }.onSuccess { onPdfResult(it, null) }
-                                            .onFailure { onPdfResult(null, if (bill.status == "DRAFT") "Unable to download Quotation PDF." else "Unable to download Bill PDF.") }
-                                    },
-                                    modifier = child,
-                                    icon = { Icon(Icons.Rounded.Download, contentDescription = null, modifier = Modifier.size(18.dp)) }
-                                )
-                            },
-                            second = { child ->
-                                SecondaryButton(
-                                    text = "Print",
-                                    onClick = {
-                                        runCatching {
-                                            val file = Screen11BillingPdfExporter.create(context, branding, detail)
-                                            Screen8PdfExporter.print(context, file, if (bill.status == "DRAFT") "Quotation ${bill.bookingNo ?: ""}" else "Final Bill ${bill.billNo}")
-                                        }.onSuccess { onPdfResult(null, null) }
-                                            .onFailure { onPdfResult(null, if (bill.status == "DRAFT") "Unable to print Quotation PDF." else "Unable to print Bill PDF.") }
-                                    },
-                                    modifier = child,
-                                    icon = { Icon(Icons.Rounded.Print, contentDescription = null, modifier = Modifier.size(18.dp)) }
-                                )
-                            }
-                        )
-                    }
+                            }.onSuccess { onPdfResult(null, null) }
+                                .onFailure {
+                                    onPdfResult(
+                                        null,
+                                        if (bill.status == "DRAFT") "Unable to print Quotation PDF." else "Unable to print Bill PDF."
+                                    )
+                                }
+                        }
+                    )
                 }
             }
+
+        }
+    }
+}
+
+@Composable
+private fun BillingPdfActionCard(
+    onView: () -> Unit,
+    onShare: () -> Unit,
+    onDownload: () -> Unit,
+    onPrint: () -> Unit
+) {
+    AppCard(Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(AppSpacing.xs)
+        ) {
+            SoftActionButton(
+                icon = Icons.Rounded.Visibility,
+                label = "View",
+                onClick = onView,
+                modifier = Modifier.weight(1f),
+                tone = ActionTone.INFO
+            )
+            SoftActionButton(
+                icon = Icons.Rounded.Share,
+                label = "Share",
+                onClick = onShare,
+                modifier = Modifier.weight(1f),
+                tone = ActionTone.BRAND
+            )
+            SoftActionButton(
+                icon = Icons.Rounded.Download,
+                label = "Download",
+                onClick = onDownload,
+                modifier = Modifier.weight(1f),
+                tone = ActionTone.SUCCESS
+            )
+            SoftActionButton(
+                icon = Icons.Rounded.Print,
+                label = "Print",
+                onClick = onPrint,
+                modifier = Modifier.weight(1f),
+                tone = ActionTone.NEUTRAL
+            )
         }
     }
 }
