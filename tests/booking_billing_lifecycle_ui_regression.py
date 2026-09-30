@@ -197,7 +197,9 @@ for token in [
     'label = "Advance Received"',
     'label = "Other Received"',
     'BillingAmountRow("Total Received", state.totalReceivedAmount',
-    "BillingBalanceDue(state.balanceAmount)",
+    "BillingSummaryBadges(",
+    'StatusBadge("Bill Amount ₹$billAmount", BadgeTone.INFO)',
+    'StatusBadge("Balance Due ₹$balanceDue"',
     "billingPaymentLabel",
     'LabeledSectionCard(title = "Pickup / Return Status")',
 ]:
@@ -376,8 +378,8 @@ for token in [
     'label = "Discount"',
     'label = "Advance Received"',
     'label = "Other Received"',
-    'text = "Save Quotation"',
-    'text = "Finalize Bill"',
+    'label = "Save Quotation"',
+    'label = "Finalize Bill"',
     'label = "Print"',
 ]:
     'Screen8PdfExporter.shareDirectToCustomerWhatsApp',
@@ -395,6 +397,8 @@ for token in [
 for token in [
     "returnComplete",
     "state.bootstrap?.booking?.returnComplete != true",
+    "state.balanceAmount > 0",
+    'Bill cannot be finalized while Balance Due is greater than ₹0.',
     "!bill.returnComplete",
     'Bill can be finalized only after all picked-up items are fully returned.',
 ]:
