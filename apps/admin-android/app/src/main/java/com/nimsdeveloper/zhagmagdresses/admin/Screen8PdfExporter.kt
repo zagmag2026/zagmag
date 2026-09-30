@@ -513,9 +513,9 @@ internal object Screen8PdfExporter {
     }
 
     /**
-     * Shares the PDF directly to the customer's primary WhatsApp Business chat.
-     * Uses the customer's normalized Indian 10-digit mobile and WhatsApp's direct-chat JID
-     * so the Android share chooser is not shown.
+     * Shares the PDF directly to the customer's primary WhatsApp chat.
+     * Preserve the verified 22-Sep contract: normal WhatsApp, customer JID,
+     * and the generated PDF attached in the same SEND intent.
      */
     fun shareDirectToCustomerWhatsApp(
         context: Context,
@@ -527,8 +527,8 @@ internal object Screen8PdfExporter {
         require(digits.length == 10) { "Customer mobile number is invalid." }
 
         val uri = contentUri(context, file)
+        val whatsappPackage = "com.whatsapp"
         val readGrant = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        val whatsappPackage = "com.whatsapp.w4b"
         val directIntent = Intent(Intent.ACTION_SEND)
             .setType(MIME)
             .setPackage(whatsappPackage)
@@ -549,25 +549,9 @@ internal object Screen8PdfExporter {
         } catch (directError: android.content.ActivityNotFoundException) {
             error("WhatsApp is not installed.")
         } catch (directError: Exception) {
-            val fallbackIntent = Intent(Intent.ACTION_SEND)
-                .setType(MIME)
-                .setPackage(whatsappPackage)
-                .putExtra(Intent.EXTRA_STREAM, uri)
-                .putExtra(Intent.EXTRA_SUBJECT, title)
-                .putExtra(Intent.EXTRA_TEXT, title)
-                .addFlags(readGrant)
-            fallbackIntent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
-
-            try {
-                grantAndStart(fallbackIntent)
-            } catch (fallbackError: android.content.ActivityNotFoundException) {
-                error("WhatsApp is not installed.")
-            } catch (fallbackError: Exception) {
-                val detail = fallbackError.message?.takeIf { it.isNotBlank() }
-                    ?: directError.message?.takeIf { it.isNotBlank() }
-                    ?: fallbackError::class.java.simpleName
-                error("WhatsApp PDF share failed: $detail")
-            }
+            val detail = directError.message?.takeIf { it.isNotBlank() }
+                ?: directError::class.java.simpleName
+            error("WhatsApp PDF share failed: $detail")
         }
     }
     fun print(context: Context, file: File, jobName: String) {
