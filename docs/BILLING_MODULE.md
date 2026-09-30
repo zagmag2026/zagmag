@@ -160,7 +160,7 @@ Pickup / Return Status is intentionally removed from the on-screen Bill Details 
 - Amount Summary is exactly: Item Total − Discount = Bill Amount; Advance Received + Other Received = Total Received; Bill Amount − Total Received = Balance Due. A single shared **Pending Payment | Part Payment | Full Payment** badge appears at the top-right of the Amount Summary. After Total Received, one separator precedes a normal emphasized Balance Due row; there is no nested Balance Due card and no duplicate bottom Payment Status row.
 - Notes are editable only in Draft.
 - Quotation Actions: Save Quotation | Finalize Bill. Finalize remains disabled and server-rejected until 100% Return.
-- Finalized Actions are unboxed shared buttons in two rows: **View | Share** then **Download | Print**. Existing View/Share/Download/Print behavior is unchanged.
+- Finalized Actions are unboxed shared buttons in one horizontal row: **View | Share | Download | Print**. Existing View/Share/Download/Print behavior is unchanged.
 
 Booking lifecycle action visibility is state-based: Edit is Reserved-only; Reserved has no Bill. From Booked onward, Bill is available and Edit is removed.
 
