@@ -527,33 +527,22 @@ internal object Screen8PdfExporter {
         require(digits.length == 10) { "Customer mobile number is invalid." }
 
         val uri = contentUri(context, file)
-        val whatsappPackage = "com.whatsapp"
-        val readGrant = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        val directIntent = Intent(Intent.ACTION_SEND)
+        val intent = Intent(Intent.ACTION_SEND)
             .setType(MIME)
-            .setPackage(whatsappPackage)
+            .setPackage("com.whatsapp")
             .putExtra(Intent.EXTRA_STREAM, uri)
             .putExtra(Intent.EXTRA_SUBJECT, title)
             .putExtra(Intent.EXTRA_TEXT, title)
             .putExtra("jid", "91$digits@s.whatsapp.net")
-            .addFlags(readGrant)
-        directIntent.setClipData(android.content.ClipData.newRawUri("Quotation PDF", uri))
-
-        fun grantAndStart(intent: Intent) {
-            context.grantUriPermission(whatsappPackage, uri, readGrant)
-            context.startActivity(intent)
-        }
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         try {
-            grantAndStart(directIntent)
+            context.startActivity(intent)
         } catch (directError: android.content.ActivityNotFoundException) {
             error("WhatsApp is not installed.")
-        } catch (directError: Exception) {
-            val detail = directError.message?.takeIf { it.isNotBlank() }
-                ?: directError::class.java.simpleName
-            error("WhatsApp PDF share failed: $detail")
         }
     }
+
     fun print(context: Context, file: File, jobName: String) {
         val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
         val adapter = object : PrintDocumentAdapter() {
