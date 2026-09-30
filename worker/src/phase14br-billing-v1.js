@@ -766,6 +766,13 @@ async function finalizeBill(request, env, user, id) {
       message:"Bill can be finalized only after all picked-up items are fully returned."
     },409);
   }
+  if (integer(current.received_amount,0) < integer(current.net_amount,0)) {
+    return apiJson({
+      ok:false,
+      error:"BILL_BALANCE_DUE",
+      message:"Bill cannot be finalized while Balance Due is greater than ₹0."
+    },409);
+  }
 
   const now = new Date().toISOString();
   const results = await env.DB.batch([
@@ -773,6 +780,7 @@ async function finalizeBill(request, env, user, id) {
       UPDATE bills
       SET status='FINAL',finalized_by_user_id=?,finalized_at=?,updated_at=?
       WHERE id=? AND status='DRAFT' AND bill_no IS NULL
+        AND COALESCE(received_amount,0) >= COALESCE(net_amount,0)
         AND EXISTS (
           SELECT 1 FROM booking_items bi
           WHERE bi.booking_id=bills.booking_id AND bi.given_qty>0
@@ -815,6 +823,14 @@ async function finalizeBill(request, env, user, id) {
         ok:false,
         error:"BOOKING_RETURN_INCOMPLETE",
         message:"Bill can be finalized only after all picked-up items are fully returned."
+      },409);
+    }
+    const latestBalance = integer(saved?.received_amount,0) < integer(saved?.net_amount,0);
+    if (latestBalance) {
+      return apiJson({
+        ok:false,
+        error:"BILL_BALANCE_DUE",
+        message:"Bill cannot be finalized while Balance Due is greater than ₹0."
       },409);
     }
     return apiJson({ ok:false,error:"STALE_WRITE",message:"Bill changed while finalizing. Refresh and try again." },409);
